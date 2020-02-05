@@ -2,21 +2,48 @@ import XCTest
 @testable import FaceppSwift
 
 final class FaceppSwiftTests: XCTestCase {
-    func testExample() {
+    
+    let key = ProcessInfo.processInfo.environment["key"]
+    let secret = ProcessInfo.processInfo.environment["secret"]
+    
+    override func setUp() {
+        XCTAssert(key != nil && secret != nil)
+        Facepp.Initialization(key: key!, secret: secret!)
+    }
+    
+    func testDetect() {
         let exp = XCTestExpectation(description: "detect")
-        Facepp.Initialization(key: "-jE-aCYiCtmlDuv-E3JKbLBzzi2Z8flz", secret: "AcD9J28WnFz_uIJPuY4pvwarE5UEY4Tv")
         var opt = DetectOption()
-        opt.imageFile = URL(fileURLWithPath: "/Users/jiangzhenhua/Pictures/Lena.jpg")
+        opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         opt.returnAttributes = .all
         opt.returnLandmark = .all
         Facepp.shared?.detect(option: opt, completionHanlder: { (err, data) in
-            print(data)
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
             exp.fulfill()
         })
-        wait(for: [exp], timeout: 100)
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testCompare() {
+        XCTAssert(key != nil && secret != nil)
+        
+        let exp = XCTestExpectation(description: "compare")
+        var opt = CompareOption()
+        opt.imageUrl1 = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
+        opt.imageUrl2 = URL(string: "https://bellard.org/bpg/lena5.jpg")
+        
+        Facepp.shared?.compare(option: opt, completionHanlder: { (err, data) in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        })
+        wait(for: [exp], timeout: 60)
     }
     
     static var allTests = [
-        ("testExample", testExample),
+        ("testDetect", testDetect),
     ]
 }

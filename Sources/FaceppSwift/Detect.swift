@@ -33,17 +33,9 @@ public struct DetectOption {
     ///是否检测并返回所有人脸的人脸关键点和人脸属性。如果不使用此功能，则本 API 只会对人脸面积最大的五个人脸分析人脸关键点和人脸属性
     public var calculateAll: Bool?
     
-    public var imageURL: URL? {
-        didSet {
-            picType = imageFile?.pathExtension == "png" ? .png : .jpeg
-        }
-    }
-    public var imageFile: URL? {
-        didSet {
-            picType = imageFile?.pathExtension == "png" ? .png : .jpeg
-        }
-    }
-    public var imageBase64: Data?
+    public var imageURL: URL?
+    public var imageFile: URL?
+    public var imageBase64: String?
     
     /// 是否指定人脸框位置进行人脸检测。
     public var faceRectangele: FaceRectangle?
@@ -51,12 +43,6 @@ public struct DetectOption {
     public var beautyScoreMin = 0
     /// beauty_score_max
     public var beautyScoreNax = 100
-    
-    public enum PicType: String {
-        case jpeg, png
-    }
-    
-    public var picType = PicType.jpeg
     
     func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?) {
         
@@ -89,25 +75,23 @@ public struct DetectOption {
         params["beauty_score_min"] = beautyScoreMin
         params["beauty_score_max"] = beautyScoreNax
         
-        var bodyData: Data?
+        var files = [Params]()
         
         if let url = imageFile, let data = try? Data(contentsOf: url) {
-            bodyData = kBodyDataWithParams(params: params, fileData: [[
+            files.append([
                 "fieldName": "image_file",
-                "fileType": self.picType.rawValue,
+                "fileType": url.pathExtension,
                 "data": data
-                ]])
+            ])
         } else if let data = imageBase64 {
-            bodyData = kBodyDataWithParams(params: params, fileData: [[
-                "fieldName": "image_file",
-                "fileType": self.picType.rawValue,
-                "data": data
-                ]])
+            params["image_base64"] = data
         } else if let url = imageURL {
             params["image_url"] = url
         } else {
             return (nil, nil)
         }
+        
+        let bodyData = kBodyDataWithParams(params: params, fileData: files)
         
         return (request, bodyData)
     }
@@ -243,10 +227,10 @@ public struct Attributes: Codable {
 }
 
 public struct FaceRectangle: Codable {
-    var top = 0
-    var left = 0
-    var width = 0
-    var height = 0
+    var top: UInt = 0
+    var left: UInt = 0
+    var width: UInt = 0
+    var height: UInt = 0
 }
 
 public struct LandMark: Codable {
