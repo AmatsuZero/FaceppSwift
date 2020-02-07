@@ -46,7 +46,30 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    func testBeautify() {
+        let exp = XCTestExpectation(description: "beautify")
+        var opt = BeautifyOption()
+        opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
+        Facepp.shared?.beautify(option: opt) { (err, data) in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
     // 残念，XCTest无法顺序执行测试用例
+    func testSearch() {
+        testDetect()
+        createFaceSet()
+        addFace()
+        search()
+        if facesetToken != nil {
+            deleteFaceset()
+        }
+    }
+    
     func testFaceSetSuite() {
         testDetect()
         createFaceSet()
@@ -56,6 +79,23 @@ final class FaceppSwiftTests: XCTestCase {
         addFace()
         removeFace()
         deleteFaceset()
+    }
+    
+    func search() {
+        guard let setToken = facesetToken else {
+            return XCTFail("没有Face Token")
+        }
+        let exp = XCTestExpectation(description: "search")
+        var opt = SearchOption()
+        opt.facesetToken = setToken
+        opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
+        FaceSet.search(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
     }
     
     static var allTests = [

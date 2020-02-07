@@ -165,3 +165,18 @@ extension URLRequest {
         return (request, kBodyDataWithParams(params: body, fileData: []))
     }
 }
+
+public struct ThreshHolds: Codable {
+    /// 误识率为千分之一的置信度阈值
+    public let lowPrecision: Float
+    /// 误识率为万分之一的置信度阈值
+    public let middlePrecision: Float
+    /// 误识率为十万分之一的置信度阈值
+    public let hightPrecision: Float
+    
+    enum CodingKeys: String, CodingKey {
+        case lowPrecision = "1e-3"
+        case middlePrecision = "1e-4"
+        case hightPrecision = "1e-5"
+    }
+}

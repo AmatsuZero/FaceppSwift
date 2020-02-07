@@ -38,7 +38,7 @@ public struct DetectOption: RequestProtocol {
     public var imageBase64: String?
     
     /// 是否指定人脸框位置进行人脸检测。
-    public var faceRectangele: FaceRectangle?
+    public var faceRectangle: FaceRectangle?
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
     /// beauty_score_max
@@ -64,7 +64,7 @@ public struct DetectOption: RequestProtocol {
         if let ret = calculateAll {
             params["calculate_all"] = ret ? 1 : 0
         }
-        if let rectangle = faceRectangele {
+        if let rectangle = faceRectangle {
             params["face_rectangle"] = "\(String(describing: rectangle))"
         }
         params["beauty_score_min"] = beautyScoreMin
@@ -163,13 +163,13 @@ public struct Attributes: Codable {
     
     public struct SkinStatus: Codable {
         /// 健康
-        let health: Float
+        public let health: Float
         /// 色斑
-        let stain: Float
+        public let stain: Float
         /// 青春痘
-        let acne: Float
+        public let acne: Float
         /// 黑眼圈
-        let darkCircle: Float
+        public let darkCircle: Float
     }
     
     /// 面部特征识别结果，包括以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
@@ -200,13 +200,13 @@ public struct Attributes: Codable {
     
     public struct MouthStatus: Codable {
         /// 嘴部被医用口罩或呼吸面罩遮挡的置信度
-        let surgicalMaskOrRespirator: Float
+        public let surgicalMaskOrRespirator: Float
         /// 嘴部被其他物体遮挡的置信度
-        let otherOcclusion: Float
+        public let otherOcclusion: Float
         /// 嘴部没有遮挡且闭上的置信度
-        let close: Float
+        public let close: Float
         /// 嘴部没有遮挡且张开的置信度
-        let open: Float
+        public let open: Float
     }
     /// 嘴部状态信息
     public let mouthstatus: MouthStatus?
@@ -215,144 +215,144 @@ public struct Attributes: Codable {
 }
 
 public struct FaceRectangle: Codable {
-    var top: UInt = 0
-    var left: UInt = 0
-    var width: UInt = 0
-    var height: UInt = 0
+    public var top: Int = 0
+    public var left: Int = 0
+    public var width: Int = 0
+    public var height: Int = 0
 }
 
 public struct LandMark: Codable {
     public struct LandMarkInfo: Codable {
-        let x: Float
-        let y: Float
+        public let x: Float
+        public let y: Float
     }
     // MARK: - 83个特征点：https://console.faceplusplus.com.cn/documents/5671270
-    let contourChin: LandMarkInfo
-    let contourLeft1: LandMarkInfo
-    let contourLeft2: LandMarkInfo
-    let contourLeft3: LandMarkInfo
-    let contourLeft4: LandMarkInfo
-    let contourLeft5: LandMarkInfo
-    let contourLeft6: LandMarkInfo
-    let contourLeft7: LandMarkInfo
-    let contourLeft8: LandMarkInfo
-    let contourLeft9: LandMarkInfo
-    let contourRight1: LandMarkInfo
-    let contourRight2: LandMarkInfo
-    let contourRight3: LandMarkInfo
-    let contourRight4: LandMarkInfo
-    let contourRight5: LandMarkInfo
-    let contourRight6: LandMarkInfo
-    let contourRight7: LandMarkInfo
-    let contourRight8: LandMarkInfo
-    let contourRight9: LandMarkInfo
-    let leftEyeBottom: LandMarkInfo
-    let leftEyeCenter: LandMarkInfo
-    let leftEyeLeftCorner: LandMarkInfo
-    let leftEyeLowerLeftQuarter: LandMarkInfo
-    let leftEyeLowerRightQuarter: LandMarkInfo
-    let leftEyePupil: LandMarkInfo
-    let leftEyeRightCorner: LandMarkInfo
-    let leftEyeTop: LandMarkInfo
-    let leftEyeUpperLeftQuarter: LandMarkInfo
-    let leftEyeUpperRightQuarter: LandMarkInfo
-    let leftEyebrowLeftCorner: LandMarkInfo
-    let leftEyebrowLowerLeftQuarter: LandMarkInfo
-    let leftEyebrowLowerMiddle: LandMarkInfo
-    let leftEyebrowLowerRightQuarter: LandMarkInfo
-    let leftEyebrowRightCorner: LandMarkInfo?
-    let leftEyebrowUpperLeftQuarter: LandMarkInfo
-    let leftEyebrowUpperMiddle: LandMarkInfo
-    let leftEyebrowUpperRightQuarter: LandMarkInfo
-    let mouthLeftCorner: LandMarkInfo
-    let mouthLowerLipBottom: LandMarkInfo
-    let mouthLowerLipLeftContour1: LandMarkInfo
-    let mouthLowerLipLeftContour2: LandMarkInfo
-    let mouthLowerLipLeftContour3: LandMarkInfo
-    let mouthLowerLipRightContour1: LandMarkInfo
-    let mouthLowerLipRightContour2: LandMarkInfo
-    let mouthLowerLipRightContour3: LandMarkInfo
-    let mouthLowerLipTop: LandMarkInfo
-    let mouthRightCorner: LandMarkInfo
-    let mouthUpperLipBottom: LandMarkInfo
-    let mouthUpperLipLeftContour1: LandMarkInfo
-    let mouthUpperLipLeftContour2: LandMarkInfo
-    let mouthUpperLipLeftContour3: LandMarkInfo
-    let mouthUpperLipRightContour1: LandMarkInfo
-    let mouthUpperLipRightContour2: LandMarkInfo
-    let mouthUpperLipRightContour3: LandMarkInfo
-    let mouthUpperLipTop: LandMarkInfo
-    let noseContourLeft1: LandMarkInfo?
-    let noseContourLeft2: LandMarkInfo?
-    let noseContourLeft3: LandMarkInfo?
-    let noseContourLowerMiddle: LandMarkInfo?
-    let noseContourRight1: LandMarkInfo?
-    let noseContourRight2: LandMarkInfo?
-    let noseContourRight3: LandMarkInfo?
-    let noseLeft: LandMarkInfo?
-    let noseRight: LandMarkInfo?
-    let noseTip: LandMarkInfo
-    let rightEyeBottom: LandMarkInfo
-    let rightEyeCenter: LandMarkInfo
-    let rightEyeLeftCorner: LandMarkInfo
-    let rightEyeLowerLeftQuarter: LandMarkInfo
-    let rightEyeLowerRightQuarter: LandMarkInfo
-    let rightEyePupil: LandMarkInfo
-    let rightEyeRightCorner: LandMarkInfo
-    let rightEyeTop: LandMarkInfo
-    let rightEyeUpperLeftQuarter: LandMarkInfo
-    let rightEyeUpperRightQuarter: LandMarkInfo
-    let rightEyebrowLeftCorner: LandMarkInfo?
-    let rightEyebrowLowerLeftQuarter: LandMarkInfo
-    let rightEyebrowLowerMiddle: LandMarkInfo
-    let rightEyebrowLowerRightQuarter: LandMarkInfo
-    let rightEyebrowRightCorner: LandMarkInfo
-    let rightEyebrowUpperLeftQuarter: LandMarkInfo
-    let rightEyebrowUpperMiddle: LandMarkInfo
-    let rightEyebrowUpperRightQuarter: LandMarkInfo
+    public let contourChin: LandMarkInfo
+    public let contourLeft1: LandMarkInfo
+    public let contourLeft2: LandMarkInfo
+    public let contourLeft3: LandMarkInfo
+    public let contourLeft4: LandMarkInfo
+    public let contourLeft5: LandMarkInfo
+    public let contourLeft6: LandMarkInfo
+    public let contourLeft7: LandMarkInfo
+    public let contourLeft8: LandMarkInfo
+    public let contourLeft9: LandMarkInfo
+    public let contourRight1: LandMarkInfo
+    public let contourRight2: LandMarkInfo
+    public let contourRight3: LandMarkInfo
+    public let contourRight4: LandMarkInfo
+    public let contourRight5: LandMarkInfo
+    public let contourRight6: LandMarkInfo
+    public let contourRight7: LandMarkInfo
+    public let contourRight8: LandMarkInfo
+    public let contourRight9: LandMarkInfo
+    public let leftEyeBottom: LandMarkInfo
+    public let leftEyeCenter: LandMarkInfo
+    public let leftEyeLeftCorner: LandMarkInfo
+    public let leftEyeLowerLeftQuarter: LandMarkInfo
+    public let leftEyeLowerRightQuarter: LandMarkInfo
+    public let leftEyePupil: LandMarkInfo
+    public let leftEyeRightCorner: LandMarkInfo
+    public let leftEyeTop: LandMarkInfo
+    public let leftEyeUpperLeftQuarter: LandMarkInfo
+    public let leftEyeUpperRightQuarter: LandMarkInfo
+    public let leftEyebrowLeftCorner: LandMarkInfo
+    public let leftEyebrowLowerLeftQuarter: LandMarkInfo
+    public let leftEyebrowLowerMiddle: LandMarkInfo
+    public let leftEyebrowLowerRightQuarter: LandMarkInfo
+    public let leftEyebrowRightCorner: LandMarkInfo?
+    public let leftEyebrowUpperLeftQuarter: LandMarkInfo
+    public let leftEyebrowUpperMiddle: LandMarkInfo
+    public let leftEyebrowUpperRightQuarter: LandMarkInfo
+    public let mouthLeftCorner: LandMarkInfo
+    public let mouthLowerLipBottom: LandMarkInfo
+    public let mouthLowerLipLeftContour1: LandMarkInfo
+    public let mouthLowerLipLeftContour2: LandMarkInfo
+    public let mouthLowerLipLeftContour3: LandMarkInfo
+    public let mouthLowerLipRightContour1: LandMarkInfo
+    public let mouthLowerLipRightContour2: LandMarkInfo
+    public let mouthLowerLipRightContour3: LandMarkInfo
+    public let mouthLowerLipTop: LandMarkInfo
+    public let mouthRightCorner: LandMarkInfo
+    public let mouthUpperLipBottom: LandMarkInfo
+    public let mouthUpperLipLeftContour1: LandMarkInfo
+    public let mouthUpperLipLeftContour2: LandMarkInfo
+    public let mouthUpperLipLeftContour3: LandMarkInfo
+    public let mouthUpperLipRightContour1: LandMarkInfo
+    public let mouthUpperLipRightContour2: LandMarkInfo
+    public let mouthUpperLipRightContour3: LandMarkInfo
+    public let mouthUpperLipTop: LandMarkInfo
+    public let noseContourLeft1: LandMarkInfo?
+    public let noseContourLeft2: LandMarkInfo?
+    public let noseContourLeft3: LandMarkInfo?
+    public let noseContourLowerMiddle: LandMarkInfo?
+    public let noseContourRight1: LandMarkInfo?
+    public let noseContourRight2: LandMarkInfo?
+    public let noseContourRight3: LandMarkInfo?
+    public let noseLeft: LandMarkInfo?
+    public let noseRight: LandMarkInfo?
+    public let noseTip: LandMarkInfo
+    public let rightEyeBottom: LandMarkInfo
+    public let rightEyeCenter: LandMarkInfo
+    public let rightEyeLeftCorner: LandMarkInfo
+    public let rightEyeLowerLeftQuarter: LandMarkInfo
+    public let rightEyeLowerRightQuarter: LandMarkInfo
+    public let rightEyePupil: LandMarkInfo
+    public let rightEyeRightCorner: LandMarkInfo
+    public let rightEyeTop: LandMarkInfo
+    public let rightEyeUpperLeftQuarter: LandMarkInfo
+    public let rightEyeUpperRightQuarter: LandMarkInfo
+    public let rightEyebrowLeftCorner: LandMarkInfo?
+    public let rightEyebrowLowerLeftQuarter: LandMarkInfo
+    public let rightEyebrowLowerMiddle: LandMarkInfo
+    public let rightEyebrowLowerRightQuarter: LandMarkInfo
+    public let rightEyebrowRightCorner: LandMarkInfo
+    public let rightEyebrowUpperLeftQuarter: LandMarkInfo
+    public let rightEyebrowUpperMiddle: LandMarkInfo
+    public let rightEyebrowUpperRightQuarter: LandMarkInfo
     
     // MARK: - 106个特征点：https://console.faceplusplus.com.cn/documents/13207408
-    let contourLeft10: LandMarkInfo?
-    let contourLeft11: LandMarkInfo?
-    let contourLeft12: LandMarkInfo?
-    let contourLeft13: LandMarkInfo?
-    let contourLeft14: LandMarkInfo?
-    let contourLeft15: LandMarkInfo?
-    let contourLeft16: LandMarkInfo?
-    let contourRight10: LandMarkInfo?
-    let contourRight11: LandMarkInfo?
-    let contourRight12: LandMarkInfo?
-    let contourRight13: LandMarkInfo?
-    let contourRight14: LandMarkInfo?
-    let contourRight15: LandMarkInfo?
-    let contourRight16: LandMarkInfo?
-    let leftEyebrowUpperRightCorner: LandMarkInfo?
-    let leftEyebrowLowerRightCorner: LandMarkInfo?
-    let rightEyebrowUpperLeftCorner: LandMarkInfo?
-    let rightEyebrowLowerLeftCorner: LandMarkInfo?
-    let noseBridge1: LandMarkInfo?
-    let noseBridge2: LandMarkInfo?
-    let noseBridge3: LandMarkInfo?
-    let noseLeftContour1: LandMarkInfo?
-    let noseLeftContour2: LandMarkInfo?
-    let noseLeftContour3: LandMarkInfo?
-    let noseLeftContour4: LandMarkInfo?
-    let noseLeftContour5: LandMarkInfo?
-    let noseMiddleContour: LandMarkInfo?
-    let noseRightContour1: LandMarkInfo?
-    let noseRightContour2: LandMarkInfo?
-    let noseRightContour3: LandMarkInfo?
-    let noseRightContour4: LandMarkInfo?
-    let noseRightContour5: LandMarkInfo?
-    let mouthUpperLipLeftContour4: LandMarkInfo?
-    let mouthUupperLipRightContour4: LandMarkInfo?
+    public let contourLeft10: LandMarkInfo?
+    public let contourLeft11: LandMarkInfo?
+    public let contourLeft12: LandMarkInfo?
+    public let contourLeft13: LandMarkInfo?
+    public let contourLeft14: LandMarkInfo?
+    public let contourLeft15: LandMarkInfo?
+    public let contourLeft16: LandMarkInfo?
+    public let contourRight10: LandMarkInfo?
+    public let contourRight11: LandMarkInfo?
+    public let contourRight12: LandMarkInfo?
+    public let contourRight13: LandMarkInfo?
+    public let contourRight14: LandMarkInfo?
+    public let contourRight15: LandMarkInfo?
+    public let contourRight16: LandMarkInfo?
+    public let leftEyebrowUpperRightCorner: LandMarkInfo?
+    public let leftEyebrowLowerRightCorner: LandMarkInfo?
+    public let rightEyebrowUpperLeftCorner: LandMarkInfo?
+    public let rightEyebrowLowerLeftCorner: LandMarkInfo?
+    public let noseBridge1: LandMarkInfo?
+    public let noseBridge2: LandMarkInfo?
+    public let noseBridge3: LandMarkInfo?
+    public let noseLeftContour1: LandMarkInfo?
+    public let noseLeftContour2: LandMarkInfo?
+    public let noseLeftContour3: LandMarkInfo?
+    public let noseLeftContour4: LandMarkInfo?
+    public let noseLeftContour5: LandMarkInfo?
+    public let noseMiddleContour: LandMarkInfo?
+    public let noseRightContour1: LandMarkInfo?
+    public let noseRightContour2: LandMarkInfo?
+    public let noseRightContour3: LandMarkInfo?
+    public let noseRightContour4: LandMarkInfo?
+    public let noseRightContour5: LandMarkInfo?
+    public let mouthUpperLipLeftContour4: LandMarkInfo?
+    public let mouthUupperLipRightContour4: LandMarkInfo?
 }
 
 public struct Face: Codable {
-    let faceToken: String
-    let faceRectangle: FaceRectangle
-    let attributes: Attributes?
-    let landmark: LandMark?
+    public let faceToken: String
+    public let faceRectangle: FaceRectangle
+    public let attributes: Attributes?
+    public let landmark: LandMark?
 }
 
 public struct DetectResponse: ResponseProtocol {

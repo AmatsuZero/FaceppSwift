@@ -30,6 +30,10 @@ public class Facepp {
     public func compare(option: CompareOption, completionHanlder: @escaping (Error?, CompareResponse?) -> Void) {
         parse(option: option, completionHanlder: completionHanlder)
     }
+    
+    public func beautify(option: BeautifyOption, completionHanlder: @escaping (Error?, BeautifyResponse?) -> Void) {
+        parse(option: option, completionHanlder: completionHanlder)
+    }
 }
 
 extension Facepp {

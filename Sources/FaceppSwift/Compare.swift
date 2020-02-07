@@ -118,21 +118,6 @@ public struct CompareResponse: ResponseProtocol {
      注：如果传入图片但图片中未检测到人脸，则无法进行比对，本字段不返回。
      */
     public let confidence: Float?
-    
-    public struct ThreshHolds: Codable {
-        /// 误识率为千分之一的置信度阈值
-        public let lowPrecision: Float
-        /// 误识率为万分之一的置信度阈值
-        public let middlePrecision: Float
-        /// 误识率为十万分之一的置信度阈值
-        public let hightPrecision: Float
-        
-        enum CodingKeys: String, CodingKey {
-            case lowPrecision = "1e-3"
-            case middlePrecision = "1e-4"
-            case hightPrecision = "1e-5"
-        }
-    }
     /**
      一组用于参考的置信度阈值，包含以下三个字段。每个字段的值为一个 [0,100] 的浮点数，小数点后 3 位有效数字。
      
@@ -159,27 +144,20 @@ public struct CompareResponse: ResponseProtocol {
      注：如果未传入图片，本字段不返回。
      */
     public let imageId2: String?
-    
-    public struct Face: Codable {
-        /// 人脸的标识
-        public let faceToken: String
-        /// 人脸矩形框的位
-        public let faceRectangle: FaceRectangle
-    }
     /**
      通过 image_url1、image_file1 或 image_base64_1 传入的图片中检测出的人脸数组，采用数组中的第一个人脸进行人脸比对。
 
      注：如果未传入图片，本字段不返回。如果没有检测出人脸则为空数组
      */
-    var faces1: [Face]?
+    public let faces1: [Face]?
     /**
      通过 image_url2、image_file2 或 image_base64_2 传入的图片中检测出的人脸数组，采用数组中的第一个人脸进行人脸比对。
 
      注：如果未传入图片，本字段不返回。如果没有检测出人脸则为空数组
      */
-    var faces2: [Face]?
+    public let faces2: [Face]?
     /// 整个请求所花费的时间，单位为毫秒。
-    var timeUsed: Int?
+    public var timeUsed: Int?
     /// 当请求失败时才会返回此字符串
-    var errorMessage: String?
+    public var errorMessage: String?
 }

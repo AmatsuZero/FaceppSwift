@@ -134,7 +134,7 @@ public struct FacesetDeleteResponse: ResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// FaceSet的标识
-    public var facesetToken: String?
+    public let facesetToken: String?
     /// 用户自定义的FaceSet标识，如果未定义则返回值为空
     public var outerId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -223,13 +223,13 @@ public struct FacesetGetDetailResponse: ResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
     /// 人脸集合的名字
-    public var displayName: String?
+    public let displayName: String?
     /// 自定义用户信息
-    public var userData: String?
+    public let userData: String?
     /// 自定义标签
-    public var tags: String?
+    public let tags: String?
     /// FaceSet中的face_token总数量
-    public var faceCount: Int?
+    public let faceCount: Int?
     /**
      用于进行下一次请求。返回值表示排在此次返回的所有 face_token 之后的下一个 face_token 的序号。
      
@@ -237,7 +237,7 @@ public struct FacesetGetDetailResponse: ResponseProtocol {
      
      如果没有返回该字段，则说明已经返回此 FaceSet 下的所有 face_token。
      */
-    public var next: String?
+    public let next: String?
 }
 
 public extension FaceSet {
@@ -334,9 +334,9 @@ public struct FaceSetUpdateResponse: ResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
     /// 用户自定义的FaceSet标识，如果未定义则返回值为空
-    public var outerId: String?
+    public let outerId: String?
     /// FaceSet的标识
-    public var facesetToken: String?
+    public let facesetToken: String?
 }
 
 public extension FaceSet {
@@ -401,9 +401,9 @@ public class FaceSetRemoveOption: RequestProtocol {
 
 public struct FaceSetOpFailureDetail: Codable {
     /// 人脸标识
-    let faceToken: String
+    public let faceToken: String
     /// 操作失败的原因
-    let reason: String
+    public let reason: String
 }
 
 public struct FaceSetRemoveResponse: ResponseProtocol {
@@ -414,15 +414,15 @@ public struct FaceSetRemoveResponse: ResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。除非发生404（API_NOT_FOUND )或403 （AUTHORIZATION_ERROR）错误，此字段必定返回。
     public var timeUsed: Int?
     /// FaceSet的标识
-    public var facesetToken: String?
+    public let facesetToken: String?
     /// 用户自定义的FaceSet标识，如果未定义则返回值为空
-    public var outerId: String?
+    public let outerId: String?
     /// 成功从FaceSet中移除的face_token数量
-    public var faceRemoved: Int?
+    public let faceRemoved: Int?
     /// 操作完成后FaceSet中的face_token数量
-    public var faceCount: Int?
+    public let faceCount: Int?
     /// 无法从FaceSet中移除的face_token以及原因
-    public var failureDetail: [FaceSetOpFailureDetail]?
+    public let failureDetail: [FaceSetOpFailureDetail]?
 }
 
 public extension FaceSet {
@@ -492,11 +492,11 @@ public struct FaceSetAddFaceResponse: ResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
     /// 成功加入 FaceSet 的 face_token 数量。
-    public var faceAdded: Int?
+    public let faceAdded: Int?
     /// 操作结束后 FaceSet 中的 face_token 总数量。
-    public var faceCount: Int?
+    public let faceCount: Int?
     /// 无法被加入FaceSet的face_token以及原因
-    public var failureDetail: [FaceSetOpFailureDetail]?
+    public let failureDetail: [FaceSetOpFailureDetail]?
 }
 
 public extension FaceSet {
@@ -581,13 +581,13 @@ public struct FaceSetCreateResponse: ResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。除非发生404（API_NOT_FOUND )或403 （AUTHORIZATION_ERROR）错误，此字段必定返回。
     public var timeUsed: Int?
     /// 用户自定义的 FaceSet 标识，如果未定义则返回值为空
-    public var outerId: String?
+    public let outerId: String?
     /// 本次操作成功加入 FaceSet的face_token 数量
-    public var faceAdded: Int?
+    public let faceAdded: Int?
     /// 操作结束后 FaceSet 中的 face_token 总数量
-    public var faceCount: Int?
+    public let faceCount: Int?
     /// FaceSet 的标识
-    public var facesetToken: String?
+    public let facesetToken: String?
     /**
      无法被加入 FaceSet 的 face_token 以及原因
      
@@ -645,17 +645,17 @@ public struct FaceSetTaskQueryResponse: ResponseProtocol {
     public var timeUsed: Int?
     /// MARK: - 任务完成返回
     /// 1: 标示当前异步任务已经完成
-    public var status: Int?
+    public let status: Int?
     /// FaceSet 的标识
-    public var facesetToken: String?
+    public let facesetToken: String?
     /// 用户自定义的 FaceSet 标识，如果未定义则返回值为空
-    public var outerId: String?
+    public let outerId: String?
     /// 成功加入 FaceSet 的 face_token 数量（如果当前任务类型为添加人脸，返回此字段）
     public var faceAdded: Int?
     /// 成功从FaceSet中移除的face_token数量（如果当前任务类型为删除人脸，返回此字段）
-    public var faceRemoved: Int?
+    public let faceRemoved: Int?
     /// 操作结束后 FaceSet 中的 face_token 总数量
-    public var faceCount: Int?
+    public let faceCount: Int?
     /**
      无法被加入/删除FaceSet的face_token以及原因
      
@@ -663,7 +663,7 @@ public struct FaceSetTaskQueryResponse: ResponseProtocol {
      
      reason：不能被添加的原因，包括 INVALID_FACE_TOKEN 人脸标识不存在 ，QUOTA_EXCEEDED 已达到FaceSet存储上限
      */
-    public var failureDetail: [FaceSetOpFailureDetail]?
+    public let failureDetail: [FaceSetOpFailureDetail]?
 }
 
 extension FaceSet {
@@ -691,7 +691,7 @@ public struct FaceSetAsyncOperationResponse: ResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
     /// 标示当前异步请求的唯一task标识，之后调用任务状态查询接口时，使用当前值作为参数，如果发生错误，此字段不返回。
-    public var taskId: String?
+    public let taskId: String?
 }
 
 public extension FaceSet {
