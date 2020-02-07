@@ -7,7 +7,9 @@
 
 import Foundation
 
-let kFaceppBaseURL = URL(string: "https://api-cn.faceplusplus.com/facepp/v3")
+let kBaseURL = URL(string: "https://api-cn.faceplusplus.com/facepp")
+let kFaceappV1BaseURL = kBaseURL?.appendingPathComponent("v1")
+let kFaceppV3BaseURL = kBaseURL?.appendingPathComponent("v3")
 
 protocol ResponseProtocol: Codable {
     // 用于区分每一次请求的唯一的字符串。

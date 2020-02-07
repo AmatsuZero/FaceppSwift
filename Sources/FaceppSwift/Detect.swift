@@ -45,7 +45,7 @@ public struct DetectOption: RequestProtocol {
     public var beautyScoreNax = 100
     
     var requsetURL: URL? {
-        return kFaceppBaseURL?.appendingPathComponent("detect")
+        return kFaceppV3BaseURL?.appendingPathComponent("detect")
     }
     
     func paramsCheck() -> Bool {
@@ -58,9 +58,7 @@ public struct DetectOption: RequestProtocol {
             "api_secret": apiSecret
         ]
         params["return_landmark"] = returnLandmark.rawValue
-        params["return_attributes"] = Array(returnAttributes)
-            .map { $0.rawValue }
-            .joined(separator: ",")
+        params["return_attributes"] = returnAttributes.map { $0.rawValue }.joined(separator: ",")
         if let ret = calculateAll {
             params["calculate_all"] = ret ? 1 : 0
         }
@@ -221,11 +219,12 @@ public struct FaceRectangle: Codable {
     public var height: Int = 0
 }
 
+public struct LandMarkInfo: Codable {
+    public let x: Float
+    public let y: Float
+}
+
 public struct LandMark: Codable {
-    public struct LandMarkInfo: Codable {
-        public let x: Float
-        public let y: Float
-    }
     // MARK: - 83个特征点：https://console.faceplusplus.com.cn/documents/5671270
     public let contourChin: LandMarkInfo
     public let contourLeft1: LandMarkInfo

@@ -49,7 +49,7 @@ public struct SearchOption: RequestProtocol {
     }
     
     var requsetURL: URL? {
-        return kFaceppBaseURL?.appendingPathComponent("search")
+        return kFaceppV3BaseURL?.appendingPathComponent("search")
     }
     
     func params(apiKey: String, apiSecret: String) -> Params {

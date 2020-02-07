@@ -59,6 +59,19 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    func testDenseLandmark() {
+        let exp = XCTestExpectation(description: "Thousand Landmarks")
+        var opt = ThousandLandMarkOption(returnLandMark: .all)
+        opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
+        Facepp.shared?.thousandLandmark(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
     // 残念，XCTest无法顺序执行测试用例
     func testSearch() {
         testDetect()
@@ -101,7 +114,9 @@ final class FaceppSwiftTests: XCTestCase {
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
-        ("testFaceSetSuite", testFaceSetSuite)
+        ("testFaceSetSuite", testFaceSetSuite),
+        ("testSearch", testSearch),
+        ("testDenseLandmark", testDenseLandmark)
     ]
 }
 

@@ -43,10 +43,16 @@ public struct BeautifyOption: RequestProtocol {
     public var smoothing = 100
     
     var requsetURL: URL? {
-       return kFaceppBaseURL?.deletingLastPathComponent().appendingPathComponent("v1/beautify")
+       return kFaceappV1BaseURL?.appendingPathComponent("beautify")
     }
     
     func paramsCheck() -> Bool {
+        guard whitening >= 0 && whitening <= 100 else {
+            return false
+        }
+        guard smoothing >= 0 && smoothing <= 100 else {
+            return false
+        }
         return imageURL != nil || imageFile != nil || imageBase64 != nil
     }
     

@@ -34,6 +34,10 @@ public class Facepp {
     public func beautify(option: BeautifyOption, completionHanlder: @escaping (Error?, BeautifyResponse?) -> Void) {
         parse(option: option, completionHanlder: completionHanlder)
     }
+    
+    public func thousandLandmark(option: ThousandLandMarkOption, completionHanlder: @escaping (Error?, ThousandLandmarkResponse?) -> Void) {
+        parse(option: option, completionHanlder: completionHanlder)
+    }
 }
 
 extension Facepp {
