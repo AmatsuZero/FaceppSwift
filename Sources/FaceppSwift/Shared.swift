@@ -9,6 +9,36 @@ import Foundation
 
 let kFaceppBaseURL = URL(string: "https://api-cn.faceplusplus.com/facepp/v3")
 
+protocol ResponseProtocol: Codable {
+    // 用于区分每一次请求的唯一的字符串。
+    var requestId: String? { get }
+    /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
+    var errorMessage: String? { get }
+    /// 整个请求所花费的时间，单位为毫秒。
+    var timeUsed: Int? { get }
+}
+
+protocol RequestProtocol {
+    var requsetURL: URL? { get }
+    func paramsCheck() -> Bool
+    func params(apiKey: String, apiSecret: String) -> Params
+    func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?)
+}
+
+extension RequestProtocol {
+    func paramsCheck() -> Bool {
+        return true
+    }
+    
+    func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?) {
+        guard let url = requsetURL, paramsCheck() else {
+            return (nil, nil)
+        }
+        return URLRequest.postRequest(url: url,
+                                      body: params(apiKey: apiKey, apiSecret: apiSecret))
+    }
+}
+
 typealias Params = [String: Any]
 
 func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
@@ -99,6 +129,39 @@ extension Set where Element: Option {
 }
 
 public enum RequestError: Error {
-    case NoPic
+    case NotInit
+    case MissingArguments
     case FaceppError(String)
+}
+
+extension Dictionary {
+    func percentEncoded() -> Data? {
+        return map { key, value in
+            let escapedKey = "\(key)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
+            let escapedValue = "\(value)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
+            return escapedKey + "=" + escapedValue
+        }
+        .joined(separator: "&")
+        .data(using: .utf8)
+    }
+}
+
+extension CharacterSet {
+    static let urlQueryValueAllowed: CharacterSet = {
+        let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
+        let subDelimitersToEncode = "!$&'()*+,;="
+
+        var allowed = CharacterSet.urlQueryAllowed
+        allowed.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
+        return allowed
+    }()
+}
+
+extension URLRequest {
+    static func postRequest(url:URL,  body:Params) -> (URLRequest?, Data?) {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=boundary", forHTTPHeaderField: "Content-Type")
+        return (request, kBodyDataWithParams(params: body, fileData: []))
+    }
 }

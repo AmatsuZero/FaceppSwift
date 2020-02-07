@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DetectOption {
+public struct DetectOption: RequestProtocol {
     
     /// 是否检测并返回人脸关键点。合法值为：
     public enum ReturnLandmark: Int {
@@ -44,39 +44,32 @@ public struct DetectOption {
     /// beauty_score_max
     public var beautyScoreNax = 100
     
-    func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?) {
-        
-        guard let url = kFaceppBaseURL?.appendingPathComponent("detect") else {
-            return (nil, nil)
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("multipart/form-data; boundary=boundary", forHTTPHeaderField: "Content-Type")
-        
+    var requsetURL: URL? {
+        return kFaceppBaseURL?.appendingPathComponent("detect")
+    }
+    
+    func paramsCheck() -> Bool {
+        return imageFile != nil || imageURL != nil || imageBase64 != nil
+    }
+    
+    func params(apiKey: String, apiSecret: String) -> Params {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
         ]
-        
         params["return_landmark"] = returnLandmark.rawValue
         params["return_attributes"] = Array(returnAttributes)
             .map { $0.rawValue }
             .joined(separator: ",")
-        
         if let ret = calculateAll {
             params["calculate_all"] = ret ? 1 : 0
         }
-        
         if let rectangle = faceRectangele {
             params["face_rectangle"] = "\(String(describing: rectangle))"
         }
-        
         params["beauty_score_min"] = beautyScoreMin
         params["beauty_score_max"] = beautyScoreNax
-        
         var files = [Params]()
-        
         if let url = imageFile, let data = try? Data(contentsOf: url) {
             files.append([
                 "fieldName": "image_file",
@@ -87,13 +80,8 @@ public struct DetectOption {
             params["image_base64"] = data
         } else if let url = imageURL {
             params["image_url"] = url
-        } else {
-            return (nil, nil)
         }
-        
-        let bodyData = kBodyDataWithParams(params: params, fileData: files)
-        
-        return (request, bodyData)
+        return params
     }
 }
 
@@ -367,7 +355,7 @@ public struct Face: Codable {
     let landmark: LandMark?
 }
 
-public struct DetectResponse: Codable {
+public struct DetectResponse: ResponseProtocol {
     
     public let requestId: String?
     public let imageId: String?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CompareOption {
+public struct CompareOption: RequestProtocol {
     /// 第一个人脸标识 face_token，优先使用该参数
     public var faceToken1: String?
     /// 第一张图片的 URL
@@ -51,15 +51,16 @@ public struct CompareOption {
      */
     public var faceRectangle2: FaceRectangle?
     
-    func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?) {
-        guard let url = kFaceppBaseURL?.appendingPathComponent("compare") else {
-            return (nil, nil)
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("multipart/form-data; boundary=boundary", forHTTPHeaderField: "Content-Type")
-        
+    var requsetURL: URL? {
+        return kFaceppBaseURL?.appendingPathComponent("compare")
+    }
+    
+    func paramsCheck() -> Bool {
+        return (faceToken1 != nil || imageUrl1 != nil || imageBase641 != nil || imageFile1 != nil)
+        && (faceToken2 != nil || imageUrl2 != nil || imageBase642 != nil || imageFile2 != nil)
+    }
+    
+    func params(apiKey: String, apiSecret: String) -> Params {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
@@ -80,9 +81,7 @@ public struct CompareOption {
                 "fileType": url.pathExtension,
                 "data": data
             ])
-        } else {
-            return (nil, nil)
-        }
+        } 
         
         if let token = faceToken2 {
             params["face_token2"] = token
@@ -97,8 +96,6 @@ public struct CompareOption {
                 "fileType": url.pathExtension,
                 "data": data
             ])
-        } else {
-            return (nil, nil)
         }
         
         if let rectangle = faceRectangle1 {
@@ -108,14 +105,11 @@ public struct CompareOption {
         if let rectangle = faceRectangle2 {
             params["face_rectangle2"] = "\(rectangle)"
         }
-        
-        let bodyData = kBodyDataWithParams(params: params, fileData: files)
-        
-        return (request, bodyData)
+        return params
     }
 }
 
-public struct CompareResponse: Codable {
+public struct CompareResponse: ResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public let requestId: String?
     /**
