@@ -3,6 +3,7 @@
 //  FaceppSwift
 //
 //  Created by 姜振华 on 2020/2/4.
+// - Wiki: https://console.faceplusplus.com.cn/documents/4887586
 //
 
 import Foundation
@@ -11,7 +12,7 @@ public struct CompareOption: RequestProtocol {
     /// 第一个人脸标识 face_token，优先使用该参数
     public var faceToken1: String?
     /// 第一张图片的 URL
-    public var imageUrl1: URL?
+    public var imageURL1: URL?
     /// 第一张图片，二进制文件，需要用 post multipart/form-data 的方式上传。
     public var imageFile1: URL?
     /// base64 编码的二进制图片数据。如果同时传入了 image_url1、image_file1 和 image_base64_1 参数，本 API 使用顺序为image_file1 优先，image_url1 最低。
@@ -20,7 +21,7 @@ public struct CompareOption: RequestProtocol {
     /// 第二个人脸标识 face_token，优先使用该参数
     public var faceToken2: String?
     /// 第二张图片的 URL
-    public var imageUrl2: URL?
+    public var imageURL2: URL?
     /// 第二张图片，二进制文件，需要用 post multipart/form-data 的方式上传。
     public var imageFile2: URL?
     /// base64 编码的二进制图片数据。如果同时传入了 image_url2、image_file2 和 image_base64_2 参数，本API 使用顺序为 image_file2优先，image_url2 最低。
@@ -56,43 +57,36 @@ public struct CompareOption: RequestProtocol {
     }
     
     func paramsCheck() -> Bool {
-        return (faceToken1 != nil || imageUrl1 != nil || imageBase641 != nil || imageFile1 != nil)
-        && (faceToken2 != nil || imageUrl2 != nil || imageBase642 != nil || imageFile2 != nil)
+        return (faceToken1 != nil || imageURL1 != nil || imageBase641 != nil || imageFile1 != nil)
+        && (faceToken2 != nil || imageURL2 != nil || imageBase642 != nil || imageFile2 != nil)
     }
     
-    func params(apiKey: String, apiSecret: String) -> Params {
+    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
         ]
 
         var files = [Params]()
-        
-        if let token = faceToken1 {
-            params["face_token1"] = token
-        } else if let url = imageUrl1 {
-            params["image_url1"] = url
-        } else if let data = imageBase641 {
-            params["image_base64_1"] = data
-        } else if let url = imageFile1,
+        params["face_token1"] = faceToken1
+        params["image_url1"] = imageURL1
+        params["image_base64_1"] = imageBase641
+        if let url = imageFile1,
             let data = try? Data(contentsOf: url) {
             files.append([
-                "fieldName": "image_file",
+                "fieldName": "image_file1",
                 "fileType": url.pathExtension,
                 "data": data
             ])
         } 
         
-        if let token = faceToken2 {
-            params["face_token2"] = token
-        } else if let url = imageUrl2 {
-            params["image_url2"] = url
-        } else if let data = imageBase642 {
-            params["image_base64_2"] = data
-        } else if let url = imageFile2,
+        params["face_token2"] = faceToken2
+        params["image_url2"] = imageURL2
+        params["image_base64_2"] = imageBase642
+        if let url = imageFile2,
             let data = try? Data(contentsOf: url) {
             files.append([
-                "fieldName": "image_file",
+                "fieldName": "image_file2",
                 "fileType": url.pathExtension,
                 "data": data
             ])
@@ -105,7 +99,7 @@ public struct CompareOption: RequestProtocol {
         if let rectangle = faceRectangle2 {
             params["face_rectangle2"] = "\(rectangle)"
         }
-        return params
+        return (params, files)
     }
 }
 
@@ -131,7 +125,7 @@ public struct CompareResponse: ResponseProtocol {
      
      注：如果传入图片但图片中未检测到人脸，则无法进行比对，本字段不返回。
      */
-    public let thresholds: ThreshHolds?
+    public let thresholds: FacialThreshHolds?
     /**
      通过 image_url1、image_file1 或 image_base64_1 传入的图片在系统中的标识。
      

@@ -3,6 +3,7 @@
 //  FaceppSwift
 //
 //  Created by 姜振华 on 2020/2/7.
+// - Wiki: https://console.faceplusplus.com.cn/documents/34878217
 //
 
 import Foundation
@@ -56,24 +57,22 @@ public struct BeautifyOption: RequestProtocol {
         return imageURL != nil || imageFile != nil || imageBase64 != nil
     }
     
-    func params(apiKey: String, apiSecret: String) -> Params {
+    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
         ]
         var files = [Params]()
+        params["image_base64"] = imageBase64
+        params["image_url"] = imageURL
         if let url = imageFile, let data = try? Data(contentsOf: url) {
             files.append([
                 "fieldName": "image_file",
                 "fileType": url.pathExtension,
                 "data": data
             ])
-        } else if let data = imageBase64 {
-            params["image_base64"] = data
-        } else if let url = imageURL {
-            params["image_url"] = url
         }
-        return params
+        return (params, nil)
     }
 }
 

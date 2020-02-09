@@ -38,6 +38,18 @@ public class Facepp {
     public func thousandLandmark(option: ThousandLandMarkOption, completionHanlder: @escaping (Error?, ThousandLandmarkResponse?) -> Void) {
         parse(option: option, completionHanlder: completionHanlder)
     }
+    
+    public func facialFeatures(option: FacialFeaturesOption, completionHandler:  @escaping (Error?, FacialFeaturesResponse?) -> Void) {
+        parse(option: option, completionHanlder: completionHandler)
+    }
+    
+    public func threeDimensionFace(option: ThreeDimensionFaceOption, completionHandler: @escaping (Error?, ThreeDimensionFaceResponse?) -> Void) {
+        parse(option: option, completionHanlder: completionHandler)
+    }
+    
+    public func skinanalyze(option: SkinAnalyzeOption, completionHandler: @escaping (Error?, SkinAnalyzeResponse?) -> Void) {
+        parse(option: option, completionHanlder: completionHandler)
+    }
 }
 
 extension Facepp {

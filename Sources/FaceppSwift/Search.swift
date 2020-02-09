@@ -3,6 +3,7 @@
 //  FaceppSwift
 //
 //  Created by 姜振华 on 2020/2/7.
+// - Wiki: https://console.faceplusplus.com.cn/documents/4888381
 //
 
 import Foundation
@@ -52,7 +53,7 @@ public struct SearchOption: RequestProtocol {
         return kFaceppV3BaseURL?.appendingPathComponent("search")
     }
     
-    func params(apiKey: String, apiSecret: String) -> Params {
+    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret,
@@ -62,20 +63,18 @@ public struct SearchOption: RequestProtocol {
             params["face_rectangle"] = "\(String(describing: rectangle))"
         }
         var files = [Params]()
+        params["image_base64"] = imageBase64
+        params["image_url"] = imageURL
         if let url = imageFile, let data = try? Data(contentsOf: url) {
             files.append([
                 "fieldName": "image_file",
                 "fileType": url.pathExtension,
                 "data": data
             ])
-        } else if let data = imageBase64 {
-            params["image_base64"] = data
-        } else if let url = imageURL {
-            params["image_url"] = url
-        }
+        } 
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
-        return params
+        return (params, files)
     }
 }
 
@@ -105,7 +104,7 @@ public struct SearchResponse: ResponseProtocol {
      
      注：如果传入图片但图片中未检测到人脸，则无法进行比对，本字段不返回。
      */
-    public let thresholds: ThreshHolds?
+    public let thresholds: FacialThreshHolds?
     /**
      传入的图片中检测出的人脸数组，采用数组中的第一个人脸进行人脸搜索。
 

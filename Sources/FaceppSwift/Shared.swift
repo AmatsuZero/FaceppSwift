@@ -23,7 +23,7 @@ protocol ResponseProtocol: Codable {
 protocol RequestProtocol {
     var requsetURL: URL? { get }
     func paramsCheck() -> Bool
-    func params(apiKey: String, apiSecret: String) -> Params
+    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?)
     func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?)
 }
 
@@ -36,8 +36,8 @@ extension RequestProtocol {
         guard let url = requsetURL, paramsCheck() else {
             return (nil, nil)
         }
-        return URLRequest.postRequest(url: url,
-                                      body: params(apiKey: apiKey, apiSecret: apiSecret))
+        let (params, files) = self.params(apiKey: apiKey, apiSecret: apiSecret)
+        return URLRequest.postRequest(url: url, body: params, filesData: files ?? [])
     }
 }
 
@@ -77,9 +77,9 @@ func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
     }
     
     if let data = "--boundary--\r\n".data(using: .utf8) {
-         bodyData += data
+        bodyData += data
     }
-   
+    
     return bodyData
 }
 
@@ -99,23 +99,23 @@ extension Data {
 
 extension DispatchQueue {
     private static var _onceTracker = [String]()
-       /**
-        Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
-        only execute the code once even in the presence of multithreaded calls.
-
-        - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
-        - parameter block: Block to execute once
-        */
+    /**
+     Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
+     only execute the code once even in the presence of multithreaded calls.
+     
+     - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
+     - parameter block: Block to execute once
+     */
     public class func once(token: String = UUID().uuidString, block: ()-> Void) {
-           objc_sync_enter(self); defer { objc_sync_exit(self) }
-
-           if _onceTracker.contains(token) {
-               return
-           }
-
-           _onceTracker.append(token)
-           block()
-       }
+        objc_sync_enter(self); defer { objc_sync_exit(self) }
+        
+        if _onceTracker.contains(token) {
+            return
+        }
+        
+        _onceTracker.append(token)
+        block()
+    }
 }
 
 extension Set where Element: Option {
@@ -152,7 +152,7 @@ extension CharacterSet {
     static let urlQueryValueAllowed: CharacterSet = {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
-
+        
         var allowed = CharacterSet.urlQueryAllowed
         allowed.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
         return allowed
@@ -160,15 +160,15 @@ extension CharacterSet {
 }
 
 extension URLRequest {
-    static func postRequest(url:URL,  body:Params) -> (URLRequest?, Data?) {
+    static func postRequest(url:URL,  body:Params, filesData: [Params] = []) -> (URLRequest?, Data?) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=boundary", forHTTPHeaderField: "Content-Type")
-        return (request, kBodyDataWithParams(params: body, fileData: []))
+        return (request, kBodyDataWithParams(params: body, fileData: filesData))
     }
 }
 
-public struct ThreshHolds: Codable {
+public struct FacialThreshHolds: Codable {
     /// 误识率为千分之一的置信度阈值
     public let lowPrecision: Float
     /// 误识率为万分之一的置信度阈值
@@ -181,4 +181,13 @@ public struct ThreshHolds: Codable {
         case middlePrecision = "1e-4"
         case hightPrecision = "1e-5"
     }
+}
+
+public struct FacialHeadPose: Codable {
+    /// 抬头
+    public let pitchAngle: Double
+    /// 旋转（平面旋转）
+    public let rollAngle: Double
+    /// 摇头
+    public let yawAngle: Double
 }

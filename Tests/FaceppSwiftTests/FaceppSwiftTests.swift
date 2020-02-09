@@ -6,11 +6,16 @@ final class FaceppSwiftTests: XCTestCase {
     let key = ProcessInfo.processInfo.environment["key"]
     let secret = ProcessInfo.processInfo.environment["secret"]
     
+    let threeDImageFile1 = ProcessInfo.processInfo.environment["3dImageFile1"]
+    let threeDImageFile2 = ProcessInfo.processInfo.environment["3dImageFile2"]
+    let threeDImageFile3 = ProcessInfo.processInfo.environment["3dImageFile3"]
+    
     var facesetToken: String?
     var faceToken: String?
     
     override func setUp() {
-        XCTAssert(key != nil && secret != nil)
+        XCTAssertNotNil(key)
+        XCTAssertNotNil(secret)
         Facepp.Initialization(key: key!, secret: secret!)
     }
     
@@ -34,8 +39,8 @@ final class FaceppSwiftTests: XCTestCase {
     func testCompare() {
         let exp = XCTestExpectation(description: "compare")
         var opt = CompareOption()
-        opt.imageUrl1 = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
-        opt.imageUrl2 = URL(string: "https://bellard.org/bpg/lena5.jpg")
+        opt.imageURL1 = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
+        opt.imageURL2 = URL(string: "https://bellard.org/bpg/lena5.jpg")
         
         Facepp.shared?.compare(option: opt, completionHanlder: { (err, data) in
             if let err = err {
@@ -64,6 +69,52 @@ final class FaceppSwiftTests: XCTestCase {
         var opt = ThousandLandMarkOption(returnLandMark: .all)
         opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
         Facepp.shared?.thousandLandmark(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFacialFeatures() {
+        let exp = XCTestExpectation(description: "Facial Features")
+        var opt = FacialFeaturesOption()
+        opt.imageURL = URL(string: "https://bellard.org/bpg/lena5.jpg")
+        Facepp.shared?.facialFeatures(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func test3DFace() {
+        XCTAssertNotNil(threeDImageFile1)
+        XCTAssertNotNil(threeDImageFile2)
+        XCTAssertNotNil(threeDImageFile3)
+        let exp = XCTestExpectation(description: "3D Face")
+        var opt = ThreeDimensionFaceOption()
+        opt.imageFile1 = URL(fileURLWithPath: threeDImageFile1!)
+        opt.imageFile2 = URL(fileURLWithPath: threeDImageFile2!)
+        opt.imageFile3 = URL(fileURLWithPath: threeDImageFile3!)
+        opt.needMtl = true
+        opt.needTexture = true
+        Facepp.shared?.threeDimensionFace(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testSkinAnalyze() {
+        let exp = XCTestExpectation(description: "Skin Analyze")
+        var opt = SkinAnalyzeOption()
+        opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Candye_Kane_2012.jpg/500px-Candye_Kane_2012.jpg")
+        Facepp.shared?.skinanalyze(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
@@ -116,7 +167,9 @@ final class FaceppSwiftTests: XCTestCase {
         ("testCompare", testCompare),
         ("testFaceSetSuite", testFaceSetSuite),
         ("testSearch", testSearch),
-        ("testDenseLandmark", testDenseLandmark)
+        ("testDenseLandmark", testDenseLandmark),
+        ("testFacialFeatures", testFacialFeatures),
+        ("test3DFace", test3DFace)
     ]
 }
 
