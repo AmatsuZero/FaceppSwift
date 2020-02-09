@@ -7,9 +7,29 @@
 
 import Foundation
 
-let kBaseURL = URL(string: "https://api-cn.faceplusplus.com/facepp")
-let kFaceappV1BaseURL = kBaseURL?.appendingPathComponent("v1")
-let kFaceppV3BaseURL = kBaseURL?.appendingPathComponent("v3")
+let kBaseURL = URL(string: "https://api-cn.faceplusplus.com")
+
+let kBaseFaceppURL: URL? = {
+    return kBaseURL?.appendingPathComponent("facepp")
+}()
+let kBaseCardppURL: URL? = {
+    return kBaseURL?.appendingPathComponent("cardpp")
+}()
+let kFaceappV1URL: URL? = {
+    return kBaseFaceppURL?.appendingPathComponent("v1")
+}()
+let kFaceppV3URL: URL? = {
+    return kBaseFaceppURL?.appendingPathComponent("v3")
+}()
+let kCardppV1URL: URL? = {
+    return kBaseCardppURL?.appendingPathComponent("v1")
+}()
+let kCardppV2URL: URL? = {
+    return kBaseCardppURL?.appendingPathComponent("v2")
+}()
+let kCardppBetaURL: URL? = {
+    return kBaseCardppURL?.appendingPathComponent("beta")
+}()
 
 protocol ResponseProtocol: Codable {
     // 用于区分每一次请求的唯一的字符串。
@@ -83,7 +103,7 @@ func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
     return bodyData
 }
 
-public protocol Option: RawRepresentable, Hashable, CaseIterable {}
+protocol Option: RawRepresentable, Hashable, CaseIterable {}
 
 extension FaceRectangle: CustomStringConvertible {
     public var description: String {
@@ -106,7 +126,7 @@ extension DispatchQueue {
      - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
      - parameter block: Block to execute once
      */
-    public class func once(token: String = UUID().uuidString, block: ()-> Void) {
+    class func once(token: String = UUID().uuidString, block: ()-> Void) {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
         
         if _onceTracker.contains(token) {
@@ -176,7 +196,7 @@ public struct FacialThreshHolds: Codable {
     /// 误识率为十万分之一的置信度阈值
     public let hightPrecision: Float
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case lowPrecision = "1e-3"
         case middlePrecision = "1e-4"
         case hightPrecision = "1e-5"
@@ -190,4 +210,13 @@ public struct FacialHeadPose: Codable {
     public let rollAngle: Double
     /// 摇头
     public let yawAngle: Double
+}
+
+public enum OCRType: Int, Codable {
+    /// 身份证
+    case idCard = 1
+    /// 驾驶证
+    case driverLicense
+    /// 行驶证
+    case vehicleLicense
 }

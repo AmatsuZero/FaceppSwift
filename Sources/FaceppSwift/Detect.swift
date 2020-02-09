@@ -52,7 +52,7 @@ public struct DetectOption: RequestProtocol {
     public var beautyScoreNax = 100
     
     var requsetURL: URL? {
-        return kFaceppV3BaseURL?.appendingPathComponent("detect")
+        return kFaceppV3URL?.appendingPathComponent("detect")
     }
     
     func paramsCheck() -> Bool {

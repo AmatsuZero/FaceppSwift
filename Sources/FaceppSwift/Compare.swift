@@ -53,7 +53,7 @@ public struct CompareOption: RequestProtocol {
     public var faceRectangle2: FaceRectangle?
     
     var requsetURL: URL? {
-        return kFaceppV3BaseURL?.appendingPathComponent("compare")
+        return kFaceppV3URL?.appendingPathComponent("compare")
     }
     
     func paramsCheck() -> Bool {

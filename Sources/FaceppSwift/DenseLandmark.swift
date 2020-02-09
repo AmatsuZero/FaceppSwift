@@ -8,7 +8,7 @@
 
 import Foundation
 
-let kFaceBaseURL = kFaceappV1BaseURL?.appendingPathComponent("face")
+let kFaceBaseURL = kFaceappV1URL?.appendingPathComponent("face")
 
 public struct ThousandLandMarkOption: RequestProtocol {
     /// 人脸标识 face_token，优先使用该参数

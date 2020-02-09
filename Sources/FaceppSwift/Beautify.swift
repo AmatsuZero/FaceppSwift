@@ -44,7 +44,7 @@ public struct BeautifyOption: RequestProtocol {
     public var smoothing = 100
     
     var requsetURL: URL? {
-       return kFaceappV1BaseURL?.appendingPathComponent("beautify")
+       return kFaceappV1URL?.appendingPathComponent("beautify")
     }
     
     func paramsCheck() -> Bool {

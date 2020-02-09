@@ -19,7 +19,7 @@ public struct FacialFeaturesOption: RequestProtocol {
     public var returnImageReset = false
     
     var requsetURL: URL? {
-        return kFaceappV1BaseURL?.appendingPathComponent("facialfeatures")
+        return kFaceappV1URL?.appendingPathComponent("facialfeatures")
     }
     
     func paramsCheck() -> Bool {

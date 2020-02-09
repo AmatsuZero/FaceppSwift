@@ -7,7 +7,7 @@
 
 import Foundation
 
-let kFaceSetBaseURL = kFaceppV3BaseURL?.appendingPathComponent("faceset")
+let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
 
 // MARK: - 人脸集合
 public struct FaceSet: Codable {

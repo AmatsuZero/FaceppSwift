@@ -55,7 +55,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
     }
     
     var requsetURL: URL? {
-        return kFaceappV1BaseURL?.appendingPathComponent("3dface")
+        return kFaceappV1URL?.appendingPathComponent("3dface")
     }
     
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {

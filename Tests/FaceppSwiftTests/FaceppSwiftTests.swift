@@ -19,7 +19,7 @@ final class FaceppSwiftTests: XCTestCase {
         Facepp.Initialization(key: key!, secret: secret!)
     }
     
-    //MARK: - Facepp API
+    //MARK: - 人脸识别
     func testDetect() {
         let exp = XCTestExpectation(description: "detect")
         var opt = DetectOption()
@@ -162,6 +162,30 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    // MARK: - 证件识别
+    func testIDCard() {
+        let exp1 = XCTestExpectation(description: "身份证正面检测")
+        var opt = OCRIDCardOption()
+        opt.needLegality = true
+        opt.imageURL = URL(string: "http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg")
+        Cardpp.idcard(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 60)
+        let exp2 = XCTestExpectation(description: "身份证背面检测")
+        opt.imageURL = URL(string: "https://img.maijia.com/news/main/201604/19161234v78q.jpg")
+        Cardpp.idcard(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp2.fulfill()
+        }
+        wait(for: [exp2], timeout: 60)
+    }
+    
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
@@ -169,7 +193,9 @@ final class FaceppSwiftTests: XCTestCase {
         ("testSearch", testSearch),
         ("testDenseLandmark", testDenseLandmark),
         ("testFacialFeatures", testFacialFeatures),
-        ("test3DFace", test3DFace)
+        ("testSkinAnalyze", testSkinAnalyze),
+        ("test3DFace", test3DFace),
+    
     ]
 }
 

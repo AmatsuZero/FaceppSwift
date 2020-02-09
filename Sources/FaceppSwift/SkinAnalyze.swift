@@ -25,7 +25,7 @@ public struct SkinAnalyzeOption: RequestProtocol {
     }
     
     var requsetURL: URL? {
-        return kFaceappV1BaseURL?.appendingPathComponent("skinanalyze")
+        return kFaceappV1URL?.appendingPathComponent("skinanalyze")
     }
     
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
@@ -59,7 +59,7 @@ public struct SkinAnalyzeEyelids: Codable {
     public let type: EyelidType
     public let confidence: Double
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case type = "value"
         case confidence
     }
