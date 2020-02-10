@@ -186,6 +186,19 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp2], timeout: 60)
     }
     
+    func testDriverLicense() {
+        let exp1 = XCTestExpectation(description: "驾驶证")
+        var opt = OCRDriverLicenseOption()
+        opt.imageURL = URL(string: "http://pic.wodingche.com/carimg/kqfmpmny.jpeg")
+        Cardpp.driverLicense(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 60)
+    }
+    
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
@@ -195,7 +208,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testFacialFeatures", testFacialFeatures),
         ("testSkinAnalyze", testSkinAnalyze),
         ("test3DFace", test3DFace),
-    
+        ("testIDCard", testIDCard),
+        ("testDriverLicense", testDriverLicense)
     ]
 }
 

@@ -13,6 +13,10 @@ public class Cardpp {
         parse(option: option, completionHanlder: completionHanlder)
     }
     
+    public class func driverLicense(option: OCRDriverLicenseOption, completionHanlder: @escaping (Error?, OCRDriverLicenseResponse?) -> Void) {
+        parse(option: option, completionHanlder: completionHanlder)
+    }
+    
     class func parse<R: ResponseProtocol>(option: RequestProtocol,
                                           completionHanlder: @escaping (Error?, R?) -> Void)  {
         guard let client = Facepp.shared else {
