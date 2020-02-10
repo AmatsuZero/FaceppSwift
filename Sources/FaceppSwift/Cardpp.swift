@@ -9,19 +9,27 @@ import Foundation
 
 public class Cardpp {
     
-    public class func idcard(option: OCRIDCardOption, completionHanlder: @escaping (Error?, OCRIDCardResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
+    public class func idcard(option: OCRIDCardOption, completionHandler: @escaping (Error?, OCRIDCardResponse?) -> Void) {
+        parse(option: option, completionHandler: completionHandler)
     }
     
-    public class func driverLicense(option: OCRDriverLicenseOption, completionHanlder: @escaping (Error?, OCRDriverLicenseResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
+    public class func driverLicenseV2(option: OCRDriverLicenseV2Option, completionHandler: @escaping (Error?, OCRDriverLicenseV2Response?) -> Void) {
+        parse(option: option, completionHandler: completionHandler)
+    }
+    
+    public class func driverLicenseV1(option: OCRDriverLicenseV1Option, completionHandler: @escaping (Error?, OCRDriverLicenseV1Response?) -> Void) {
+        parse(option: option, completionHandler: completionHandler)
+    }
+    
+    public class func vehicleLicense(option: OCRVehicleLicenseOption, completionHandler: @escaping (Error?, OCRVehicleLicenseResponse?) -> Void) {
+        parse(option: option, completionHandler: completionHandler)
     }
     
     class func parse<R: ResponseProtocol>(option: RequestProtocol,
-                                          completionHanlder: @escaping (Error?, R?) -> Void)  {
+                                          completionHandler: @escaping (Error?, R?) -> Void)  {
         guard let client = Facepp.shared else {
-            return completionHanlder(RequestError.NotInit, nil)
+            return completionHandler(RequestError.NotInit, nil)
         }
-        client.parse(option: option, completionHanlder: completionHanlder)
+        client.parse(option: option, completionHanlder: completionHandler)
     }
 }

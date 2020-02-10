@@ -7,8 +7,52 @@
 //
 
 import Foundation
+
+public struct OCRDriverLicenseV1Option: RequestProtocol {
+    /// 图片的URL
+    public var imageURL: URL?
+    /**
+     一个图片，二进制文件，需要用post multipart/form-data的方式上传。图像存储尺寸不能超过2MB，像素尺寸的长或宽都不能超过4096像素。
+     
+     如果同时传入了image_url和image_file参数，本API将使用image_file参数。
+     */
+    public var imageFile: URL?
+    /**
+     base64编码的二进制图片数据
+     
+     如果同时传入了image_url、image_file和image_base64参数，本API使用顺序为image_file优先，image_url最低。
+     */
+    public var imageBase64: String?
+    
+    var requsetURL: URL? {
+        return kCardppV1URL?.appendingPathComponent("ocrdriverlicense")
+    }
+    
+    func paramsCheck() -> Bool {
+        return imageURL != nil || imageFile != nil || imageBase64 != nil
+    }
+    
+    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var params: Params = [
+            "api_key": apiKey,
+            "api_secret": apiSecret,
+        ]
+        var files = [Params]()
+        params["image_url"] = imageURL
+        params["image_base64"] = imageBase64
+        if let url = imageFile, let data = try? Data(contentsOf: url) {
+            files.append([
+                "fieldName": "image_file",
+                "fileType": url.pathExtension,
+                "data": data
+            ])
+        }
+        return (params, files)
+    }
+}
+
 /// 检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息。只可识别驾照正本(main sheet)正面和副本(second sheet)正面，一张照片最多可识别一个正本正面和一个副本正面。
-public struct OCRDriverLicenseOption: RequestProtocol {
+public struct OCRDriverLicenseV2Option: RequestProtocol {
     /// 图片的URL
     public var imageURL: URL?
     /**
@@ -81,14 +125,8 @@ public struct OCRDriverLicenseMain: Codable {
     public let confidence: Float?
     
     public struct Version: Codable {
-        public enum Content: Int, Codable {
-            /// 2008或更早版本驾驶证
-            case old = 1
-            /// 2013版本驾驶证
-            case new = 2
-        }
         /// 表示驾驶证正本版本，int型，返回 2，表示是2013版本驾驶证；返回 1，表示是2008或更早版本驾驶证
-        public let content: Content
+        public let content: OCRDriverLicenseV1Response.Card.Version
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
         public let confidence: Float?
     }
@@ -121,12 +159,8 @@ public struct OCRDriverLicenseMain: Codable {
     public let birthday: DateModel
     
     public struct Gender: Codable {
-        public enum Content: String, Codable {
-            case male = "男"
-            case female = "女"
-        }
         /// 表示性别
-        public let content: Content
+        public let content: OCRDriverLicenseV1Response.Card.Gender
         public let confidence: Float?
     }
     /// 性别及其置信度
@@ -147,10 +181,7 @@ public struct OCRDriverLicenseMain: Codable {
     public let name: DriverLicenseStringModel
     
     public struct DriverLicenseClass: Codable {
-        public enum Class: String, Codable {
-            case A1, A2, A3, B1, B2, C1, C2, C3, C4, C5, D, E, F, M, N, P
-        }
-        public let content: Class
+        public let content: OCRDriverLicenseV1Response.Card.Class
         public let confidence: Float?
     }
     /**
@@ -238,7 +269,7 @@ public struct OCRDriverLicenseSecond: Codable {
     public let fileNumber: DriverLicenseStringModel
 }
 
-public struct OCRDriverLicenseResponse: ResponseProtocol {
+public struct OCRDriverLicenseV2Response: ResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
@@ -250,8 +281,131 @@ public struct OCRDriverLicenseResponse: ResponseProtocol {
     public let main: [OCRDriverLicenseMain]?
     /**
      检测出驾驶证副页的数组
-
+     
      注：如果没有检测出副本则为空数组
      */
     public let second: [OCRDriverLicenseSecond]?
+}
+/**
+ 检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像为结构化的文字信息。目前只支持驾照主页正面，不支持副页正面反面。
+ 
+ 驾照图像须为正拍（垂直角度拍摄），但是允许有一定程度的旋转角度；
+ 仅支持图像里有一个驾照的主页正面，如果同时出现多页、或正副页同时出现，可能会返回空结果。
+ 
+ Wiki: https://console.faceplusplus.com.cn/documents/5671704
+ */
+public struct OCRDriverLicenseV1Response: ResponseProtocol {
+    public var requestId: String?
+    public var errorMessage: String?
+    public var timeUsed: Int?
+    
+    public struct Card: Codable {
+        /// 证件类型。
+        public let type: OCRType
+        
+        public enum Version: Int, Codable {
+            /// 2008或更早版本驾驶证
+            case old = 1
+            /// 2013版本驾驶证
+            case new = 2
+        }
+        /// 驾驶证版本
+        public let version: Version
+        /// 住址
+        public let address: String
+        /// 生日，格式为YYYY-MM-DD
+        public let birthday: Date?
+        
+        public enum Gender: String, Codable {
+            case male = "男"
+            case female = "女"
+        }
+        
+        /// 性别（男/女）
+        public let gender: Gender
+        /// 驾驶证号
+        public let licenseNumber: String
+        /// 姓名
+        public let name: String
+        
+        public enum Class: String, Codable {
+            case A1, A2, A3, B1, B2, C1, C2, C3, C4, C5, D, E, F, M, N, P
+        }
+        /// 准驾车型
+        public let `class`: Class?
+        
+        public enum Side: String, Codable {
+            case front, back
+        }
+        /// 表示驾驶证的正面或者反面。该字段目前只会返回“front”，表示是正面
+        public let side: Side
+        /// 国籍
+        public let nationality: String
+        /// 签发机关
+        public let issuedBy: String
+        /// 初次领证日期，格式为YYYY-MM-DD
+        public let issueDate: Date?
+        /// 有效日期，格式为YYYY-MM-DD
+        public let validFrom: Date?
+        /// 有效年限，例如 6年
+        public let validFor: Date?
+        /**
+         有效期限格式为：YYYY-MM-DD至YYYY-MM-DD
+         
+         根据驾驶证版本不同，一种情况会返回valid_from和valid_for两个字段，另一种情况只返回valid_date字段
+         */
+        public let validDate: [Date?]?
+        
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            type = try container.decode(OCRType.self, forKey: .type)
+            version = try container.decode(Version.self, forKey: .version)
+            address = try container.decode(String.self, forKey: .address)
+            let formatter = DateFormatter()
+            formatter.dateFormat = "YYYY-MM-DD"
+            if container.contains(.birthday) {
+                let b = try container.decode(String.self, forKey: .birthday)
+                birthday = formatter.date(from: b)
+            } else {
+                birthday = nil
+            }
+            gender = try container.decode(Gender.self, forKey: .gender)
+            licenseNumber = try container.decode(String.self, forKey: .licenseNumber)
+            name = try container.decode(String.self, forKey: .name)
+            self.class = try container.decode(Class.self, forKey: .class)
+            side = try container.decode(Side.self, forKey: .side)
+            nationality = try container.decode(String.self, forKey: .nationality)
+            issuedBy = try container.decode(String.self, forKey: .issuedBy)
+            if container.contains(.issueDate) {
+                let i = try container.decode(String.self, forKey: .issueDate)
+                issueDate = formatter.date(from: i)
+            } else {
+                issueDate = nil
+            }
+            if container.contains(.validFrom) {
+                let v = try container.decode(String.self, forKey: .validFrom)
+                validFrom = formatter.date(from: v)
+            } else {
+                validFrom = nil
+            }
+            if container.contains(.validFor) {
+                let v = try container.decode(String.self, forKey: .validFor)
+                validFor = formatter.date(from: v)
+            } else {
+                validFor = nil
+            }
+            if container.contains(.validDate) {
+                let date = try container.decode(String.self, forKey: .validDate)
+                validDate = date.components(separatedBy: "-").map { formatter.date(from: $0) }
+            } else {
+                validDate = nil
+            }
+        }
+    }
+    /**
+     检测出证件的数组
+
+     注：如果没有检测出证件则为空数组
+     */
+    public let cards: [Card]?
 }

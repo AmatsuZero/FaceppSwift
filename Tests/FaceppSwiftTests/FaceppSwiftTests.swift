@@ -186,11 +186,37 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp2], timeout: 60)
     }
     
-    func testDriverLicense() {
-        let exp1 = XCTestExpectation(description: "驾驶证")
-        var opt = OCRDriverLicenseOption()
+    func testDriverLicenseV2() {
+        let exp1 = XCTestExpectation(description: "驾驶证 V2")
+        var opt = OCRDriverLicenseV2Option()
         opt.imageURL = URL(string: "http://pic.wodingche.com/carimg/kqfmpmny.jpeg")
-        Cardpp.driverLicense(option: opt) { err, resp in
+        Cardpp.driverLicenseV2(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 60)
+    }
+    
+    func testDriverLicenseV1() {
+        let exp1 = XCTestExpectation(description: "驾驶证 V1")
+        var opt = OCRDriverLicenseV1Option()
+        opt.imageURL = URL(string: "http://pic.wodingche.com/carimg/kqfmpmny.jpeg")
+        Cardpp.driverLicenseV1(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 60)
+    }
+    
+    func testVehicleLicense() {
+        let exp1 = XCTestExpectation(description: "行驶证")
+        var opt = OCRVehicleLicenseOption()
+        opt.imageURL = URL(string: "https://imgs.icauto.com.cn/allimg/180912/18-1P9121K31Y01.png")
+        Cardpp.vehicleLicense(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
@@ -209,7 +235,9 @@ final class FaceppSwiftTests: XCTestCase {
         ("testSkinAnalyze", testSkinAnalyze),
         ("test3DFace", test3DFace),
         ("testIDCard", testIDCard),
-        ("testDriverLicense", testDriverLicense)
+        ("testDriverLicenseV2", testDriverLicenseV2),
+        ("testDriverLicenseV1", testDriverLicenseV1),
+        ("testVehicleLicense", testVehicleLicense)
     ]
 }
 
