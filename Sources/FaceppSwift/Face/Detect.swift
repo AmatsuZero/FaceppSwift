@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct DetectOption: RequestProtocol {
+public class DetectOption: FaceppBaseRequest {
     
     /// 是否检测并返回人脸关键点。合法值为：
     public enum ReturnLandmark: Int {
@@ -33,17 +33,6 @@ public struct DetectOption: RequestProtocol {
     public var returnAttributes = Set(arrayLiteral: ReturnbAttributes.none)
     ///是否检测并返回所有人脸的人脸关键点和人脸属性。如果不使用此功能，则本 API 只会对人脸面积最大的五个人脸分析人脸关键点和人脸属性
     public var calculateAll: Bool?
-    /// 图片的 URL
-    public var imageURL: URL?
-    /// 图片的二进制文件，需要用 post multipart/form-data 的方式上传。
-    public var imageFile: URL?
-    /**
-     base64 编码的二进制图片数据
-     
-     如果同时传入了 image_url、image_file 和 image_base64参数，本 API 使用顺序为image_file 优先，image_url最低。
-     */
-    public var imageBase64: String?
-    
     /// 是否指定人脸框位置进行人脸检测。
     public var faceRectangle: FaceRectangle?
     /// 颜值评分分数区间的最小值。默认为0
@@ -51,19 +40,12 @@ public struct DetectOption: RequestProtocol {
     /// beauty_score_max
     public var beautyScoreNax = 100
     
-    var requsetURL: URL? {
+    override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("detect")
     }
     
-    func paramsCheck() -> Bool {
-        return imageFile != nil || imageURL != nil || imageBase64 != nil
-    }
-    
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_landmark"] = returnLandmark.rawValue
         params["return_attributes"] = returnAttributes.map { $0.rawValue }.joined(separator: ",")
         if let ret = calculateAll {
@@ -74,16 +56,6 @@ public struct DetectOption: RequestProtocol {
         }
         params["beauty_score_min"] = beautyScoreMin
         params["beauty_score_max"] = beautyScoreNax
-        var files = [Params]()
-        params["image_base64"] = imageBase64
-        params["image_url"] = imageURL
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
-            files.append([
-                "fieldName": "image_file",
-                "fileType": url.pathExtension,
-                "data": data
-            ])
-        }
         return (params, files)
     }
 }
@@ -215,132 +187,132 @@ public struct FaceRectangle: Codable {
     public var height: Int = 0
 }
 
-public struct LandMarkInfo: Codable {
+public struct FaceppPoint: Codable {
     public let x: Float
     public let y: Float
 }
 
 public struct LandMark: Codable {
     // MARK: - 83个特征点：https://console.faceplusplus.com.cn/documents/5671270
-    public let contourChin: LandMarkInfo
-    public let contourLeft1: LandMarkInfo
-    public let contourLeft2: LandMarkInfo
-    public let contourLeft3: LandMarkInfo
-    public let contourLeft4: LandMarkInfo
-    public let contourLeft5: LandMarkInfo
-    public let contourLeft6: LandMarkInfo
-    public let contourLeft7: LandMarkInfo
-    public let contourLeft8: LandMarkInfo
-    public let contourLeft9: LandMarkInfo
-    public let contourRight1: LandMarkInfo
-    public let contourRight2: LandMarkInfo
-    public let contourRight3: LandMarkInfo
-    public let contourRight4: LandMarkInfo
-    public let contourRight5: LandMarkInfo
-    public let contourRight6: LandMarkInfo
-    public let contourRight7: LandMarkInfo
-    public let contourRight8: LandMarkInfo
-    public let contourRight9: LandMarkInfo
-    public let leftEyeBottom: LandMarkInfo
-    public let leftEyeCenter: LandMarkInfo
-    public let leftEyeLeftCorner: LandMarkInfo
-    public let leftEyeLowerLeftQuarter: LandMarkInfo
-    public let leftEyeLowerRightQuarter: LandMarkInfo
-    public let leftEyePupil: LandMarkInfo
-    public let leftEyeRightCorner: LandMarkInfo
-    public let leftEyeTop: LandMarkInfo
-    public let leftEyeUpperLeftQuarter: LandMarkInfo
-    public let leftEyeUpperRightQuarter: LandMarkInfo
-    public let leftEyebrowLeftCorner: LandMarkInfo
-    public let leftEyebrowLowerLeftQuarter: LandMarkInfo
-    public let leftEyebrowLowerMiddle: LandMarkInfo
-    public let leftEyebrowLowerRightQuarter: LandMarkInfo
-    public let leftEyebrowRightCorner: LandMarkInfo?
-    public let leftEyebrowUpperLeftQuarter: LandMarkInfo
-    public let leftEyebrowUpperMiddle: LandMarkInfo
-    public let leftEyebrowUpperRightQuarter: LandMarkInfo
-    public let mouthLeftCorner: LandMarkInfo
-    public let mouthLowerLipBottom: LandMarkInfo
-    public let mouthLowerLipLeftContour1: LandMarkInfo
-    public let mouthLowerLipLeftContour2: LandMarkInfo
-    public let mouthLowerLipLeftContour3: LandMarkInfo
-    public let mouthLowerLipRightContour1: LandMarkInfo
-    public let mouthLowerLipRightContour2: LandMarkInfo
-    public let mouthLowerLipRightContour3: LandMarkInfo
-    public let mouthLowerLipTop: LandMarkInfo
-    public let mouthRightCorner: LandMarkInfo
-    public let mouthUpperLipBottom: LandMarkInfo
-    public let mouthUpperLipLeftContour1: LandMarkInfo
-    public let mouthUpperLipLeftContour2: LandMarkInfo
-    public let mouthUpperLipLeftContour3: LandMarkInfo
-    public let mouthUpperLipRightContour1: LandMarkInfo
-    public let mouthUpperLipRightContour2: LandMarkInfo
-    public let mouthUpperLipRightContour3: LandMarkInfo
-    public let mouthUpperLipTop: LandMarkInfo
-    public let noseContourLeft1: LandMarkInfo?
-    public let noseContourLeft2: LandMarkInfo?
-    public let noseContourLeft3: LandMarkInfo?
-    public let noseContourLowerMiddle: LandMarkInfo?
-    public let noseContourRight1: LandMarkInfo?
-    public let noseContourRight2: LandMarkInfo?
-    public let noseContourRight3: LandMarkInfo?
-    public let noseLeft: LandMarkInfo?
-    public let noseRight: LandMarkInfo?
-    public let noseTip: LandMarkInfo
-    public let rightEyeBottom: LandMarkInfo
-    public let rightEyeCenter: LandMarkInfo
-    public let rightEyeLeftCorner: LandMarkInfo
-    public let rightEyeLowerLeftQuarter: LandMarkInfo
-    public let rightEyeLowerRightQuarter: LandMarkInfo
-    public let rightEyePupil: LandMarkInfo
-    public let rightEyeRightCorner: LandMarkInfo
-    public let rightEyeTop: LandMarkInfo
-    public let rightEyeUpperLeftQuarter: LandMarkInfo
-    public let rightEyeUpperRightQuarter: LandMarkInfo
-    public let rightEyebrowLeftCorner: LandMarkInfo?
-    public let rightEyebrowLowerLeftQuarter: LandMarkInfo
-    public let rightEyebrowLowerMiddle: LandMarkInfo
-    public let rightEyebrowLowerRightQuarter: LandMarkInfo
-    public let rightEyebrowRightCorner: LandMarkInfo
-    public let rightEyebrowUpperLeftQuarter: LandMarkInfo
-    public let rightEyebrowUpperMiddle: LandMarkInfo
-    public let rightEyebrowUpperRightQuarter: LandMarkInfo
+    public let contourChin: FaceppPoint
+    public let contourLeft1: FaceppPoint
+    public let contourLeft2: FaceppPoint
+    public let contourLeft3: FaceppPoint
+    public let contourLeft4: FaceppPoint
+    public let contourLeft5: FaceppPoint
+    public let contourLeft6: FaceppPoint
+    public let contourLeft7: FaceppPoint
+    public let contourLeft8: FaceppPoint
+    public let contourLeft9: FaceppPoint
+    public let contourRight1: FaceppPoint
+    public let contourRight2: FaceppPoint
+    public let contourRight3: FaceppPoint
+    public let contourRight4: FaceppPoint
+    public let contourRight5: FaceppPoint
+    public let contourRight6: FaceppPoint
+    public let contourRight7: FaceppPoint
+    public let contourRight8: FaceppPoint
+    public let contourRight9: FaceppPoint
+    public let leftEyeBottom: FaceppPoint
+    public let leftEyeCenter: FaceppPoint
+    public let leftEyeLeftCorner: FaceppPoint
+    public let leftEyeLowerLeftQuarter: FaceppPoint
+    public let leftEyeLowerRightQuarter: FaceppPoint
+    public let leftEyePupil: FaceppPoint
+    public let leftEyeRightCorner: FaceppPoint
+    public let leftEyeTop: FaceppPoint
+    public let leftEyeUpperLeftQuarter: FaceppPoint
+    public let leftEyeUpperRightQuarter: FaceppPoint
+    public let leftEyebrowLeftCorner: FaceppPoint
+    public let leftEyebrowLowerLeftQuarter: FaceppPoint
+    public let leftEyebrowLowerMiddle: FaceppPoint
+    public let leftEyebrowLowerRightQuarter: FaceppPoint
+    public let leftEyebrowRightCorner: FaceppPoint?
+    public let leftEyebrowUpperLeftQuarter: FaceppPoint
+    public let leftEyebrowUpperMiddle: FaceppPoint
+    public let leftEyebrowUpperRightQuarter: FaceppPoint
+    public let mouthLeftCorner: FaceppPoint
+    public let mouthLowerLipBottom: FaceppPoint
+    public let mouthLowerLipLeftContour1: FaceppPoint
+    public let mouthLowerLipLeftContour2: FaceppPoint
+    public let mouthLowerLipLeftContour3: FaceppPoint
+    public let mouthLowerLipRightContour1: FaceppPoint
+    public let mouthLowerLipRightContour2: FaceppPoint
+    public let mouthLowerLipRightContour3: FaceppPoint
+    public let mouthLowerLipTop: FaceppPoint
+    public let mouthRightCorner: FaceppPoint
+    public let mouthUpperLipBottom: FaceppPoint
+    public let mouthUpperLipLeftContour1: FaceppPoint
+    public let mouthUpperLipLeftContour2: FaceppPoint
+    public let mouthUpperLipLeftContour3: FaceppPoint
+    public let mouthUpperLipRightContour1: FaceppPoint
+    public let mouthUpperLipRightContour2: FaceppPoint
+    public let mouthUpperLipRightContour3: FaceppPoint
+    public let mouthUpperLipTop: FaceppPoint
+    public let noseContourLeft1: FaceppPoint?
+    public let noseContourLeft2: FaceppPoint?
+    public let noseContourLeft3: FaceppPoint?
+    public let noseContourLowerMiddle: FaceppPoint?
+    public let noseContourRight1: FaceppPoint?
+    public let noseContourRight2: FaceppPoint?
+    public let noseContourRight3: FaceppPoint?
+    public let noseLeft: FaceppPoint?
+    public let noseRight: FaceppPoint?
+    public let noseTip: FaceppPoint
+    public let rightEyeBottom: FaceppPoint
+    public let rightEyeCenter: FaceppPoint
+    public let rightEyeLeftCorner: FaceppPoint
+    public let rightEyeLowerLeftQuarter: FaceppPoint
+    public let rightEyeLowerRightQuarter: FaceppPoint
+    public let rightEyePupil: FaceppPoint
+    public let rightEyeRightCorner: FaceppPoint
+    public let rightEyeTop: FaceppPoint
+    public let rightEyeUpperLeftQuarter: FaceppPoint
+    public let rightEyeUpperRightQuarter: FaceppPoint
+    public let rightEyebrowLeftCorner: FaceppPoint?
+    public let rightEyebrowLowerLeftQuarter: FaceppPoint
+    public let rightEyebrowLowerMiddle: FaceppPoint
+    public let rightEyebrowLowerRightQuarter: FaceppPoint
+    public let rightEyebrowRightCorner: FaceppPoint
+    public let rightEyebrowUpperLeftQuarter: FaceppPoint
+    public let rightEyebrowUpperMiddle: FaceppPoint
+    public let rightEyebrowUpperRightQuarter: FaceppPoint
     
     // MARK: - 106个特征点：https://console.faceplusplus.com.cn/documents/13207408
-    public let contourLeft10: LandMarkInfo?
-    public let contourLeft11: LandMarkInfo?
-    public let contourLeft12: LandMarkInfo?
-    public let contourLeft13: LandMarkInfo?
-    public let contourLeft14: LandMarkInfo?
-    public let contourLeft15: LandMarkInfo?
-    public let contourLeft16: LandMarkInfo?
-    public let contourRight10: LandMarkInfo?
-    public let contourRight11: LandMarkInfo?
-    public let contourRight12: LandMarkInfo?
-    public let contourRight13: LandMarkInfo?
-    public let contourRight14: LandMarkInfo?
-    public let contourRight15: LandMarkInfo?
-    public let contourRight16: LandMarkInfo?
-    public let leftEyebrowUpperRightCorner: LandMarkInfo?
-    public let leftEyebrowLowerRightCorner: LandMarkInfo?
-    public let rightEyebrowUpperLeftCorner: LandMarkInfo?
-    public let rightEyebrowLowerLeftCorner: LandMarkInfo?
-    public let noseBridge1: LandMarkInfo?
-    public let noseBridge2: LandMarkInfo?
-    public let noseBridge3: LandMarkInfo?
-    public let noseLeftContour1: LandMarkInfo?
-    public let noseLeftContour2: LandMarkInfo?
-    public let noseLeftContour3: LandMarkInfo?
-    public let noseLeftContour4: LandMarkInfo?
-    public let noseLeftContour5: LandMarkInfo?
-    public let noseMiddleContour: LandMarkInfo?
-    public let noseRightContour1: LandMarkInfo?
-    public let noseRightContour2: LandMarkInfo?
-    public let noseRightContour3: LandMarkInfo?
-    public let noseRightContour4: LandMarkInfo?
-    public let noseRightContour5: LandMarkInfo?
-    public let mouthUpperLipLeftContour4: LandMarkInfo?
-    public let mouthUupperLipRightContour4: LandMarkInfo?
+    public let contourLeft10: FaceppPoint?
+    public let contourLeft11: FaceppPoint?
+    public let contourLeft12: FaceppPoint?
+    public let contourLeft13: FaceppPoint?
+    public let contourLeft14: FaceppPoint?
+    public let contourLeft15: FaceppPoint?
+    public let contourLeft16: FaceppPoint?
+    public let contourRight10: FaceppPoint?
+    public let contourRight11: FaceppPoint?
+    public let contourRight12: FaceppPoint?
+    public let contourRight13: FaceppPoint?
+    public let contourRight14: FaceppPoint?
+    public let contourRight15: FaceppPoint?
+    public let contourRight16: FaceppPoint?
+    public let leftEyebrowUpperRightCorner: FaceppPoint?
+    public let leftEyebrowLowerRightCorner: FaceppPoint?
+    public let rightEyebrowUpperLeftCorner: FaceppPoint?
+    public let rightEyebrowLowerLeftCorner: FaceppPoint?
+    public let noseBridge1: FaceppPoint?
+    public let noseBridge2: FaceppPoint?
+    public let noseBridge3: FaceppPoint?
+    public let noseLeftContour1: FaceppPoint?
+    public let noseLeftContour2: FaceppPoint?
+    public let noseLeftContour3: FaceppPoint?
+    public let noseLeftContour4: FaceppPoint?
+    public let noseLeftContour5: FaceppPoint?
+    public let noseMiddleContour: FaceppPoint?
+    public let noseRightContour1: FaceppPoint?
+    public let noseRightContour2: FaceppPoint?
+    public let noseRightContour3: FaceppPoint?
+    public let noseRightContour4: FaceppPoint?
+    public let noseRightContour5: FaceppPoint?
+    public let mouthUpperLipLeftContour4: FaceppPoint?
+    public let mouthUupperLipRightContour4: FaceppPoint?
 }
 
 public struct Face: Codable {

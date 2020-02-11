@@ -12,44 +12,20 @@ import Foundation
  
  Wiki: https://console.faceplusplus.com.cn/documents/5671702
  */
-public struct OCRIDCardOption: RequestProtocol {
-    
-    /// 图片的 URL
-    public var imageURL: URL?
-    /// 图片的二进制文件，需要用 post multipart/form-data 的方式上传。
-    public var imageFile: URL?
-    /**
-     base64 编码的二进制图片数据
-     
-     如果同时传入了 image_url、image_file 和 image_base64参数，本 API 使用顺序为image_file 优先，image_url最低。
-     */
-    public var imageBase64: String?
+public class OCRIDCardOption: CardppV1Requst {
     /**
      是否返回身份证照片合法性检查结果
      注意：2017年6月7日之后，只有正式 API Key 能够调用此参数返回分类结果，免费 API Key 调用后无法返回分类结果。
      */
     public var needLegality = false
     
-    var requsetURL: URL? {
-        return kCardppV1URL?.appendingPathComponent("ocridcard")
+    override var requsetURL: URL? {
+        return super.requsetURL?.appendingPathComponent("ocridcard")
     }
     
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-            "legality": needLegality ? 1 : 0
-        ]
-        var files = [Params]()
-        params["image_base64"] = imageBase64
-        params["image_url"] = imageURL
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
-            files.append([
-                "fieldName": "image_file",
-                "fileType": url.pathExtension,
-                "data": data
-            ])
-        }
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+        params["legality"] = needLegality ? 1 : 0
         return (params, files)
     }
 }

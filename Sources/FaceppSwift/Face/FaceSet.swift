@@ -14,17 +14,17 @@ public struct FaceSet: Codable {
     /// FaceSet 的标识
     public let facesetToken: String?
     /// 用户提供的FaceSet标识，如果未提供为""
-    public var outerId: String?
+    public var outerId: String? = nil
     /// FaceSet的名字，如果未提供为""
-    public var displayName: String?
+    public var displayName: String? = nil
     /// FaceSet的标签，如果未提供为""
-    public var tags: String?
+    public var tags: String? = nil
 }
 
 //MARK: - 获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息。
 /**
  获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息。
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/4888397
  */
 public struct FaceSetGetOption: RequestProtocol {
@@ -98,45 +98,60 @@ public extension FaceSet {
 //MARK: - 删除一个人脸集合
 /**
  删除一个人脸集合。
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/4888393
  */
-public struct FaceSetsDeleteOption: RequestProtocol {
+public class FaceSetBaseRequest: RequestProtocol {
     /// FaceSet的标识
     public var facesetToken: String?
     /// 用户提供的FaceSet标识
     public var outerId: String?
-    /// 删除时是否检查FaceSet中是否存在face_token
-    public var checkEmpty = true
     
-    init(facesetToken: String?, outerId: String?, checkEmpty: Bool = true) {
-        self.facesetToken = facesetToken
-        self.outerId = outerId
-        self.checkEmpty = checkEmpty
+    convenience init(faceset: FaceSet) {
+        self.init(facesetToken: faceset.facesetToken, outerId:faceset.outerId)
     }
     
-    public init(faceset: FaceSet) {
-        facesetToken = faceset.facesetToken
-        outerId = faceset.outerId
+    public init(facesetToken: String?, outerId:String?) {
+        self.facesetToken = facesetToken
+        self.outerId = outerId
     }
     
     var requsetURL: URL? {
-        return kFaceSetBaseURL?.appendingPathComponent("delete")
+        return kFaceSetBaseURL
+    }
+    
+    func paramsCheck() -> Bool {
+        return facesetToken != nil || outerId != nil
     }
     
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret,
-            "check_empty": checkEmpty ? 1 : 0
         ]
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
         return (params, nil)
     }
+}
+
+public class FaceSetsDeleteOption: FaceSetBaseRequest {
+    /// 删除时是否检查FaceSet中是否存在face_token
+    public var checkEmpty = true
     
-    func paramsCheck() -> Bool {
-        return facesetToken != nil || outerId != nil
+    init(facesetToken: String?, outerId: String?, checkEmpty: Bool = true) {
+        super.init(facesetToken: facesetToken, outerId: outerId)
+        self.checkEmpty = checkEmpty
+    }
+
+    override var requsetURL: URL? {
+        return super.requsetURL?.appendingPathComponent("delete")
+    }
+    
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+        params["check_empty"] = checkEmpty ? 1 : 0
+        return (params, nil)
     }
 }
 
@@ -155,7 +170,8 @@ public struct FacesetDeleteResponse: ResponseProtocol {
 
 public extension FaceSet {
     func delete(completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) {
-        FaceSet.delete(option: .init(faceset: self), completionHanlder: completionHanlder)
+        FaceSet.delete(option: .init(facesetToken: facesetToken, outerId: outerId),
+                       completionHanlder: completionHanlder)
     }
     
     static func delete(option: FaceSetsDeleteOption, completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) {
@@ -177,14 +193,10 @@ extension FaceSet {
 // MARK: - 获取一个 FaceSet 的所有信息，包括此 FaceSet 的 faceset_token, outer_id, display_name 的信息，以及此 FaceSet 中存放的 face_token 数量与列表。
 /**
  获取一个 FaceSet 的所有信息，包括此 FaceSet 的 faceset_token, outer_id, display_name 的信息，以及此 FaceSet 中存放的 face_token 数量与列表。
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/4888395
  */
-public struct FacesetGetDetailOption: RequestProtocol {
-    /// FaceSet的标识
-    public var facesetToken: String?
-    /// 用户提供的FaceSet标识
-    public var outerId: String?
+public class FacesetGetDetailOption: FaceSetBaseRequest {
     /**
      一个数字 n，表示开始返回的 face_token 在本 FaceSet 中的序号， n 是 [1,10000] 间的一个整数。
      
@@ -197,32 +209,18 @@ public struct FacesetGetDetailOption: RequestProtocol {
     public var start = 1
     
     init(facesetToken: String?, outerId: String?, start: Int = 1) {
-        self.facesetToken = facesetToken
-        self.outerId = outerId
+        super.init(facesetToken: facesetToken, outerId: outerId)
         self.start = start
     }
     
-    init(faceset: FaceSet) {
-        facesetToken = faceset.facesetToken
-        outerId = faceset.outerId
+    override var requsetURL: URL? {
+        return super.requsetURL?.appendingPathComponent("getdetail")
     }
     
-    var requsetURL: URL? {
-        return kFaceSetBaseURL?.appendingPathComponent("getdetail")
-    }
-    
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-        ]
-        params["faceset_token"] = facesetToken
-        params["outer_id"] = outerId
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+        params["start"] = 1
         return (params, nil)
-    }
-    
-    func paramsCheck() -> Bool {
-        return facesetToken != nil || outerId != nil
     }
 }
 
@@ -257,7 +255,7 @@ public struct FacesetGetDetailResponse: ResponseProtocol {
 
 public extension FaceSet {
     func detail(start: Int = 1, completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) {
-        var opt = FacesetGetDetailOption(faceset: self)
+        let opt = FacesetGetDetailOption(facesetToken: facesetToken, outerId: outerId, start: start)
         opt.start = start
         FaceSet.detail(option: opt, completionHandler: completionHandler)
     }
@@ -270,14 +268,10 @@ public extension FaceSet {
 // MARK: - 更新一个人脸集合的属性
 /**
  更新一个人脸集合的属性
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/4888401
  */
-public struct FacesetUpdateOption: RequestProtocol {
-    /// FaceSet的标识
-    public var facesetToken: String?
-    /// 用户提供的FaceSet标识
-    public var outerId: String?
+public class FacesetUpdateOption: FaceSetBaseRequest {
     /// 在api_key下全局唯一的FaceSet自定义标识，可以用来管理FaceSet对象。最长255个字符，不能包括字符^@,&=*'"
     public var newOuterId: String?
     /// 人脸集合的名字，256个字符
@@ -289,17 +283,7 @@ public struct FacesetUpdateOption: RequestProtocol {
     
     static let invalidUserDataCharacters = Set("^@,&=*'\"")
     
-    init(facesetToken: String?, outerId: String?) {
-        self.facesetToken = facesetToken
-        self.outerId = outerId
-    }
-    
-    init(faceset: FaceSet) {
-        facesetToken = faceset.facesetToken
-        outerId = faceset.outerId
-    }
-    
-    func paramsCheck() -> Bool {
+    override func paramsCheck() -> Bool {
         guard (facesetToken != nil || outerId != nil)
             && (newOuterId != nil || displayName != nil || userData != nil || tags != nil) else {
                 return false
@@ -327,17 +311,12 @@ public struct FacesetUpdateOption: RequestProtocol {
         return true
     }
     
-    var requsetURL: URL? {
-        return kFaceSetBaseURL?.appendingPathComponent("update")
+    override var requsetURL: URL? {
+        return super.requsetURL?.appendingPathComponent("update")
     }
     
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-        ]
-        params["faceset_token"] = facesetToken
-        params["outer_id"] = outerId
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, _) = super.params(apiKey: apiSecret, apiSecret: apiSecret)
         params["new_outer_id"] = newOuterId
         params["display_name"] = displayName
         params["user_data"] = userData
@@ -361,7 +340,7 @@ public struct FaceSetUpdateResponse: ResponseProtocol {
 
 public extension FaceSet {
     func update(displayName: String?, userData: String?, tags: [String]?, completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) {
-        var opt = FacesetUpdateOption(faceset: self)
+        let opt = FacesetUpdateOption(faceset: self)
         opt.displayName = displayName
         opt.userData = userData
         opt.tags = tags
@@ -376,14 +355,10 @@ public extension FaceSet {
 //MARK: - 移除一个FaceSet中的某些或者全部face_token
 /**
  移除一个FaceSet中的某些或者全部face_token
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/4888399
  */
-public class FaceSetRemoveOption: RequestProtocol {
-    /// FaceSet的标识
-    public var facesetToken: String?
-    /// 用户提供的FaceSet标识
-    public var outerId: String?
+public class FaceSetRemoveOption: FaceSetBaseRequest {
     /// 是否删除全部
     fileprivate var removeAll = false
     /**
@@ -393,33 +368,22 @@ public class FaceSetRemoveOption: RequestProtocol {
      */
     public var faceTokens = [String]()
     
-    init(facesetToken: String?, outerId: String?, tokens:[String]) {
-        self.facesetToken = facesetToken
-        self.outerId = outerId
+    init(facesetToken: String?, outerId: String?, tokens:[String] = []) {
+        super.init(facesetToken: facesetToken, outerId: outerId)
         faceTokens = tokens
     }
     
-    init(faceset: FaceSet) {
-        facesetToken = faceset.facesetToken
-        outerId = faceset.outerId
-    }
-    
-    var requsetURL: URL? {
+    override var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("removeface")
     }
     
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-        ]
-        params["faceset_token"] = facesetToken
-        params["outer_id"] = outerId
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["face_tokens"] = removeAll ? "RemoveAllFaceTokens" : faceTokens.joined(separator: ",")
         return (params, nil)
     }
     
-    func paramsCheck() -> Bool {
+    override func paramsCheck() -> Bool {
         return removeAll || (!faceTokens.isEmpty && faceTokens.count <= 1000)
     }
 }
@@ -452,11 +416,12 @@ public struct FaceSetRemoveResponse: ResponseProtocol {
 
 public extension FaceSet {
     func remove(faceTokens: [String], completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) {
-        FaceSet.remove(option: .init(faceset: self), completionHandler: completionHandler)
+        FaceSet.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
+                       completionHandler: completionHandler)
     }
     
     func removeAll(completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) {
-        let opt = FaceSetRemoveOption(faceset: self)
+        let opt = FaceSetRemoveOption(facesetToken: facesetToken, outerId: outerId)
         opt.removeAll = true
         FaceSet.remove(option: opt, completionHandler: completionHandler)
     }
@@ -469,46 +434,36 @@ public extension FaceSet {
 // MARK: - 为一个已经创建的 FaceSet 添加人脸标识 face_token。一个 FaceSet 最多存储1,000个 face_token。
 /**
  为一个已经创建的 FaceSet 添加人脸标识 face_token。一个 FaceSet 最多存储1,000个 face_token。
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/4888389
  */
-public class FaceSetAddFaceOption: RequestProtocol {
-    /// FaceSet 的标识
-    public var facesetToken: String?
-    /// 用户提供的 FaceSet 标识
-    public var outerId: String?
+public class FaceSetAddFaceOption: FaceSetBaseRequest {
     /**
      人脸标识 face_token 组成的字符串，可以是一个或者多个，用逗号分隔。最多不超过5个face_token
      */
     public var faceTokens: [String]
     
-    init(facesetToken: String?, outerId: String?, tokens: [String] = []) {
-        self.facesetToken = facesetToken
-        self.outerId = outerId
+    init(facesetToken: String?, outerId: String?, tokens: [String]) {
         faceTokens = tokens
+        super.init(facesetToken: facesetToken, outerId: outerId)
+        
     }
     
     init(faceset: FaceSet, tokens: [String]) {
-        facesetToken = faceset.facesetToken
-        outerId = faceset.outerId
         faceTokens = tokens
+        super.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
     }
     
-    var requsetURL: URL? {
-        return kFaceSetBaseURL?.appendingPathComponent("addface")
+    override var requsetURL: URL? {
+        return super.requsetURL?.appendingPathComponent("addface")
     }
     
-    func paramsCheck() -> Bool {
+    override func paramsCheck() -> Bool {
         return (facesetToken != nil || outerId != nil) && faceTokens.count <= 5
     }
     
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-        ]
-        params["faceset_token"] = facesetToken
-        params["outer_id"] = outerId
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["face_tokens"] = faceTokens.joined(separator: ",")
         return (params, nil)
     }
@@ -542,7 +497,7 @@ public extension FaceSet {
 // MARK: - 创建一个人脸的集合 FaceSet，用于存储人脸标识 face_token。一个 FaceSet 能够存储10000个 face_token。
 /**
  创建一个人脸的集合 FaceSet，用于存储人脸标识 face_token。一个 FaceSet 能够存储10000个 face_token。
-
+ 
  试用API Key可以创建1000个FaceSet，正式API Key可以创建10000个FaceSet。
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888391
@@ -657,7 +612,7 @@ public extension FaceSet {
 let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
 /**
  查询之前调用的异步添加/删除人脸请求，异步任务当前的状态
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/40622157
  */
 public struct FaceSetTaskQueryOption: RequestProtocol {
@@ -720,7 +675,7 @@ extension FaceSet {
 // MARK: - (异步) 为一个已经创建的 FaceSet 添加人脸标识 face_token。一个 FaceSet 最多存储1,000个 face_token。
 /**
  为一个已经创建的 FaceSet 添加人脸标识 face_token。一个 FaceSet 最多存储1,000个 face_token。
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/40622166
  */
 public class FaceSetAsyncAddFaceOption: FaceSetAddFaceOption {
@@ -759,7 +714,7 @@ public extension FaceSet {
 // MARK: - （异步）移除一个FaceSet中的某些或者全部face_token
 /**
  移除一个FaceSet中的某些或者全部face_token
-
+ 
  Wiki: https://console.faceplusplus.com.cn/documents/40622169
  */
 public class FaceSetAsyncRemoveOption: FaceSetRemoveOption {

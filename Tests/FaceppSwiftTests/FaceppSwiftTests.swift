@@ -22,7 +22,7 @@ final class FaceppSwiftTests: XCTestCase {
     //MARK: - 人脸识别
     func testDetect() {
         let exp = XCTestExpectation(description: "detect")
-        var opt = DetectOption()
+        let opt = DetectOption()
         opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         opt.returnAttributes = .all
         opt.returnLandmark = .all
@@ -53,7 +53,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testBeautify() {
         let exp = XCTestExpectation(description: "beautify")
-        var opt = BeautifyOption()
+        let opt = BeautifyOption()
         opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
         Facepp.shared?.beautify(option: opt) { (err, data) in
             if let err = err {
@@ -66,7 +66,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testDenseLandmark() {
         let exp = XCTestExpectation(description: "Thousand Landmarks")
-        var opt = ThousandLandMarkOption(returnLandMark: .all)
+        let opt = ThousandLandMarkOption(returnLandMark: .all)
         opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
         Facepp.shared?.thousandLandmark(option: opt) { err, resp in
             if let err = err {
@@ -79,7 +79,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testFacialFeatures() {
         let exp = XCTestExpectation(description: "Facial Features")
-        var opt = FacialFeaturesOption()
+        let opt = FacialFeaturesOption()
         opt.imageURL = URL(string: "https://bellard.org/bpg/lena5.jpg")
         Facepp.shared?.facialFeatures(option: opt) { err, resp in
             if let err = err {
@@ -112,7 +112,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testSkinAnalyze() {
         let exp = XCTestExpectation(description: "Skin Analyze")
-        var opt = SkinAnalyzeOption()
+        let opt = SkinAnalyzeOption()
         opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Candye_Kane_2012.jpg/500px-Candye_Kane_2012.jpg")
         Facepp.shared?.skinanalyze(option: opt) { err, resp in
             if let err = err {
@@ -150,7 +150,7 @@ final class FaceppSwiftTests: XCTestCase {
             return XCTFail("没有Face Token")
         }
         let exp = XCTestExpectation(description: "search")
-        var opt = SearchOption()
+        let opt = SearchOption()
         opt.facesetToken = setToken
         opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         FaceSet.search(option: opt) { err, resp in
@@ -165,7 +165,7 @@ final class FaceppSwiftTests: XCTestCase {
     // MARK: - 证件识别
     func testIDCard() {
         let exp1 = XCTestExpectation(description: "身份证正面检测")
-        var opt = OCRIDCardOption()
+        let opt = OCRIDCardOption()
         opt.needLegality = true
         opt.imageURL = URL(string: "http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg")
         Cardpp.idcard(option: opt) { err, resp in
@@ -201,7 +201,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testDriverLicenseV1() {
         let exp1 = XCTestExpectation(description: "驾驶证 V1")
-        var opt = OCRDriverLicenseV1Option()
+        let opt = OCRDriverLicenseV1Option()
         opt.imageURL = URL(string: "http://pic.wodingche.com/carimg/kqfmpmny.jpeg")
         Cardpp.driverLicenseV1(option: opt) { err, resp in
             if let err = err {
@@ -214,9 +214,22 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testVehicleLicense() {
         let exp1 = XCTestExpectation(description: "行驶证")
-        var opt = OCRVehicleLicenseOption()
+        let opt = OCRVehicleLicenseOption()
         opt.imageURL = URL(string: "https://imgs.icauto.com.cn/allimg/180912/18-1P9121K31Y01.png")
         Cardpp.vehicleLicense(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 60)
+    }
+    
+    func testBandCardV1() {
+        let exp1 = XCTestExpectation(description: "银行卡 V1")
+        let opt = OCRBandCardV1Option()
+        opt.imageURL = URL(string: "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg")
+        Cardpp.bandCardV1(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
@@ -237,7 +250,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testIDCard", testIDCard),
         ("testDriverLicenseV2", testDriverLicenseV2),
         ("testDriverLicenseV1", testDriverLicenseV1),
-        ("testVehicleLicense", testVehicleLicense)
+        ("testVehicleLicense", testVehicleLicense),
+        ("testBandCardV1", testBandCardV1)
     ]
 }
 
@@ -262,7 +276,7 @@ extension FaceppSwiftTests {
             return XCTFail("没有Face Token")
         }
         let exp = XCTestExpectation(description: "Update Face Token")
-        var opt = FacesetUpdateOption(facesetToken: setToken, outerId: nil)
+        let opt = FacesetUpdateOption(facesetToken: setToken, outerId: nil)
         opt.tags = ["test"]
         FaceSet.update(option: opt) { error, resp in
             if let err = error {
@@ -340,7 +354,7 @@ extension FaceppSwiftTests {
             return XCTFail("没有Face Token")
         }
         let exp = XCTestExpectation(description: "Delete Faceset")
-        var opt = FaceSetsDeleteOption.init(facesetToken: setToken, outerId: nil)
+        let opt = FaceSetsDeleteOption.init(facesetToken: setToken, outerId: nil)
         opt.checkEmpty = false
         FaceSet.delete(option: opt) { (error, resp) in
             if let err = error {

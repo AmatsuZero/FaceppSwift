@@ -8,19 +8,9 @@
 
 import Foundation
 
-public struct SearchOption: RequestProtocol {
+public class SearchOption: FaceppBaseRequest {
     /// 进行搜索的目标人脸的 face_token，优先使用该参数
     public var faceToken: String?
-    /// 目标人脸所在的图片的 URL
-    public var imageURL: URL?
-    /// 目标人脸所在的图片，二进制文件，需要用 post multipart/form-data 的方式上传。
-    public var imageFile: URL?
-    /**
-     base64 编码的二进制图片数据
-     
-     如果同时传入了 image_url、image_file 和 image_base64 参数，本 API 使用顺序为 image_file 优先，image_url 最低。
-     */
-    public var imageBase64: String?
     /// 用来搜索的 FaceSet 的标识
     public var facesetToken: String?
     /// 用户自定义的 FaceSet 标识
@@ -40,7 +30,7 @@ public struct SearchOption: RequestProtocol {
      */
     public var faceRectangle: FaceRectangle?
     
-    func paramsCheck() -> Bool {
+    override func paramsCheck() -> Bool {
         guard returnResultCount >= 1, returnResultCount <= 5 else {
             return false
         }
@@ -49,29 +39,16 @@ public struct SearchOption: RequestProtocol {
             && (facesetToken != nil || outerId != nil)
     }
     
-    var requsetURL: URL? {
+    override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("search")
     }
     
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-            "return_result_count": returnResultCount
-        ]
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+        params["return_result_count"] = returnResultCount
         if let rectangle = faceRectangle {
             params["face_rectangle"] = "\(String(describing: rectangle))"
         }
-        var files = [Params]()
-        params["image_base64"] = imageBase64
-        params["image_url"] = imageURL
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
-            files.append([
-                "fieldName": "image_file",
-                "fileType": url.pathExtension,
-                "data": data
-            ])
-        } 
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
         return (params, files)
@@ -134,7 +111,7 @@ public extension FaceSet {
                 imageFile: URL? = nil,
                 imageBase64: String? = nil,
                 returnResultCount: Int = 1, completionHanlder: @escaping (Error?, SearchResponse?) -> Void) {
-        var opt = SearchOption()
+        let opt = SearchOption()
         opt.facesetToken = facesetToken
         opt.outerId = outerId
         opt.imageURL = imageURL

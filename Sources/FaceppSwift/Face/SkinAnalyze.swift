@@ -8,42 +8,9 @@
 
 import Foundation
 
-public struct SkinAnalyzeOption: RequestProtocol {
-    /// 图片的 URL
-    public var imageURL: URL?
-    /// 图片的二进制文件，需要用 post multipart/form-data 的方式上传。
-    public var imageFile: URL?
-    /**
-     base64 编码的二进制图片数据
-     
-     如果同时传入了 image_url、image_file 和 image_base64参数，本 API 使用顺序为image_file 优先，image_url最低
-     */
-    public var imageBase64: String?
-    
-    func paramsCheck() -> Bool {
-        return imageURL != nil || imageFile != nil || imageFile != nil
-    }
-    
-    var requsetURL: URL? {
+public class SkinAnalyzeOption: FaceppBaseRequest {
+    override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("skinanalyze")
-    }
-    
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
-        var files = [Params]()
-        params["image_base64"] = imageBase64
-        params["image_url"] = imageURL
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
-            files.append([
-                "fieldName": "image_file",
-                "fileType": url.pathExtension,
-                "data": data
-            ])
-        }
-        return (params, files)
     }
 }
 

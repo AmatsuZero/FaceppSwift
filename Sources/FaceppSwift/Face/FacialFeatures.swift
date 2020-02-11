@@ -8,40 +8,17 @@
 
 import Foundation
 
-public struct FacialFeaturesOption: RequestProtocol {
-    /// 图片的 URL
-    public var imageURL: URL?
-    /// 图片的二进制文件，需要用 post multipart/form-data 的方式上传。
-    public var imageFile: URL?
-    /// base64 编码的二进制图片数据 如果同时传入了 image_url、image_file 和 image_base64参数，本 API 使用顺序为image_file 优先，image_url最低
-    public var imageBase64: String?
+public class FacialFeaturesOption: FaceppBaseRequest {
     /// 是否返回人脸矫正后图片。合法值为：
     public var returnImageReset = false
     
-    var requsetURL: URL? {
+    override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("facialfeatures")
     }
     
-    func paramsCheck() -> Bool {
-        return imageURL != nil || imageFile != nil || imageBase64 != nil
-    }
-    
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
-        params["image_url"] = imageURL
-        params["image_base64"] = imageBase64
+    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_imagereset"] = returnImageReset ? 1 : 0
-        var files = [Params]()
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
-            files.append([
-                "fieldName": "image_file",
-                "fileType": url.pathExtension,
-                "data": data
-            ])
-        }
         return (params, files)
     }
 }

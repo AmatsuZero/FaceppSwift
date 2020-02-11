@@ -25,6 +25,10 @@ public class Cardpp {
         parse(option: option, completionHandler: completionHandler)
     }
     
+    public class func bandCardV1(option: OCRBandCardV1Option, completionHandler: @escaping (Error?, OCRBandCardV1Response?) -> Void) {
+        parse(option: option, completionHandler: completionHandler)
+    }
+    
     class func parse<R: ResponseProtocol>(option: RequestProtocol,
                                           completionHandler: @escaping (Error?, R?) -> Void)  {
         guard let client = Facepp.shared else {
