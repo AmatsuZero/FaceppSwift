@@ -13,7 +13,7 @@ public class OCRBandCardV1Option: CardppV1Requst {
     }
 }
 
-public struct OCRBandCardV1Response: ResponseProtocol {
+public struct OCRBandCardResponse: ResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -61,4 +61,10 @@ public struct OCRBandCardV1Response: ResponseProtocol {
      注：如果没有检测出证件则为空数组
      */
     public let bankCards: [Card]?
+}
+
+public class OCRBankCardBetaOption: CardppV1Requst {
+    override var requsetURL: URL? {
+        return kCardppBetaURL?.appendingPathComponent("ocrbankcard")
+    }
 }

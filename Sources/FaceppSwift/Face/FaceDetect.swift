@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class DetectOption: FaceppBaseRequest {
+public class FaceDetectOption: FaceppBaseRequest {
     
     /// 是否检测并返回人脸关键点。合法值为：
     public enum ReturnLandmark: Int {
@@ -21,7 +21,7 @@ public class DetectOption: FaceppBaseRequest {
     }
     
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性。合法值为：
-    public enum ReturnbAttributes: String, Option {
+    public enum ReturnAttributes: String, Option {
         case gender, age, smiling, headpose, facequality, blur, eyestatus,
         emotion, ethnicity, beauty, mouthstatus, eyegaze, skinstatus
         case none
@@ -30,11 +30,11 @@ public class DetectOption: FaceppBaseRequest {
     /// 是否检测并返回人脸关键点
     public var returnLandmark = ReturnLandmark.no
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
-    public var returnAttributes = Set(arrayLiteral: ReturnbAttributes.none)
+    public var returnAttributes = Set(arrayLiteral: ReturnAttributes.none)
     ///是否检测并返回所有人脸的人脸关键点和人脸属性。如果不使用此功能，则本 API 只会对人脸面积最大的五个人脸分析人脸关键点和人脸属性
     public var calculateAll: Bool?
     /// 是否指定人脸框位置进行人脸检测。
-    public var faceRectangle: FaceRectangle?
+    public var faceRectangle: FaceppRectangle?
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
     /// beauty_score_max
@@ -83,7 +83,7 @@ public struct Attributes: Codable {
     }
     
     public struct Age: Codable {
-        let value: Int
+        public let value: Int
     }
     /// 年龄分析结果。返回值为一个非负整数。
     public let age: Age?
@@ -180,16 +180,26 @@ public struct Attributes: Codable {
     public let smile: Threshold?
 }
 
-public struct FaceRectangle: Codable {
+public struct FaceppRectangle: Codable {
     public var top: Int = 0
     public var left: Int = 0
     public var width: Int = 0
     public var height: Int = 0
+    
+    @available(OSX 10.12, iOS 10, *)
+    public func asCGRect() -> CGRect {
+        return .init(x: left, y: top, width: width, height: height)
+    }
 }
 
 public struct FaceppPoint: Codable {
     public let x: Float
     public let y: Float
+    
+    @available(OSX 10.12, iOS 10, *)
+    public func asCGPoint() -> CGPoint {
+        return .init(x: CGFloat(x), y: CGFloat(y))
+    }
 }
 
 public struct LandMark: Codable {
@@ -317,12 +327,12 @@ public struct LandMark: Codable {
 
 public struct Face: Codable {
     public let faceToken: String
-    public let faceRectangle: FaceRectangle
+    public let faceRectangle: FaceppRectangle
     public let attributes: Attributes?
     public let landmark: LandMark?
 }
 
-public struct DetectResponse: ResponseProtocol {
+public struct FaceDetectResponse: ResponseProtocol {
     
     public let requestId: String?
     public let imageId: String?
@@ -331,8 +341,8 @@ public struct DetectResponse: ResponseProtocol {
     public let faces: [Face]?
 }
 
-extension Set where Element == DetectOption.ReturnbAttributes {
-    static var all: Set<DetectOption.ReturnbAttributes> {
+extension Set where Element == FaceDetectOption.ReturnAttributes {
+    public static var all: Set<FaceDetectOption.ReturnAttributes> {
         return Set(Element.allCases.filter { $0 != .none })
     }
 }

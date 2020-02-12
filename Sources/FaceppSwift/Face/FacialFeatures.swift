@@ -33,7 +33,7 @@ public struct FacialFeaturesResponse: ResponseProtocol {
     /// 人脸五官及轮廓的关键点坐标数组。
     public let denselandmark: DenseLandmark?
     /// 人脸矩形框的位置
-    public let faceRectangle: FaceRectangle?
+    public let faceRectangle: FaceppRectangle?
     /// 被检测的图片在系统中的标识。
     public let imageId: String?
     /// 人脸矫正后的图片，jpg格式。base64 编码的二进制图片数据。

@@ -62,7 +62,7 @@ public struct ThousandLandmarkResponse: ResponseProtocol {
     
     public struct Face: Codable {
         /// 人脸矩形框的位置
-        public let faceRectangle: FaceRectangle
+        public let faceRectangle: FaceppRectangle
         /// 人脸五官及轮廓的关键点坐标数组。
         public let landmark: DenseLandmark
     }

@@ -10,7 +10,7 @@ import Foundation
 let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
 
 // MARK: - 人脸集合
-public struct FaceSet: Codable {
+public struct FaceSet: Codable, UseFaceppClientProtocol {
     /// FaceSet 的标识
     public let facesetToken: String?
     /// 用户提供的FaceSet标识，如果未提供为""
@@ -77,11 +77,12 @@ public struct FaceSetsGetResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
+    @discardableResult
     static func getFaceSets(tags:[String] = [],
                             start: Int = 1,
-                            completionHanlder: @escaping (Error?, [FaceSet]?) -> Void) {
+                            completionHanlder: @escaping (Error?, [FaceSet]?) -> Void) -> URLSessionTask? {
         let opt = FaceSetGetOption(tags: tags, start: start)
-        getFaceSets(option: opt) { (error, resp) in
+        return getFaceSets(option: opt) { (error, resp) in
             if let err = error {
                 completionHanlder(err, nil)
             } else {
@@ -90,8 +91,10 @@ public extension FaceSet {
         }
     }
     
-    static func getFaceSets(option: FaceSetGetOption, completionHanlder: @escaping (Error?, FaceSetsGetResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
+    @discardableResult
+    static func getFaceSets(option: FaceSetGetOption,
+                            completionHanlder: @escaping (Error?, FaceSetsGetResponse?) -> Void) -> URLSessionTask?  {
+        return parse(option: option, completionHandler: completionHanlder)
     }
 }
 
@@ -143,7 +146,7 @@ public class FaceSetsDeleteOption: FaceSetBaseRequest {
         super.init(facesetToken: facesetToken, outerId: outerId)
         self.checkEmpty = checkEmpty
     }
-
+    
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("delete")
     }
@@ -169,24 +172,15 @@ public struct FacesetDeleteResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    func delete(completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) {
-        FaceSet.delete(option: .init(facesetToken: facesetToken, outerId: outerId),
-                       completionHanlder: completionHanlder)
+    @discardableResult
+    func delete(completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) -> URLSessionTask?  {
+        return FaceSet.delete(option: .init(facesetToken: facesetToken, outerId: outerId),
+                              completionHanlder: completionHanlder)
     }
-    
-    static func delete(option: FaceSetsDeleteOption, completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
-    }
-}
-
-
-extension FaceSet {
-    static func parse<R: ResponseProtocol>(option: RequestProtocol,
-                                           completionHanlder: @escaping (Error?, R?) -> Void)  {
-        guard let client = Facepp.shared else {
-            return completionHanlder(RequestError.NotInit, nil)
-        }
-        client.parse(option: option, completionHanlder: completionHanlder)
+    @discardableResult
+    static func delete(option: FaceSetsDeleteOption,
+                       completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHanlder)
     }
 }
 
@@ -254,14 +248,17 @@ public struct FacesetGetDetailResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    func detail(start: Int = 1, completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) {
+    @discardableResult
+    func detail(start: Int = 1, completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) -> URLSessionTask? {
         let opt = FacesetGetDetailOption(facesetToken: facesetToken, outerId: outerId, start: start)
         opt.start = start
-        FaceSet.detail(option: opt, completionHandler: completionHandler)
+        return FaceSet.detail(option: opt, completionHandler: completionHandler)
     }
     
-    static func detail(option: FacesetGetDetailOption, completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func detail(option: FacesetGetDetailOption,
+                       completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -339,16 +336,21 @@ public struct FaceSetUpdateResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    func update(displayName: String?, userData: String?, tags: [String]?, completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) {
+    @discardableResult
+    func update(displayName: String?,
+                userData: String?,
+                tags: [String]?,
+                completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) -> URLSessionTask?  {
         let opt = FacesetUpdateOption(faceset: self)
         opt.displayName = displayName
         opt.userData = userData
         opt.tags = tags
-        FaceSet.update(option: opt, completionHandler: completionHandler)
+        return FaceSet.update(option: opt, completionHandler: completionHandler)
     }
-    
-    static func update(option: FacesetUpdateOption, completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func update(option: FacesetUpdateOption,
+                       completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -415,19 +417,24 @@ public struct FaceSetRemoveResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    func remove(faceTokens: [String], completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) {
-        FaceSet.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
-                       completionHandler: completionHandler)
+    @discardableResult
+    func remove(faceTokens: [String],
+                completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
+        return FaceSet.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
+                              completionHandler: completionHandler)
     }
     
-    func removeAll(completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) {
+    @discardableResult
+    func removeAll(completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
         let opt = FaceSetRemoveOption(facesetToken: facesetToken, outerId: outerId)
         opt.removeAll = true
-        FaceSet.remove(option: opt, completionHandler: completionHandler)
+        return FaceSet.remove(option: opt, completionHandler: completionHandler)
     }
     
-    static func remove(option: FaceSetRemoveOption, completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func remove(option: FaceSetRemoveOption,
+                       completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -485,12 +492,16 @@ public struct FaceSetAddFaceResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    func add(faceTokens: [String], completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) {
-        FaceSet.add(option: .init(faceset: self, tokens: faceTokens), completionHandler: completionHandler)
+    @discardableResult
+    func add(faceTokens: [String],
+             completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
+        return FaceSet.add(option: .init(faceset: self, tokens: faceTokens), completionHandler: completionHandler)
     }
     
-    static func add(option: FaceSetAddFaceOption, completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func add(option: FaceSetAddFaceOption,
+                    completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
+        parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -591,7 +602,9 @@ public struct FaceSetCreateResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    static func new(option: FaceSetCreateOption, completionHandler: @escaping (Error?, FaceSet?) -> Void) {
+    @discardableResult
+    static func new(option: FaceSetCreateOption,
+                    completionHandler: @escaping (Error?, FaceSet?) -> Void) -> URLSessionTask? {
         create(option: option) { (error, response) in
             if error != nil {
                 completionHandler(error, nil)
@@ -602,9 +615,10 @@ public extension FaceSet {
             }
         }
     }
-    
-    static func create(option: FaceSetCreateOption, completionHandler: @escaping (Error?, FaceSetCreateResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func create(option: FaceSetCreateOption,
+                       completionHandler: @escaping (Error?, FaceSetCreateResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -662,13 +676,16 @@ public struct FaceSetTaskQueryResponse: ResponseProtocol {
     public let failureDetail: [FaceSetOpFailureDetail]?
 }
 
-extension FaceSet {
-    static func asyncQuery(taskId: String, completionHandler: @escaping (Error?, FaceSetTaskQueryResponse?) -> Void) {
-        asyncQuery(option: .init(taskId: taskId), completionHandler: completionHandler)
+public extension FaceSet {
+    @discardableResult
+    static func asyncQuery(taskId: String,
+                           completionHandler: @escaping (Error?, FaceSetTaskQueryResponse?) -> Void) -> URLSessionTask? {
+        return asyncQuery(option: .init(taskId: taskId), completionHandler: completionHandler)
     }
-    
-    static func asyncQuery(option: FaceSetTaskQueryOption, completionHandler: @escaping (Error?, FaceSetTaskQueryResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func asyncQuery(option: FaceSetTaskQueryOption,
+                           completionHandler: @escaping (Error?, FaceSetTaskQueryResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -696,8 +713,10 @@ public struct FaceSetAsyncOperationResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
-    func asyncAdd(faceTokens: [String], completionHandler: @escaping (Error?, String?) -> Void) {
-        FaceSet.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
+    @discardableResult
+    func asyncAdd(faceTokens: [String],
+                  completionHandler: @escaping (Error?, String?) -> Void) -> URLSessionTask? {
+        return FaceSet.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
             if let err = error {
                 completionHandler(err, nil)
             } else {
@@ -705,9 +724,10 @@ public extension FaceSet {
             }
         }
     }
-    
-    static func asyncAdd(option: FaceSetAsyncAddFaceOption, completionHandler: @escaping (Error?, FaceSetAsyncOperationResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func asyncAdd(option: FaceSetAsyncAddFaceOption,
+                         completionHandler: @escaping (Error?, FaceSetAsyncOperationResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -724,8 +744,9 @@ public class FaceSetAsyncRemoveOption: FaceSetRemoveOption {
 }
 
 public extension FaceSet {
-    func asyncRemove(faceTokens: [String], completionHandler: @escaping (Error?, String?) -> Void) {
-        FaceSet.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
+    @discardableResult
+    func asyncRemove(faceTokens: [String], completionHandler: @escaping (Error?, String?) -> Void) -> URLSessionTask? {
+        return FaceSet.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
             if let err = error {
                 completionHandler(err, nil)
             } else {
@@ -733,8 +754,9 @@ public extension FaceSet {
             }
         }
     }
-    
-    static func asyncRemove(option: FaceSetAsyncRemoveOption, completionHandler: @escaping (Error?, FaceSetAsyncOperationResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    static func asyncRemove(option: FaceSetAsyncRemoveOption,
+                            completionHandler: @escaping (Error?, FaceSetAsyncOperationResponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 }

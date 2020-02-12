@@ -1,68 +1,68 @@
 import Foundation
 
-public class Facepp {
-    
-    let apiKey: String
-    let apiSecret: String
-    let session = URLSession(configuration: .default)
-    
-    public static private(set) var shared: Facepp?
-    
+public class FaceppClient {
+    private let apiKey: String
+    private let apiSecret: String
+    private let session = URLSession(configuration: .default)
+    static private(set) var shared: FaceppClient?
     public class func Initialization(key: String, secret: String) {
         DispatchQueue.once(token: "com.daubert.faceapp.init") {
-            shared = Facepp(apikey: key, apiSecret: secret)
+            shared = FaceppClient(apikey: key, apiSecret: secret)
         }
     }
-    
     private init() {
         fatalError("不要调用原来的初始化")
     }
     
-    init(apikey key: String, apiSecret secret: String) {
+    private init(apikey key: String, apiSecret secret: String) {
         self.apiKey = key
         self.apiSecret = secret
     }
+}
+
+public enum Facepp: UseFaceppClientProtocol {
+    case detect(option: FaceDetectOption, completionHanlder: (Error?, FaceDetectResponse?) -> Void)
+    case compare(option: CompareOption, completionHanlder: (Error?, CompareResponse?) -> Void)
+    case beautify(option: BeautifyOption, completionHanlder: (Error?, BeautifyResponse?) -> Void)
+    case thousandLandmark(option: ThousandLandMarkOption, completionHanlder: (Error?, ThousandLandmarkResponse?) -> Void)
+    case facialFeatures(option: FacialFeaturesOption, completionHandler:  (Error?, FacialFeaturesResponse?) -> Void)
+    case threeDimensionFace(option: ThreeDimensionFaceOption, completionHandler: (Error?, ThreeDimensionFaceResponse?) -> Void)
+    case skinanalyze(option: SkinAnalyzeOption, completionHandler: (Error?, SkinAnalyzeResponse?) -> Void)
     
-    public func detect(option: DetectOption, completionHanlder: @escaping (Error?, DetectResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
-    }
-    
-    public func compare(option: CompareOption, completionHanlder: @escaping (Error?, CompareResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
-    }
-    
-    public func beautify(option: BeautifyOption, completionHanlder: @escaping (Error?, BeautifyResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
-    }
-    
-    public func thousandLandmark(option: ThousandLandMarkOption, completionHanlder: @escaping (Error?, ThousandLandmarkResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
-    }
-    
-    public func facialFeatures(option: FacialFeaturesOption, completionHandler:  @escaping (Error?, FacialFeaturesResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
-    }
-    
-    public func threeDimensionFace(option: ThreeDimensionFaceOption, completionHandler: @escaping (Error?, ThreeDimensionFaceResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
-    }
-    
-    public func skinanalyze(option: SkinAnalyzeOption, completionHandler: @escaping (Error?, SkinAnalyzeResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHandler)
+    @discardableResult
+    public func request() -> URLSessionTask? {
+        switch self {
+        case .detect(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        case .compare(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        case .beautify(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        case .thousandLandmark(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        case .facialFeatures(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        case .threeDimensionFace(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        case .skinanalyze(let opt, let handler):
+            return Self.parse(option: opt, completionHandler: handler)
+        }
     }
 }
 
-extension Facepp {
+extension FaceppClient {
+    @discardableResult
     func parse<R: ResponseProtocol>(option: RequestProtocol,
-                                    completionHanlder: @escaping (Error?, R?) -> Void)  {
+                                    completionHanlder: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         
         let (request, data) = option.asRequest(apiKey: apiKey, apiSecret: apiSecret)
         
         guard let req = request else {
-            return completionHanlder(RequestError.MissingArguments, nil)
+            completionHanlder(RequestError.MissingArguments, nil)
+            return nil
         }
         
-        session.uploadTask(with: req, from: data) { (data, _, error) in
+        let task = session.uploadTask(with: req, from: data) { data, _, error in
             guard error == nil, let data = data else {
                 return completionHanlder(error, nil)
             }
@@ -78,7 +78,9 @@ extension Facepp {
             } catch(let err) {
                 completionHanlder(err, nil)
             }
-        }.resume()
+        }
+        task.resume()
+        return task
     }
 }
 
@@ -99,7 +101,7 @@ public class FaceppBaseRequest: RequestProtocol {
     public var imageBase64: String?
     
     var requsetURL: URL? {
-        return kCardppV1URL
+        return kFaceBaseURL
     }
     
     func paramsCheck() -> Bool {

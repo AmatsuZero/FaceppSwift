@@ -31,6 +31,14 @@ let kCardppBetaURL: URL? = {
     return kBaseCardppURL?.appendingPathComponent("beta")
 }()
 
+let kHumanBodyBaseURL: URL? = {
+    return kBaseURL?.appendingPathComponent("humanbodypp")
+}()
+
+let kHumanBodyBaseV1URL: URL? = {
+    return kHumanBodyBaseURL?.appendingPathComponent("v1")
+}()
+
 protocol ResponseProtocol: Codable {
     // 用于区分每一次请求的唯一的字符串。
     var requestId: String? { get }
@@ -105,7 +113,7 @@ func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
 
 protocol Option: RawRepresentable, Hashable, CaseIterable {}
 
-extension FaceRectangle: CustomStringConvertible {
+extension FaceppRectangle: CustomStringConvertible {
     public var description: String {
         return "\(top),\(left),\(width),\(height)"
     }
@@ -219,4 +227,25 @@ public enum OCRType: Int, Codable {
     case driverLicense
     /// 行驶证
     case vehicleLicense
+}
+
+protocol UseFaceppClientProtocol {
+    static func parse<R: ResponseProtocol>(option: RequestProtocol,
+                                           completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask?
+    func request() -> URLSessionTask?
+}
+
+extension UseFaceppClientProtocol {
+    func request() -> URLSessionTask? {
+        return nil
+    }
+    
+    static func parse<R: ResponseProtocol>(option: RequestProtocol,
+                                           completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
+        guard let client = FaceppClient.shared else {
+            completionHandler(RequestError.NotInit, nil)
+            return nil
+        }
+        return client.parse(option: option, completionHanlder: completionHandler)
+    }
 }

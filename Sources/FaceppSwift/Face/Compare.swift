@@ -38,7 +38,7 @@ public struct CompareOption: RequestProtocol {
      
      注：只有在传入 image_url1、image_file1 和 image_base64_1 三个参数中任意一个时，本参数才生效。
      */
-    public var faceRectangle1: FaceRectangle?
+    public var faceRectangle1: FaceppRectangle?
     /**
      当传入图片进行人脸检测时，是否指定人脸框位置进行检测。
      
@@ -50,7 +50,7 @@ public struct CompareOption: RequestProtocol {
      
      注：只有在传入image_url2、image_file2 和image_base64_2 三个参数中任意一个后本参数才生效。
      */
-    public var faceRectangle2: FaceRectangle?
+    public var faceRectangle2: FaceppRectangle?
     
     var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("compare")

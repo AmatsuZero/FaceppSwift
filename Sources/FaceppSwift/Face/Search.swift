@@ -28,7 +28,7 @@ public class SearchOption: FaceppBaseRequest {
      
      注：只有在传入 image_url、image_file 和 image_base64 三个参数中任意一个时，本参数才生效。
      */
-    public var faceRectangle: FaceRectangle?
+    public var faceRectangle: FaceppRectangle?
     
     override func paramsCheck() -> Bool {
         guard returnResultCount >= 1, returnResultCount <= 5 else {
@@ -106,11 +106,13 @@ public struct SearchResponse: ResponseProtocol {
 }
 
 public extension FaceSet {
+    @discardableResult
     func search(faceToken: String?,
                 imageURL: URL? = nil,
                 imageFile: URL? = nil,
                 imageBase64: String? = nil,
-                returnResultCount: Int = 1, completionHanlder: @escaping (Error?, SearchResponse?) -> Void) {
+                returnResultCount: Int = 1,
+                completionHanlder: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask? {
         let opt = SearchOption()
         opt.facesetToken = facesetToken
         opt.outerId = outerId
@@ -119,10 +121,11 @@ public extension FaceSet {
         opt.imageFile = imageFile
         opt.imageBase64 = imageBase64
         opt.returnResultCount = returnResultCount
-        FaceSet.search(option: opt, completionHanlder: completionHanlder)
+        return FaceSet.search(option: opt, completionHanlder: completionHanlder)
     }
-    
-    static func search(option: SearchOption, completionHanlder: @escaping (Error?, SearchResponse?) -> Void) {
-        parse(option: option, completionHanlder: completionHanlder)
+    @discardableResult
+    static func search(option: SearchOption,
+                       completionHanlder: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask?  {
+        return parse(option: option, completionHandler: completionHanlder)
     }
 }

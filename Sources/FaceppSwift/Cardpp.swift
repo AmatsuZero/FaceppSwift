@@ -7,33 +7,32 @@
 
 import Foundation
 
-public class Cardpp {
+public enum Cardpp: UseFaceppClientProtocol {
+    case idCard(option: OCRIDCardOption, handler: (Error?, OCRIDCardResponse?) -> Void)
+    case driverLicenseV2(option: OCRDriverLicenseV2Option, handler: (Error?, OCRDriverLicenseV2Response?) -> Void)
+    case driverLicenseV1(option: OCRDriverLicenseV1Option, handler: (Error?, OCRDriverLicenseV1Response?) -> Void)
+    case vehicleLicense(option: OCRVehicleLicenseOption, handler: (Error?, OCRVehicleLicenseResponse?) -> Void)
+    case bankCardV1(option: OCRBandCardV1Option, handler: (Error?, OCRBandCardResponse?) -> Void)
+    case bankCardBeta(option: OCRBankCardBetaOption, handler: (Error?, OCRBandCardResponse?) -> Void)
+    case templateOCR(option: OCRTemplateOption, handler: (Error?, OCRTemplateResponse?) -> Void)
     
-    public class func idcard(option: OCRIDCardOption, completionHandler: @escaping (Error?, OCRIDCardResponse?) -> Void) {
-        parse(option: option, completionHandler: completionHandler)
-    }
-    
-    public class func driverLicenseV2(option: OCRDriverLicenseV2Option, completionHandler: @escaping (Error?, OCRDriverLicenseV2Response?) -> Void) {
-        parse(option: option, completionHandler: completionHandler)
-    }
-    
-    public class func driverLicenseV1(option: OCRDriverLicenseV1Option, completionHandler: @escaping (Error?, OCRDriverLicenseV1Response?) -> Void) {
-        parse(option: option, completionHandler: completionHandler)
-    }
-    
-    public class func vehicleLicense(option: OCRVehicleLicenseOption, completionHandler: @escaping (Error?, OCRVehicleLicenseResponse?) -> Void) {
-        parse(option: option, completionHandler: completionHandler)
-    }
-    
-    public class func bandCardV1(option: OCRBandCardV1Option, completionHandler: @escaping (Error?, OCRBandCardV1Response?) -> Void) {
-        parse(option: option, completionHandler: completionHandler)
-    }
-    
-    class func parse<R: ResponseProtocol>(option: RequestProtocol,
-                                          completionHandler: @escaping (Error?, R?) -> Void)  {
-        guard let client = Facepp.shared else {
-            return completionHandler(RequestError.NotInit, nil)
+    @discardableResult
+    public func request() -> URLSessionTask? {
+        switch self {
+        case .driverLicenseV2(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .idCard(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .driverLicenseV1(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .vehicleLicense(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .bankCardV1(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .bankCardBeta(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .templateOCR(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
         }
-        client.parse(option: option, completionHanlder: completionHandler)
     }
 }

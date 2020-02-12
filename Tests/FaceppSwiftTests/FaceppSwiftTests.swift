@@ -16,23 +16,23 @@ final class FaceppSwiftTests: XCTestCase {
     override func setUp() {
         XCTAssertNotNil(key)
         XCTAssertNotNil(secret)
-        Facepp.Initialization(key: key!, secret: secret!)
+        FaceppClient.Initialization(key: key!, secret: secret!)
     }
     
     //MARK: - 人脸识别
     func testDetect() {
         let exp = XCTestExpectation(description: "detect")
-        let opt = DetectOption()
+        let opt = FaceDetectOption()
         opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         opt.returnAttributes = .all
         opt.returnLandmark = .all
-        Facepp.shared?.detect(option: opt, completionHanlder: { [weak self] (err, data) in
+        Facepp.detect(option: opt) { [weak self] err, data in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             self?.faceToken = data?.faces?.first?.faceToken
             exp.fulfill()
-        })
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -42,12 +42,12 @@ final class FaceppSwiftTests: XCTestCase {
         opt.imageURL1 = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         opt.imageURL2 = URL(string: "https://bellard.org/bpg/lena5.jpg")
         
-        Facepp.shared?.compare(option: opt, completionHanlder: { (err, data) in
+        Facepp.compare(option: opt){ err, data in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp.fulfill()
-        })
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -55,12 +55,12 @@ final class FaceppSwiftTests: XCTestCase {
         let exp = XCTestExpectation(description: "beautify")
         let opt = BeautifyOption()
         opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
-        Facepp.shared?.beautify(option: opt) { (err, data) in
+        Facepp.beautify(option: opt) { err, data in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp.fulfill()
-        }
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -68,12 +68,12 @@ final class FaceppSwiftTests: XCTestCase {
         let exp = XCTestExpectation(description: "Thousand Landmarks")
         let opt = ThousandLandMarkOption(returnLandMark: .all)
         opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
-        Facepp.shared?.thousandLandmark(option: opt) { err, resp in
+        Facepp.thousandLandmark(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp.fulfill()
-        }
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -81,12 +81,12 @@ final class FaceppSwiftTests: XCTestCase {
         let exp = XCTestExpectation(description: "Facial Features")
         let opt = FacialFeaturesOption()
         opt.imageURL = URL(string: "https://bellard.org/bpg/lena5.jpg")
-        Facepp.shared?.facialFeatures(option: opt) { err, resp in
+        Facepp.facialFeatures(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp.fulfill()
-        }
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -101,12 +101,12 @@ final class FaceppSwiftTests: XCTestCase {
         opt.imageFile3 = URL(fileURLWithPath: threeDImageFile3!)
         opt.needMtl = true
         opt.needTexture = true
-        Facepp.shared?.threeDimensionFace(option: opt) { err, resp in
+        Facepp.threeDimensionFace(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp.fulfill()
-        }
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -114,12 +114,12 @@ final class FaceppSwiftTests: XCTestCase {
         let exp = XCTestExpectation(description: "Skin Analyze")
         let opt = SkinAnalyzeOption()
         opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Candye_Kane_2012.jpg/500px-Candye_Kane_2012.jpg")
-        Facepp.shared?.skinanalyze(option: opt) { err, resp in
+        Facepp.skinanalyze(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp.fulfill()
-        }
+        }.request()
         wait(for: [exp], timeout: 60)
     }
     
@@ -168,21 +168,21 @@ final class FaceppSwiftTests: XCTestCase {
         let opt = OCRIDCardOption()
         opt.needLegality = true
         opt.imageURL = URL(string: "http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg")
-        Cardpp.idcard(option: opt) { err, resp in
+        Cardpp.idCard(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp1.fulfill()
-        }
+        }.request()
         wait(for: [exp1], timeout: 60)
         let exp2 = XCTestExpectation(description: "身份证背面检测")
         opt.imageURL = URL(string: "https://img.maijia.com/news/main/201604/19161234v78q.jpg")
-        Cardpp.idcard(option: opt) { err, resp in
+        Cardpp.idCard(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp2.fulfill()
-        }
+        }.request()
         wait(for: [exp2], timeout: 60)
     }
     
@@ -195,7 +195,7 @@ final class FaceppSwiftTests: XCTestCase {
                 XCTFail(err.localizedDescription)
             }
             exp1.fulfill()
-        }
+        }.request()
         wait(for: [exp1], timeout: 60)
     }
     
@@ -208,7 +208,7 @@ final class FaceppSwiftTests: XCTestCase {
                 XCTFail(err.localizedDescription)
             }
             exp1.fulfill()
-        }
+        }.request()
         wait(for: [exp1], timeout: 60)
     }
     
@@ -221,21 +221,49 @@ final class FaceppSwiftTests: XCTestCase {
                 XCTFail(err.localizedDescription)
             }
             exp1.fulfill()
-        }
+        }.request()
         wait(for: [exp1], timeout: 60)
     }
     
-    func testBandCardV1() {
+    func testBankCardV1() {
         let exp1 = XCTestExpectation(description: "银行卡 V1")
         let opt = OCRBandCardV1Option()
         opt.imageURL = URL(string: "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg")
-        Cardpp.bandCardV1(option: opt) { err, resp in
+        Cardpp.bankCardV1(option: opt) { err, resp in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
             exp1.fulfill()
-        }
+        }.request()
         wait(for: [exp1], timeout: 60)
+    }
+    
+    func testBankCardBeta() {
+        let exp1 = XCTestExpectation(description: "银行卡 Beta")
+        let opt = OCRBankCardBetaOption()
+        opt.imageURL = URL(string: "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg")
+        Cardpp.bankCardBeta(option: opt) { err, resp in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp1.fulfill()
+        }.request()
+        wait(for: [exp1], timeout: 60)
+    }
+    
+    //MARK: - 人体识别
+    func testHumanBodyDetect() {
+        let exp = XCTestExpectation(description: "人体检测")
+        let opt = HumanBodyDetectOption()
+        opt.returnAttributes = .all
+        opt.imageURL = URL(string: "https://n.sinaimg.cn/ent/transform/250/w630h420/20191209/3df3-iknhexh9270759.jpg")
+        FaceppHumanBody.detect(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
     }
     
     static var allTests = [
@@ -251,7 +279,9 @@ final class FaceppSwiftTests: XCTestCase {
         ("testDriverLicenseV2", testDriverLicenseV2),
         ("testDriverLicenseV1", testDriverLicenseV1),
         ("testVehicleLicense", testVehicleLicense),
-        ("testBandCardV1", testBandCardV1)
+        ("testBandCardV1", testBankCardV1),
+        ("testBankCardBeta", testBankCardBeta),
+        ("testHumanBodyDetect", testHumanBodyDetect)
     ]
 }
 

@@ -52,7 +52,7 @@ public struct SkinAnalyzeResponse: ResponseProtocol {
      width：矩形框的宽度
      height：矩形框的高度
      */
-    public let faceRectangle: FaceRectangle?
+    public let faceRectangle: FaceppRectangle?
     /**
      表示影响计算结果的干扰因素.
      
