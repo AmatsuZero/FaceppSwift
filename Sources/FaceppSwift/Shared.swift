@@ -158,10 +158,58 @@ extension Set where Element: Option {
     }
 }
 
-public enum RequestError: Error {
+public enum FaceppRequestError: CustomNSError, LocalizedError {
     case NotInit
     case MissingArguments
-    case FaceppError(String)
+    case FaceppError(reason: String)
+    
+    public static var errorDomain: String {
+        return "com.daubert.faceapp"
+    }
+    
+    public var errorDescription: String? {
+        switch self {
+        case .NotInit:
+            return "没有初始化"
+        case .MissingArguments:
+            return "缺少参数"
+        case .FaceppError(let reason):
+            return "服务器错误：\(reason)"
+        }
+    }
+    
+    public var failureReason: String? {
+        switch self {
+        case .NotInit:
+            return "没有初始化"
+        case .MissingArguments:
+            return "参数检查失败"
+        case .FaceppError(let reason):
+            return reason
+        }
+    }
+    
+    public var helpAnchor: String? {
+        switch self {
+        case .NotInit: return "请重新调用初始化方法"
+        case .MissingArguments: return "请根据文档检查入参"
+        case .FaceppError(let reason): return "请根据 Wiki 排查失败原因：\(reason)"
+        }
+    }
+
+    public var errorCode: Int {
+        switch self {
+        case .NotInit: return -100001
+        case .MissingArguments: return -100002
+        case .FaceppError: return -100003
+        }
+    }
+   
+    public var errorUserInfo: [String : Any] {
+        return [
+            localizedDescription: errorDescription ?? "Unknown"
+        ]
+    }
 }
 
 extension Dictionary {
@@ -243,7 +291,7 @@ extension UseFaceppClientProtocol {
     static func parse<R: ResponseProtocol>(option: RequestProtocol,
                                            completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         guard let client = FaceppClient.shared else {
-            completionHandler(RequestError.NotInit, nil)
+            completionHandler(FaceppRequestError.NotInit, nil)
             return nil
         }
         return client.parse(option: option, completionHanlder: completionHandler)

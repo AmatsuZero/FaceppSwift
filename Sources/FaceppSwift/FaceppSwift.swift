@@ -58,7 +58,7 @@ extension FaceppClient {
         let (request, data) = option.asRequest(apiKey: apiKey, apiSecret: apiSecret)
         
         guard let req = request else {
-            completionHanlder(RequestError.MissingArguments, nil)
+            completionHanlder(FaceppRequestError.MissingArguments, nil)
             return nil
         }
         
@@ -71,7 +71,7 @@ extension FaceppClient {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let resp = try decoder.decode(R.self, from: data)
                 if let msg = resp.errorMessage {
-                    completionHanlder(RequestError.FaceppError(msg), nil)
+                    completionHanlder(FaceppRequestError.FaceppError(reason: msg), nil)
                 } else {
                     completionHanlder(error, resp)
                 }

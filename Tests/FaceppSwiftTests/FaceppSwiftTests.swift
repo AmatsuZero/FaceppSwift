@@ -227,7 +227,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testBankCardV1() {
         let exp1 = XCTestExpectation(description: "银行卡 V1")
-        let opt = OCRBandCardV1Option()
+        let opt = OCRBankCardV1Option()
         opt.imageURL = URL(string: "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg")
         Cardpp.bankCardV1(option: opt) { err, resp in
             if let err = err {
@@ -279,7 +279,7 @@ final class FaceppSwiftTests: XCTestCase {
         ("testDriverLicenseV2", testDriverLicenseV2),
         ("testDriverLicenseV1", testDriverLicenseV1),
         ("testVehicleLicense", testVehicleLicense),
-        ("testBandCardV1", testBankCardV1),
+        ("testBankCardV1", testBankCardV1),
         ("testBankCardBeta", testBankCardBeta),
         ("testHumanBodyDetect", testHumanBodyDetect)
     ]

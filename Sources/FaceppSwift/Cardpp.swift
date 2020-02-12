@@ -12,8 +12,8 @@ public enum Cardpp: UseFaceppClientProtocol {
     case driverLicenseV2(option: OCRDriverLicenseV2Option, handler: (Error?, OCRDriverLicenseV2Response?) -> Void)
     case driverLicenseV1(option: OCRDriverLicenseV1Option, handler: (Error?, OCRDriverLicenseV1Response?) -> Void)
     case vehicleLicense(option: OCRVehicleLicenseOption, handler: (Error?, OCRVehicleLicenseResponse?) -> Void)
-    case bankCardV1(option: OCRBandCardV1Option, handler: (Error?, OCRBandCardResponse?) -> Void)
-    case bankCardBeta(option: OCRBankCardBetaOption, handler: (Error?, OCRBandCardResponse?) -> Void)
+    case bankCardV1(option: OCRBankCardV1Option, handler: (Error?, OCRBankCardResponse?) -> Void)
+    case bankCardBeta(option: OCRBankCardBetaOption, handler: (Error?, OCRBankCardResponse?) -> Void)
     case templateOCR(option: OCRTemplateOption, handler: (Error?, OCRTemplateResponse?) -> Void)
     
     @discardableResult
