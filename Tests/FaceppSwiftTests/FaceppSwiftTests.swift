@@ -2,23 +2,23 @@ import XCTest
 @testable import FaceppSwift
 
 final class FaceppSwiftTests: XCTestCase {
-
+    
     let key = ProcessInfo.processInfo.environment["key"]
     let secret = ProcessInfo.processInfo.environment["secret"]
-
+    
     let threeDImageFile1 = ProcessInfo.processInfo.environment["3dImageFile1"]
     let threeDImageFile2 = ProcessInfo.processInfo.environment["3dImageFile2"]
     let threeDImageFile3 = ProcessInfo.processInfo.environment["3dImageFile3"]
-
+    
     var facesetToken: String?
     var faceToken: String?
-
+    
     override func setUp() {
         XCTAssertNotNil(key)
         XCTAssertNotNil(secret)
         FaceppClient.initialization(key: key!, secret: secret!)
     }
-
+    
     // MARK: - 人脸识别
     func testDetect() {
         let exp = XCTestExpectation(description: "detect")
@@ -35,13 +35,13 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     func testCompare() {
         let exp = XCTestExpectation(description: "compare")
         var opt = CompareOption()
         opt.imageURL1 = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         opt.imageURL2 = URL(string: "https://bellard.org/bpg/lena5.jpg")
-
+        
         Facepp.compare(option: opt) { err, _ in
             if let err = err {
                 XCTFail(err.localizedDescription)
@@ -50,7 +50,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     func testBeautify() {
         let exp = XCTestExpectation(description: "beautify")
         let opt = BeautifyOption()
@@ -63,7 +63,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     func testDenseLandmark() {
         let exp = XCTestExpectation(description: "Thousand Landmarks")
         let opt = ThousandLandMarkOption(returnLandMark: .all)
@@ -76,7 +76,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     func testFacialFeatures() {
         let exp = XCTestExpectation(description: "Facial Features")
         let opt = FacialFeaturesOption()
@@ -89,7 +89,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     func test3DFace() {
         XCTAssertNotNil(threeDImageFile1)
         XCTAssertNotNil(threeDImageFile2)
@@ -109,7 +109,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     func testSkinAnalyze() {
         let exp = XCTestExpectation(description: "Skin Analyze")
         let opt = SkinAnalyzeOption()
@@ -122,29 +122,41 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
     // 残念，XCTest无法顺序执行测试用例
     func testSearch() {
+        // 免费账号有并发数限制
         testDetect()
+        Thread.sleep(forTimeInterval: 3)
         createFaceSet()
+        Thread.sleep(forTimeInterval: 3)
         addFace()
+        Thread.sleep(forTimeInterval: 3)
         search()
+        Thread.sleep(forTimeInterval: 3)
         if facesetToken != nil {
             deleteFaceset()
         }
     }
-
+    
     func testFaceSetSuite() {
         testDetect()
+        Thread.sleep(forTimeInterval: 3)
         createFaceSet()
+        Thread.sleep(forTimeInterval: 3)
         updateFace()
+        Thread.sleep(forTimeInterval: 3)
         getFacesetDetail()
+        Thread.sleep(forTimeInterval: 3)
         getFaceSets()
+        Thread.sleep(forTimeInterval: 3)
         addFace()
+        Thread.sleep(forTimeInterval: 3)
         removeFace()
+        Thread.sleep(forTimeInterval: 3)
         deleteFaceset()
     }
-
+    
     func search() {
         guard let setToken = facesetToken else {
             return XCTFail("没有Face Token")
@@ -161,7 +173,7 @@ final class FaceppSwiftTests: XCTestCase {
         }
         wait(for: [exp], timeout: 60)
     }
-
+    
     // MARK: - 证件识别
     func testIDCard() {
         let exp1 = XCTestExpectation(description: "身份证正面检测")
@@ -185,7 +197,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp2], timeout: 60)
     }
-
+    
     func testDriverLicenseV2() {
         let exp1 = XCTestExpectation(description: "驾驶证 V2")
         var opt = OCRDriverLicenseV2Option()
@@ -198,7 +210,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp1], timeout: 60)
     }
-
+    
     func testDriverLicenseV1() {
         let exp1 = XCTestExpectation(description: "驾驶证 V1")
         let opt = OCRDriverLicenseV1Option()
@@ -211,7 +223,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp1], timeout: 60)
     }
-
+    
     func testVehicleLicense() {
         let exp1 = XCTestExpectation(description: "行驶证")
         let opt = OCRVehicleLicenseOption()
@@ -224,7 +236,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp1], timeout: 60)
     }
-
+    
     func testBankCardV1() {
         let exp1 = XCTestExpectation(description: "银行卡 V1")
         let opt = OCRBankCardV1Option()
@@ -237,7 +249,7 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp1], timeout: 60)
     }
-
+    
     func testBankCardBeta() {
         let exp1 = XCTestExpectation(description: "银行卡 Beta")
         let opt = OCRBankCardBetaOption()
@@ -250,14 +262,14 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp1], timeout: 60)
     }
-
+    
     // MARK: - 人体识别
     func testHumanBodyDetect() {
         let exp = XCTestExpectation(description: "人体检测")
         let opt = HumanBodyDetectOption()
         opt.returnAttributes = .all
         opt.imageURL = URL(string: "https://n.sinaimg.cn/ent/transform/250/w630h420/20191209/3df3-iknhexh9270759.jpg")
-        FaceppHumanBody.detect(option: opt) { error, _ in
+        FaceppHumanBody.bodyDetect(option: opt) { error, _ in
             if let err = error {
                 XCTFail(err.localizedDescription)
             }
@@ -265,7 +277,60 @@ final class FaceppSwiftTests: XCTestCase {
         }.request()
         wait(for: [exp], timeout: 60)
     }
-
+    
+    func testSkeleton() {
+        let exp = XCTestExpectation(description: "骨骼检测")
+        let opt = SkeletonDetectOption()
+        opt.imageURL = URL(string: "https://media1.popsugar-assets.com/files/thumbor/HzBtiO1fUBvUZeSBAp0NgA4DbEA/fit-in/1024x1024/filters:format_auto-!!-:strip_icc-!!-/2018/10/23/118/n/4981322/60cff8a45bce7e60adda52.01948560_/i/Australian-Models-Victoria-Secret-Fashion-Show-2018.jpg")
+        FaceppHumanBody.skeleton(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testSegmentV1() {
+        let exp = XCTestExpectation(description: "增加抠出人像的图片 V1")
+        let opt = HumanBodySegmentV1Option()
+        opt.imageURL = URL(string: "http://www.dabanzixun.com/wp-content/uploads/2017/11/600-x-500-3.jpg")
+        FaceppHumanBody.segmentV1(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testSegmentV2() {
+        let exp = XCTestExpectation(description: "增加抠出人像的图片 V2")
+        let opt = HumanBodySegmentV2Option()
+        opt.returnGrayScale = .grayScaleAndFigure
+        opt.imageURL = URL(string: "http://www.dabanzixun.com/wp-content/uploads/2017/11/600-x-500-3.jpg")
+        FaceppHumanBody.segmentV2(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testGesture() {
+        let exp = XCTestExpectation(description: "手势检测")
+        let opt = HumanBodyGestureOption()
+        opt.imageURL = URL(string: "https://p1.pstatp.com/large/pgc-image/1538558842994169f7673b6")
+        FaceppHumanBody.gesture(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
@@ -281,7 +346,10 @@ final class FaceppSwiftTests: XCTestCase {
         ("testVehicleLicense", testVehicleLicense),
         ("testBankCardV1", testBankCardV1),
         ("testBankCardBeta", testBankCardBeta),
-        ("testHumanBodyDetect", testHumanBodyDetect)
+        ("testHumanBodyDetect", testHumanBodyDetect),
+        ("testSkeleton", testSkeleton),
+        ("testSegmentV1", testSegmentV1),
+        ("testSegmentV2", testSegmentV2)
     ]
 }
 
@@ -300,7 +368,7 @@ extension FaceppSwiftTests {
         }
         wait(for: [exp], timeout: 60)
     }
-
+    
     func updateFace() {
         guard let setToken = facesetToken else {
             return XCTFail("没有Face Token")
@@ -316,7 +384,7 @@ extension FaceppSwiftTests {
         }
         wait(for: [exp], timeout: 60)
     }
-
+    
     func getFacesetDetail() {
         guard let setToken = facesetToken else {
             return XCTFail("没有Face Token")
@@ -331,7 +399,7 @@ extension FaceppSwiftTests {
         }
         wait(for: [exp], timeout: 60)
     }
-
+    
     func getFaceSets() {
         let exp = XCTestExpectation(description: "Get Facesets")
         var opt = FaceSetGetOption()
@@ -344,7 +412,7 @@ extension FaceppSwiftTests {
         })
         wait(for: [exp], timeout: 60)
     }
-
+    
     func addFace() {
         guard let setToken = facesetToken,
             let token = faceToken else {
@@ -362,7 +430,7 @@ extension FaceppSwiftTests {
         }
         wait(for: [exp], timeout: 60)
     }
-
+    
     func removeFace() {
         guard let setToken = facesetToken,
             let token = faceToken else {
@@ -378,7 +446,7 @@ extension FaceppSwiftTests {
         }
         wait(for: [exp], timeout: 60)
     }
-
+    
     func deleteFaceset() {
         guard let setToken = facesetToken else {
             return XCTFail("没有Face Token")

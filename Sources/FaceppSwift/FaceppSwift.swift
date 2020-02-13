@@ -78,7 +78,12 @@ extension FaceppClient {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let resp = try decoder.decode(R.self, from: data)
                 if let msg = resp.errorMessage {
-                    completionHanlder(FaceppRequestError.faceppError(reason: msg), nil)
+                    let text = """
+                    请求ID：\(resp.requestId ?? "Unknown")
+                    原因：\(msg)
+                    耗时：\(TimeInterval(resp.timeUsed ?? 0) / 1000)s
+                    """
+                    completionHanlder(FaceppRequestError.faceppError(reason: text), nil)
                 } else {
                     completionHanlder(error, resp)
                 }

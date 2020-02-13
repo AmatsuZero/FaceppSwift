@@ -8,13 +8,30 @@
 import Foundation
 
 public enum FaceppHumanBody: UseFaceppClientProtocol {
-    case detect(option: HumanBodyDetectOption, handler: (Error?, HumanBodyDetectResponse?) -> Void)
+    case bodyDetect(option: HumanBodyDetectOption,
+        handler: (Error?, HumanBodyDetectResponse?) -> Void)
+    case skeleton(option: SkeletonDetectOption,
+        handler: (Error?, SkeletonDetectResponse?) -> Void)
+    case segmentV1(option: HumanBodySegmentV1Option,
+        handler: (Error?, HumanBodySegmentResponse?) -> Void)
+    case segmentV2(option: HumanBodySegmentV2Option,
+        handler: (Error?, HumanBodySegmentResponse?) -> Void)
+    case gesture(option: HumanBodyGestureOption,
+        handler: (Error?, HumanBodyGestureResponse?) -> Void)
 
     @discardableResult
     public func request() -> URLSessionTask? {
         switch self {
-        case .detect(let option, let handler):
+        case .bodyDetect(let option, let handler):
            return Self.parse(option: option, completionHandler: handler)
+        case .skeleton(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .segmentV1(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .segmentV2(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .gesture(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
         }
     }
 }

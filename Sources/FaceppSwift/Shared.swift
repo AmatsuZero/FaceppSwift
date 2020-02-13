@@ -39,6 +39,10 @@ let kHumanBodyBaseV1URL: URL? = {
     return kHumanBodyBaseURL?.appendingPathComponent("v1")
 }()
 
+let kHumanBodyBaseV2URL: URL? = {
+    return kHumanBodyBaseURL?.appendingPathComponent("v2")
+}()
+
 protocol ResponseProtocol: Codable {
     // 用于区分每一次请求的唯一的字符串。
     var requestId: String? { get }
@@ -208,7 +212,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
 
     public var errorUserInfo: [String: Any] {
         return [
-            localizedDescription: errorDescription ?? "Unknown"
+            NSLocalizedDescriptionKey: errorDescription ?? "Unknown"
         ]
     }
 }
