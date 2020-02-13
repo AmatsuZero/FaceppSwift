@@ -11,11 +11,11 @@ import Foundation
 public class FacialFeaturesOption: FaceppBaseRequest {
     /// 是否返回人脸矫正后图片。合法值为：
     public var returnImageReset = false
-    
+
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("facialfeatures")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_imagereset"] = returnImageReset ? 1 : 0
@@ -49,60 +49,62 @@ public struct Threeparts: Codable {
     /// 返回三庭比例，保留至小数点后两位，若为0，则返回null
     public let partsRation: String?
 
+    public enum FaceupResult: String, Codable {
+        /// 上庭标准
+        case faceupNormal = "faceup_normal"
+        /// 上庭偏长
+        case faceupLong = "faceup_long"
+        /// 上庭偏短
+        case faceupShort = "faceup_short"
+    }
+
     public struct OnePart: Codable {
         /// 上庭长度（若为0或无法判断，则返回null）
         public let faceupLength: Float?
         /// 上庭占比（若为0或无法判断，则返回null）
         public let faceupRatio: Float?
-        
-        public enum FaceupResult: String, Codable {
-            /// 上庭标准
-            case faceupNormal = "faceup_normal"
-            /// 上庭偏长
-            case faceupLong = "faceup_long"
-            /// 上庭偏短
-            case faceupShort = "faceup_short"
-        }
         /// 上庭判断结果（若为0或无法判断，则返回null）
         public let faceupResult: FaceupResult?
     }
     /// 返回上庭分析结果，距离单位为mm，保留至小数点后两位
     public let onePart: OnePart
-    
+
+    public enum FacemidResult: String, Codable {
+        /// 中庭标准
+        case facemidNormal = "facemid_normal"
+        /// 中庭偏长
+        case facemidLong = "facemid_long"
+        /// 中庭偏短
+        case facemidShort = "facemid_short"
+    }
+
     public struct TwoPart: Codable {
         /// 中庭长度（若为0或无法判断，则返回null）
         public let facemidLength: Float?
         /// 中庭占比（若为0或无法判断，则返回null）
         public let facemidRatio: Float?
-        
-        public enum FacemidResult: String, Codable {
-            /// 中庭标准
-            case facemidNormal = "facemid_normal"
-            /// 中庭偏长
-            case facemidLong = "facemid_long"
-            /// 中庭偏短
-            case facemidShort = "facemid_short"
-        }
+
         /// 中庭判断结果（若为0或无法判断，则返回null）
         public let facemidResult: FacemidResult?
     }
     /// 返回中庭分析结果，包括以下属性，距离单位为mm，保留至小数点后两位
     public let twoPart: TwoPart?
-    
+
+    public enum FacedownResult: String, Codable {
+        /// 下庭标准
+        case facedownNormal = "facedown_normal"
+        /// 下庭偏长
+        case facedownLong = "facedown_long"
+        /// 下庭偏短
+        case facedownShort = "facedown_short"
+    }
+
     public struct ThreePart: Codable {
         /// 下庭长度（若为0或无法判断，则返回null）
         public let facedownLength: Float?
         /// 下庭占比（若为0或无法判断，则返回null）
         public let facedownRatio: Float?
-        
-        public enum FacedownResult: String, Codable {
-            /// 下庭标准
-            case facedownNormal = "facedown_normal"
-            /// 下庭偏长
-            case facedownLong = "facedown_long"
-            /// 下庭偏短
-            case facedownShort = "facedown_short"
-        }
+
         /// 下庭判断结果
         public let facedownResult: FacedownResult?
     }
@@ -111,61 +113,61 @@ public struct Threeparts: Codable {
 public struct FiveEyes: Codable {
     /// 返回五眼比例，保留至小数点后两位，若出现0，则返回null
     public let eyesRatio: String?
-    
+
+    public enum RighteyeEmptyResult: String, Codable {
+        /// 右眼外侧适中
+        case righteyeEmptyNormal = "righteye_empty_normal"
+        /// 右眼外侧偏窄
+        case righteyeEmptyShort = "righteye_empty_short"
+        /// 右眼外侧偏宽
+        case righteyeEmptyLong = "righteye_empty_long"
+    }
+
     public struct OneEye: Codable {
         /// 右外眼角颧弓留白距离（若为0或无法判断，则返回null）
         public let righteyeEmptyLength: Float?
         /// 右外眼角颧弓留白占比（若为0或无法判断，则返回null）
         public let righteyeEmptyRatio: Float?
-        
-        public enum RighteyeEmptyResult: String, Codable {
-            /// 右眼外侧适中
-            case righteyeEmptyNormal = "righteye_empty_normal"
-            /// 右眼外侧偏窄
-            case righteyeEmptyShort = "righteye_empty_short"
-            /// 右眼外侧偏宽
-            case righteyeEmptyLong = "righteye_empty_long"
-        }
         /// 五眼右侧判断结果
         public let righteyeEmptyResult: RighteyeEmptyResult?
     }
     /// 返回右眼宽度分析结果，距离单位为mm，保留至小数点后两位，若为0，则返回null
     public let righteye: Float?
-    
+
+    public enum EyeinResult: String, Codable {
+        /// 内眼角间距适中
+        case eyeinNormal = "eyein_normal"
+        /// 内眼角间距偏窄
+        case eyeinShort = "eyein_short"
+        /// 内眼角间距偏宽
+        case eyeinLong = "eyein_long"
+    }
+
     public struct ThreeEye: Codable {
         /// 内眼角间距（若为0或无法判断，则返回null）
         public let eyeinLength: Float?
         /// 内眼角间距占比（若为0或无法判断，则返回null）
         public let eyeinRatio: Float?
-        
-        public enum EyeinResult: String, Codable {
-            /// 内眼角间距适中
-            case eyeinNormal = "eyein_normal"
-            /// 内眼角间距偏窄
-            case eyeinShort = "eyein_short"
-            /// 内眼角间距偏宽
-            case eyeinLong = "eyein_long"
-        }
         /// 内眼角间距判断结果（若为0或无法判断，则返回null）
         public let eyeinResult: EyeinResult?
     }
     /// 返回左眼宽度分析结果，距离单位为mm，保留至小数点后两位，若为0，则返回null
     public let lefteye: Float?
-    
+
+    public enum LefteyeEmptyResult: String, Codable {
+        /// 左眼外侧适中
+        case lefteyeEmptyNormal = "lefteye_empty_normal"
+        /// 左外外侧偏窄
+        case lefteyeEmptyShort = "lefteye_empty_short"
+        /// (左眼外侧偏宽
+        case lefteyeEmptyLong = "lefteye_empty_long"
+    }
+
     public struct FiveEye: Codable {
         /// 左外眼角颧弓留白 （若为0或无法判断，则返回null）
         public let lefteyeEmptyLength: Float?
         /// 左外眼角颧弓留白占比（若为0或无法判断，则返回null）
         public let lefteyeEmptyRatio: Float?
-        
-        public enum LefteyeEmptyResult: String, Codable {
-            /// 左眼外侧适中
-            case lefteyeEmptyNormal = "lefteye_empty_normal"
-            /// 左外外侧偏窄
-            case lefteyeEmptyShort = "lefteye_empty_short"
-            /// (左眼外侧偏宽
-            case lefteyeEmptyLong = "lefteye_empty_long"
-        }
         /// 五眼左侧距判断结果（若为0或无法判断，则返回null）
         public let lefteyeEmptyResult: LefteyeEmptyResult?
     }
@@ -184,7 +186,7 @@ public struct FacialFeaturesFace: Codable {
     public let E: Float?
     /// 颞部宽度、颧部宽度（固定颧部为1）、下颌角宽度比（若为0则返回null）
     public let ABDRatio: Float?
-    
+
     public enum FaceType: String, Codable {
         /// 瓜子脸
         case pointedFace = "pointed_face"
@@ -212,7 +214,7 @@ public struct FacialFeaturesJaw: Codable {
     public let jawLength: Float?
     /// 下巴角度（若为0则返回null）
     public let jawAngle: Float?
-    
+
     public enum JawType: String, Codable {
         /// 圆下巴
         case flatJaw = "flat_jaw"
@@ -236,7 +238,7 @@ public struct FacialFeaturesEyebrow: Codable {
     public let browCamberAngle: Float?
     /// 眉毛粗细（若为0则返回null）
     public let browThick: Float?
-    
+
     public enum EyebrowType: String, Codable {
         /// 粗眉
         case bushyEyebrows = "bushy_eyebrows"
@@ -264,7 +266,7 @@ public struct FacialFeaturesEyes: Codable {
     public let eyeHeight: Float?
     /// 内眦角度数（若为0或无法判断，则返回null）
     public let angulusOculiMedialis: Float?
-    
+
     public enum EyesType: String, Codable {
         /// 圆眼
         case roundEyes = "round_eyes"
@@ -284,7 +286,7 @@ public struct FacialFeaturesEyes: Codable {
 public struct FacialFeaturesNose: Codable {
     /// 鼻翼宽度（若为0或无法判断，则返回null）
     public let noseWidth: Float?
-    
+
     public enum NoseType: String, Codable {
         /// 标准鼻
         case normalNose = "normal_nose"
@@ -306,7 +308,7 @@ public struct FacialFeaturesMouth: Codable {
     public let lipThickness: Float?
     /// 嘴角弯曲度（若为0或无法判断，则返回null）
     public let angulusOris: Float?
-    
+
     public enum MouthType: String, Codable {
         /// 薄唇
         case thinLip = "thin_lip"

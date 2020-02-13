@@ -9,7 +9,7 @@
 import Foundation
 
 public class FaceDetectOption: FaceppBaseRequest {
-    
+
     /// 是否检测并返回人脸关键点。合法值为：
     public enum ReturnLandmark: Int {
         /// 无特征点
@@ -19,18 +19,18 @@ public class FaceDetectOption: FaceppBaseRequest {
         /// 106特征点
         case all
     }
-    
+
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性。合法值为：
     public enum ReturnAttributes: String, Option {
         case gender, age, smiling, headpose, facequality, blur, eyestatus,
         emotion, ethnicity, beauty, mouthstatus, eyegaze, skinstatus
         case none
     }
-    
+
     /// 是否检测并返回人脸关键点
     public var returnLandmark = ReturnLandmark.no
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
-    public var returnAttributes = Set(arrayLiteral: ReturnAttributes.none)
+    public var returnAttributes: Set<ReturnAttributes> = [.none]
     ///是否检测并返回所有人脸的人脸关键点和人脸属性。如果不使用此功能，则本 API 只会对人脸面积最大的五个人脸分析人脸关键点和人脸属性
     public var calculateAll: Bool?
     /// 是否指定人脸框位置进行人脸检测。
@@ -39,11 +39,11 @@ public class FaceDetectOption: FaceppBaseRequest {
     public var beautyScoreMin = 0
     /// beauty_score_max
     public var beautyScoreNax = 100
-    
+
     override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("detect")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_landmark"] = returnLandmark.rawValue
@@ -61,12 +61,12 @@ public class FaceDetectOption: FaceppBaseRequest {
 }
 
 public struct Attributes: Codable {
-    
+
     public struct Threshold: Codable {
         public let threshold: Float
         public let value: Float
     }
-    
+
     public struct EyeStatusInfo: Codable {
         /// 眼睛被遮挡的置信度
         public let occlusion: Float
@@ -81,20 +81,20 @@ public struct Attributes: Codable {
         /// 佩戴墨镜的置信度
         public let darkGlasses: Float
     }
-    
+
     public struct Age: Codable {
         public let value: Int
     }
     /// 年龄分析结果。返回值为一个非负整数。
     public let age: Age?
-    
+
     public struct Beauty: Codable {
         public let femaleScore: Float
         public let maleScore: Float
     }
     /// 颜值识别结果。返回值包含以下两个字段。每个字段的值是一个浮点数，范围 [0,100]，小数点后 3 位有效数字。
     public let beauty: Beauty?
-    
+
     public struct Blur: Codable {
         public let blurness: Threshold
         public let gaussianblur: Threshold
@@ -102,7 +102,7 @@ public struct Attributes: Codable {
     }
     /// 人脸模糊分析结果
     public let blur: Blur?
-    
+
     public struct Emotion: Codable {
         public let anger: Float
         public let disgust: Float
@@ -114,19 +114,19 @@ public struct Attributes: Codable {
     }
     /// 情绪识别结果。返回值包含以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let emotion: Emotion?
-    
+
     public struct EyeStatus: Codable {
         public let leftEyeStatus: EyeStatusInfo
         public let rightEyeStatus: EyeStatusInfo
     }
-    
+
     /// 眼睛状态信息
     public let eyestatus: EyeStatus?
     /// 人脸质量判断结果
     public let facequality: Threshold?
     /// 人脸姿势分析结果
     public let headpose: FacialHeadPose?
-    
+
     public struct SkinStatus: Codable {
         /// 健康
         public let health: Float
@@ -137,10 +137,10 @@ public struct Attributes: Codable {
         /// 黑眼圈
         public let darkCircle: Float
     }
-    
+
     /// 面部特征识别结果，包括以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let skinstatus: SkinStatus?
-    
+
     public struct EyeGazeInfo: Codable {
         /// 眼球中心位置的 X 轴坐标
         public let positionXCoordinate: Float
@@ -153,17 +153,17 @@ public struct Attributes: Codable {
         /// 眼球视线方向向量的 Z 轴分量
         public let vectorZComponent: Float
     }
-    
+
     public struct EyeGaze: Codable {
         /// 左眼的位置与视线状态
         public let leftEyeGaze: EyeGazeInfo
         /// 右眼的位置与视线状态
         public let rightEyeGaze: EyeGazeInfo
     }
-    
+
     /// 眼球位置与视线方向信息
     public let eyegaze: EyeGaze?
-    
+
     public struct MouthStatus: Codable {
         /// 嘴部被医用口罩或呼吸面罩遮挡的置信度
         public let surgicalMaskOrRespirator: Float
@@ -185,8 +185,8 @@ public struct FaceppRectangle: Codable {
     public var left: Int = 0
     public var width: Int = 0
     public var height: Int = 0
-    
-    @available(OSX 10.12, iOS 10, *)
+
+    @available(OSX 10.12, iOS 10, watchOS 3, tvOS 10, *)
     public func asCGRect() -> CGRect {
         return .init(x: left, y: top, width: width, height: height)
     }
@@ -195,8 +195,8 @@ public struct FaceppRectangle: Codable {
 public struct FaceppPoint: Codable {
     public let x: Float
     public let y: Float
-    
-    @available(OSX 10.12, iOS 10, *)
+
+    @available(OSX 10.12, iOS 10, watchOS 3, tvOS 10, *)
     public func asCGPoint() -> CGPoint {
         return .init(x: CGFloat(x), y: CGFloat(y))
     }
@@ -287,7 +287,7 @@ public struct LandMark: Codable {
     public let rightEyebrowUpperLeftQuarter: FaceppPoint
     public let rightEyebrowUpperMiddle: FaceppPoint
     public let rightEyebrowUpperRightQuarter: FaceppPoint
-    
+
     // MARK: - 106个特征点：https://console.faceplusplus.com.cn/documents/13207408
     public let contourLeft10: FaceppPoint?
     public let contourLeft11: FaceppPoint?
@@ -333,7 +333,7 @@ public struct Face: Codable {
 }
 
 public struct FaceDetectResponse: ResponseProtocol {
-    
+
     public let requestId: String?
     public let imageId: String?
     public let timeUsed: Int?

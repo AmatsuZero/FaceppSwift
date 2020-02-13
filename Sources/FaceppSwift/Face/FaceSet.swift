@@ -14,14 +14,14 @@ public struct FaceSet: Codable, UseFaceppClientProtocol {
     /// FaceSet 的标识
     public let facesetToken: String?
     /// 用户提供的FaceSet标识，如果未提供为""
-    public var outerId: String? = nil
+    public var outerId: String?
     /// FaceSet的名字，如果未提供为""
-    public var displayName: String? = nil
+    public var displayName: String?
     /// FaceSet的标签，如果未提供为""
-    public var tags: String? = nil
+    public var tags: String?
 }
 
-//MARK: - 获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息。
+// MARK: - 获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息。
 /**
  获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息。
  
@@ -37,11 +37,11 @@ public struct FaceSetGetOption: RequestProtocol {
      默认值为1。
      */
     public var start = 1
-    
+
     var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("getfacesets")
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
@@ -78,11 +78,11 @@ public struct FaceSetsGetResponse: ResponseProtocol {
 
 public extension FaceSet {
     @discardableResult
-    static func getFaceSets(tags:[String] = [],
+    static func getFaceSets(tags: [String] = [],
                             start: Int = 1,
                             completionHanlder: @escaping (Error?, [FaceSet]?) -> Void) -> URLSessionTask? {
-        let opt = FaceSetGetOption(tags: tags, start: start)
-        return getFaceSets(option: opt) { (error, resp) in
+        let option = FaceSetGetOption(tags: tags, start: start)
+        return getFaceSets(option: option) { (error, resp) in
             if let err = error {
                 completionHanlder(err, nil)
             } else {
@@ -90,15 +90,15 @@ public extension FaceSet {
             }
         }
     }
-    
+
     @discardableResult
     static func getFaceSets(option: FaceSetGetOption,
-                            completionHanlder: @escaping (Error?, FaceSetsGetResponse?) -> Void) -> URLSessionTask?  {
+                            completionHanlder: @escaping (Error?, FaceSetsGetResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHanlder)
     }
 }
 
-//MARK: - 删除一个人脸集合
+// MARK: - 删除一个人脸集合
 /**
  删除一个人脸集合。
  
@@ -109,28 +109,28 @@ public class FaceSetBaseRequest: RequestProtocol {
     public var facesetToken: String?
     /// 用户提供的FaceSet标识
     public var outerId: String?
-    
+
     convenience init(faceset: FaceSet) {
-        self.init(facesetToken: faceset.facesetToken, outerId:faceset.outerId)
+        self.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
     }
-    
-    public init(facesetToken: String?, outerId:String?) {
+
+    public init(facesetToken: String?, outerId: String?) {
         self.facesetToken = facesetToken
         self.outerId = outerId
     }
-    
+
     var requsetURL: URL? {
         return kFaceSetBaseURL
     }
-    
+
     func paramsCheck() -> Bool {
         return facesetToken != nil || outerId != nil
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
-            "api_secret": apiSecret,
+            "api_secret": apiSecret
         ]
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
@@ -141,16 +141,16 @@ public class FaceSetBaseRequest: RequestProtocol {
 public class FaceSetsDeleteOption: FaceSetBaseRequest {
     /// 删除时是否检查FaceSet中是否存在face_token
     public var checkEmpty = true
-    
+
     init(facesetToken: String?, outerId: String?, checkEmpty: Bool = true) {
         super.init(facesetToken: facesetToken, outerId: outerId)
         self.checkEmpty = checkEmpty
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("delete")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["check_empty"] = checkEmpty ? 1 : 0
@@ -173,7 +173,7 @@ public struct FacesetDeleteResponse: ResponseProtocol {
 
 public extension FaceSet {
     @discardableResult
-    func delete(completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) -> URLSessionTask?  {
+    func delete(completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) -> URLSessionTask? {
         return FaceSet.delete(option: .init(facesetToken: facesetToken, outerId: outerId),
                               completionHanlder: completionHanlder)
     }
@@ -201,16 +201,16 @@ public class FacesetGetDetailOption: FaceSetBaseRequest {
      您可以输入上一次请求本 API 返回的 next 值，用以获得接下来的 100 个 face_token。
      */
     public var start = 1
-    
+
     init(facesetToken: String?, outerId: String?, start: Int = 1) {
         super.init(facesetToken: facesetToken, outerId: outerId)
         self.start = start
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("getdetail")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["start"] = 1
@@ -250,11 +250,11 @@ public struct FacesetGetDetailResponse: ResponseProtocol {
 public extension FaceSet {
     @discardableResult
     func detail(start: Int = 1, completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) -> URLSessionTask? {
-        let opt = FacesetGetDetailOption(facesetToken: facesetToken, outerId: outerId, start: start)
-        opt.start = start
-        return FaceSet.detail(option: opt, completionHandler: completionHandler)
+        let option = FacesetGetDetailOption(facesetToken: facesetToken, outerId: outerId, start: start)
+        option.start = start
+        return FaceSet.detail(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func detail(option: FacesetGetDetailOption,
                        completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) -> URLSessionTask? {
@@ -277,41 +277,41 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
     public var userData: String?
     /// FaceSet自定义标签组成的字符串，用来对FaceSet分组。最长255个字符，多个tag用逗号分隔，每个tag不能包括字符^@,&=*'"
     public var tags: [String]?
-    
+
     static let invalidUserDataCharacters = Set("^@,&=*'\"")
-    
+
     override func paramsCheck() -> Bool {
         guard (facesetToken != nil || outerId != nil)
             && (newOuterId != nil || displayName != nil || userData != nil || tags != nil) else {
                 return false
         }
-        
+
         if let data = userData {
             guard data.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
                 return false
             }
-            
+
             guard let d = data.data(using: .utf8), d.count <= 16 * 1024 * 1024 else {
                 return false
             }
         }
-        
+
         if let tags = tags, !tags.isEmpty {
-            guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)} )}) else {
+            guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)})}) else {
                 return false
             }
             if tags.joined(separator: ",").unicodeScalars.count > 255 {
                 return false
             }
         }
-        
+
         return true
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("update")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, _) = super.params(apiKey: apiSecret, apiSecret: apiSecret)
         params["new_outer_id"] = newOuterId
@@ -340,12 +340,12 @@ public extension FaceSet {
     func update(displayName: String?,
                 userData: String?,
                 tags: [String]?,
-                completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) -> URLSessionTask?  {
-        let opt = FacesetUpdateOption(faceset: self)
-        opt.displayName = displayName
-        opt.userData = userData
-        opt.tags = tags
-        return FaceSet.update(option: opt, completionHandler: completionHandler)
+                completionHandler: @escaping (Error?, FaceSetUpdateResponse?) -> Void) -> URLSessionTask? {
+        let option = FacesetUpdateOption(faceset: self)
+        option.displayName = displayName
+        option.userData = userData
+        option.tags = tags
+        return FaceSet.update(option: option, completionHandler: completionHandler)
     }
     @discardableResult
     static func update(option: FacesetUpdateOption,
@@ -354,7 +354,7 @@ public extension FaceSet {
     }
 }
 
-//MARK: - 移除一个FaceSet中的某些或者全部face_token
+// MARK: - 移除一个FaceSet中的某些或者全部face_token
 /**
  移除一个FaceSet中的某些或者全部face_token
  
@@ -369,22 +369,22 @@ public class FaceSetRemoveOption: FaceSetBaseRequest {
      注：face_tokens字符串传入“RemoveAllFaceTokens”则会移除FaceSet内所有的face_token
      */
     public var faceTokens = [String]()
-    
-    init(facesetToken: String?, outerId: String?, tokens:[String] = []) {
+
+    init(facesetToken: String?, outerId: String?, tokens: [String] = []) {
         super.init(facesetToken: facesetToken, outerId: outerId)
         faceTokens = tokens
     }
-    
+
     override var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("removeface")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["face_tokens"] = removeAll ? "RemoveAllFaceTokens" : faceTokens.joined(separator: ",")
         return (params, nil)
     }
-    
+
     override func paramsCheck() -> Bool {
         return removeAll || (!faceTokens.isEmpty && faceTokens.count <= 1000)
     }
@@ -423,14 +423,14 @@ public extension FaceSet {
         return FaceSet.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
                               completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func removeAll(completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
-        let opt = FaceSetRemoveOption(facesetToken: facesetToken, outerId: outerId)
-        opt.removeAll = true
-        return FaceSet.remove(option: opt, completionHandler: completionHandler)
+        let option = FaceSetRemoveOption(facesetToken: facesetToken, outerId: outerId)
+        option.removeAll = true
+        return FaceSet.remove(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func remove(option: FaceSetRemoveOption,
                        completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
@@ -449,26 +449,26 @@ public class FaceSetAddFaceOption: FaceSetBaseRequest {
      人脸标识 face_token 组成的字符串，可以是一个或者多个，用逗号分隔。最多不超过5个face_token
      */
     public var faceTokens: [String]
-    
+
     init(facesetToken: String?, outerId: String?, tokens: [String]) {
         faceTokens = tokens
         super.init(facesetToken: facesetToken, outerId: outerId)
-        
+
     }
-    
+
     init(faceset: FaceSet, tokens: [String]) {
         faceTokens = tokens
         super.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("addface")
     }
-    
+
     override func paramsCheck() -> Bool {
         return (facesetToken != nil || outerId != nil) && faceTokens.count <= 5
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["face_tokens"] = faceTokens.joined(separator: ",")
@@ -497,7 +497,7 @@ public extension FaceSet {
              completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
         return FaceSet.add(option: .init(faceset: self, tokens: faceTokens), completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func add(option: FaceSetAddFaceOption,
                     completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
@@ -534,38 +534,38 @@ public struct FaceSetCreateOption: RequestProtocol {
      默认值为0
      */
     public var forceMerge = 1
-    
+
     func paramsCheck() -> Bool {
         if let data = userData {
             guard data.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
                 return false
             }
-            
+
             guard let d = data.data(using: .utf8), d.count <= 16 * 1024 * 1024 else {
                 return false
             }
         }
-        
+
         if let tags = tags, !tags.isEmpty {
-            guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)} )}) else {
+            guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)})}) else {
                 return false
             }
             if tags.joined(separator: ",").unicodeScalars.count > 255 {
                 return false
             }
         }
-        
+
         return true
     }
-    
+
     var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("create")
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
-            "api_secret": apiSecret,
+            "api_secret": apiSecret
         ]
         params["outer_id"] = outerId
         params["tags"] = tags?.joined(separator: ",")
@@ -605,11 +605,15 @@ public extension FaceSet {
     @discardableResult
     static func new(option: FaceSetCreateOption,
                     completionHandler: @escaping (Error?, FaceSet?) -> Void) -> URLSessionTask? {
-        create(option: option) { (error, response) in
+        return create(option: option) { error, response in
             if error != nil {
                 completionHandler(error, nil)
             } else if let resp = response {
-                completionHandler(nil, .init(facesetToken: resp.facesetToken, outerId: resp.outerId, displayName: option.displayName, tags: option.tags?.joined(separator: ",")))
+                completionHandler(nil, .
+                    init(facesetToken: resp.facesetToken,
+                         outerId: resp.outerId, displayName:
+                        option.displayName,
+                         tags: option.tags?.joined(separator: ",")))
             } else {
                 completionHandler(nil, nil)
             }
@@ -632,11 +636,11 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
 public struct FaceSetTaskQueryOption: RequestProtocol {
     /// 异步任务的唯一标识
     public var taskId: String
-    
+
     var requsetURL: URL? {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("task_status")
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         return ([
             "api_key": apiKey,
@@ -653,7 +657,7 @@ public struct FaceSetTaskQueryResponse: ResponseProtocol {
     public var errorMessage: String?
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
-    /// MARK: - 任务完成返回
+    // MARK: - 任务完成返回
     /// 1: 标示当前异步任务已经完成
     public let status: Int?
     /// FaceSet 的标识

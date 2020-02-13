@@ -47,17 +47,17 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
     public var needTexture = false
     /// 是否返回mtl文件
     public var needMtl = false
-    
+
     func paramsCheck() -> Bool {
         return (imageURL1 != nil || imageFile1 != nil || imageBase641 != nil)
             && (imageURL2 != nil || imageFile2 != nil || imageBase642 != nil)
             && (imageURL3 != nil || imageFile3 != nil || imageBase643 != nil)
     }
-    
+
     var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("3dface")
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
@@ -65,7 +65,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         ]
         params["texture"] = needTexture ? 1 : 0
         params["mtl"] = needMtl ? 1 : 0
-        
+
         var files = [Params]()
         params["image_url_1"] = imageURL1
         params["image_base64_1"] = imageBase641
@@ -77,7 +77,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "data": data
             ])
         }
-        
+
         params["image_url_2"] = imageURL2
         params["image_base64_2"] = imageBase642
         if let url = imageFile2,
@@ -88,7 +88,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "data": data
             ])
         }
-        
+
         params["image_url_3"] = imageURL3
         params["image_base64_3"] = imageBase643
         if let url = imageFile3,
@@ -99,7 +99,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "data": data
             ])
         }
-        
+
         return (params, files)
     }
 }

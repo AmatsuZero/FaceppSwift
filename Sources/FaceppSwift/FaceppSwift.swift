@@ -5,7 +5,7 @@ public class FaceppClient {
     private let apiSecret: String
     private let session = URLSession(configuration: .default)
     static private(set) var shared: FaceppClient?
-    public class func Initialization(key: String, secret: String) {
+    public class func initialization(key: String, secret: String) {
         DispatchQueue.once(token: "com.daubert.faceapp.init") {
             shared = FaceppClient(apikey: key, apiSecret: secret)
         }
@@ -13,7 +13,7 @@ public class FaceppClient {
     private init() {
         fatalError("不要调用原来的初始化")
     }
-    
+
     private init(apikey key: String, apiSecret secret: String) {
         self.apiKey = key
         self.apiSecret = secret
@@ -21,31 +21,38 @@ public class FaceppClient {
 }
 
 public enum Facepp: UseFaceppClientProtocol {
-    case detect(option: FaceDetectOption, completionHanlder: (Error?, FaceDetectResponse?) -> Void)
-    case compare(option: CompareOption, completionHanlder: (Error?, CompareResponse?) -> Void)
-    case beautify(option: BeautifyOption, completionHanlder: (Error?, BeautifyResponse?) -> Void)
-    case thousandLandmark(option: ThousandLandMarkOption, completionHanlder: (Error?, ThousandLandmarkResponse?) -> Void)
-    case facialFeatures(option: FacialFeaturesOption, completionHandler:  (Error?, FacialFeaturesResponse?) -> Void)
-    case threeDimensionFace(option: ThreeDimensionFaceOption, completionHandler: (Error?, ThreeDimensionFaceResponse?) -> Void)
-    case skinanalyze(option: SkinAnalyzeOption, completionHandler: (Error?, SkinAnalyzeResponse?) -> Void)
-    
+    case detect(option: FaceDetectOption,
+        completionHanlder: (Error?, FaceDetectResponse?) -> Void)
+    case compare(option: CompareOption,
+        completionHanlder: (Error?, CompareResponse?) -> Void)
+    case beautify(option: BeautifyOption,
+        completionHanlder: (Error?, BeautifyResponse?) -> Void)
+    case thousandLandmark(option: ThousandLandMarkOption,
+        completionHanlder: (Error?, ThousandLandmarkResponse?) -> Void)
+    case facialFeatures(option: FacialFeaturesOption,
+        completionHandler:  (Error?, FacialFeaturesResponse?) -> Void)
+    case threeDimensionFace(option: ThreeDimensionFaceOption,
+        completionHandler: (Error?, ThreeDimensionFaceResponse?) -> Void)
+    case skinanalyze(option: SkinAnalyzeOption,
+        completionHandler: (Error?, SkinAnalyzeResponse?) -> Void)
+
     @discardableResult
     public func request() -> URLSessionTask? {
         switch self {
-        case .detect(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
-        case .compare(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
-        case .beautify(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
-        case .thousandLandmark(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
-        case .facialFeatures(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
-        case .threeDimensionFace(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
-        case .skinanalyze(let opt, let handler):
-            return Self.parse(option: opt, completionHandler: handler)
+        case .detect(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .compare(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .beautify(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .thousandLandmark(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .facialFeatures(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .threeDimensionFace(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .skinanalyze(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
         }
     }
 }
@@ -54,14 +61,14 @@ extension FaceppClient {
     @discardableResult
     func parse<R: ResponseProtocol>(option: RequestProtocol,
                                     completionHanlder: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
-        
+
         let (request, data) = option.asRequest(apiKey: apiKey, apiSecret: apiSecret)
-        
+
         guard let req = request else {
-            completionHanlder(FaceppRequestError.MissingArguments, nil)
+            completionHanlder(FaceppRequestError.missingArguments, nil)
             return nil
         }
-        
+
         let task = session.uploadTask(with: req, from: data) { data, _, error in
             guard error == nil, let data = data else {
                 return completionHanlder(error, nil)
@@ -71,11 +78,11 @@ extension FaceppClient {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let resp = try decoder.decode(R.self, from: data)
                 if let msg = resp.errorMessage {
-                    completionHanlder(FaceppRequestError.FaceppError(reason: msg), nil)
+                    completionHanlder(FaceppRequestError.faceppError(reason: msg), nil)
                 } else {
                     completionHanlder(error, resp)
                 }
-            } catch(let err) {
+            } catch let err {
                 completionHanlder(err, nil)
             }
         }
@@ -99,19 +106,19 @@ public class FaceppBaseRequest: RequestProtocol {
      如果同时传入了image_url、image_file和image_base64参数，本API使用顺序为image_file优先，image_url最低。
      */
     public var imageBase64: String?
-    
+
     var requsetURL: URL? {
         return kFaceBaseURL
     }
-    
+
     func paramsCheck() -> Bool {
         return imageURL != nil || imageFile != nil || imageBase64 != nil
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
-            "api_secret": apiSecret,
+            "api_secret": apiSecret
         ]
         var files = [Params]()
         params["image_url"] = imageURL

@@ -21,11 +21,11 @@ public struct SkinAnalyzeEyelids: Codable {
         /// 平行双眼皮
         case parallelDoubleEyelid
         /// 扇形双眼皮
-        case FanDoubleEyelid
+        case fanDoubleEyelid
     }
     public let type: EyelidType
     public let confidence: Double
-    
+
     private enum CodingKeys: String, CodingKey {
         case type = "value"
         case confidence
@@ -64,7 +64,7 @@ public struct SkinAnalyzeResponse: ResponseProtocol {
      无影响因素的返回：[]
      */
     public let warning: [String]?
-    
+
     public struct Result: Codable {
         /// 左眼双眼皮检测结果：
         public let leftEyelids: SkinAnalyzeEyelids?
@@ -118,19 +118,21 @@ public struct SkinAnalyzeSkinType: Codable {
     }
     /// 皮肤类型
     public let skinType: SkinType
-    
+
     public struct SkinTypeResult: Codable {
         public let oilySkin: SkinAnalyzeHasResult
         public let drySkin: SkinAnalyzeHasResult
         public let neutralSkin: SkinAnalyzeHasResult
         public let combinationSkin: SkinAnalyzeHasResult
-        
-        private enum CodingKeys: String, CodingKey {
-            case oilySkin = "0"
-            case drySkin = "1"
-            case neutralSkin = "2"
-            case combinationSkin = "3"
-        }
+    }
+}
+
+extension SkinAnalyzeSkinType.SkinTypeResult {
+    private enum CodingKeys: String, CodingKey {
+        case oilySkin = "0"
+        case drySkin = "1"
+        case neutralSkin = "2"
+        case combinationSkin = "3"
     }
 }
 
@@ -146,4 +148,3 @@ extension SkinAnalyzeHasResult {
         confidence = try container.decode(Double.self, forKey: .confidence)
     }
 }
-

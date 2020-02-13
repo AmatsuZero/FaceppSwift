@@ -22,27 +22,28 @@ public class SearchOption: FaceppBaseRequest {
      
      如果此参数传入值为空，或不传入此参数，则不使用此功能。本 API 会自动检测图片内所有区域的所有人脸。
      
-     如果使用正式 API Key 对此参数传入符合格式要求的值，则使用此功能。需要传入一个字符串代表人脸框位置，系统会根据此坐标对框内的图像进行人脸检测，以及人脸关键点和人脸属性等后续操作。系统返回的人脸矩形框位置会与传入的 face_rectangle 完全一致。对于此人脸框之外的区域，系统不会进行人脸检测，也不会返回任何其他的人脸信息。
-     
+     如果使用正式 API Key 对此参数传入符合格式要求的值，则使用此功能。
+     需要传入一个字符串代表人脸框位置，系统会根据此坐标对框内的图像进行人脸检测，以及人脸关键点和人脸属性等后续操作。
+     系统返回的人脸矩形框位置会与传入的 face_rectangle 完全一致。对于此人脸框之外的区域，系统不会进行人脸检测，也不会返回任何其他的人脸信息。
      参数规格：四个正整数，用逗号分隔，依次代表人脸框左上角纵坐标（top），左上角横坐标（left），人脸框宽度（width），人脸框高度（height）。例如：70,80,100,100
      
      注：只有在传入 image_url、image_file 和 image_base64 三个参数中任意一个时，本参数才生效。
      */
     public var faceRectangle: FaceppRectangle?
-    
+
     override func paramsCheck() -> Bool {
         guard returnResultCount >= 1, returnResultCount <= 5 else {
             return false
         }
-        
+
         return (faceToken != nil || imageURL != nil || imageFile != nil || imageBase64 != nil)
             && (facesetToken != nil || outerId != nil)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("search")
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_result_count"] = returnResultCount
@@ -88,7 +89,7 @@ public struct SearchResponse: ResponseProtocol {
      注：如果未传入图片，本字段不返回。如果没有检测出人脸则为空数组
      */
     public let faces: [Face]?
-    
+
     public struct Result: Codable {
         /// 从 FaceSet 中搜索出的一个人脸标识 face_token。
         public let faceToken: String
@@ -113,19 +114,19 @@ public extension FaceSet {
                 imageBase64: String? = nil,
                 returnResultCount: Int = 1,
                 completionHanlder: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask? {
-        let opt = SearchOption()
-        opt.facesetToken = facesetToken
-        opt.outerId = outerId
-        opt.imageURL = imageURL
-        opt.faceToken = faceToken
-        opt.imageFile = imageFile
-        opt.imageBase64 = imageBase64
-        opt.returnResultCount = returnResultCount
-        return FaceSet.search(option: opt, completionHanlder: completionHanlder)
+        let option = SearchOption()
+        option.facesetToken = facesetToken
+        option.outerId = outerId
+        option.imageURL = imageURL
+        option.faceToken = faceToken
+        option.imageFile = imageFile
+        option.imageBase64 = imageBase64
+        option.returnResultCount = returnResultCount
+        return FaceSet.search(option: option, completionHanlder: completionHanlder)
     }
     @discardableResult
     static func search(option: SearchOption,
-                       completionHanlder: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask?  {
+                       completionHanlder: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHanlder)
     }
 }

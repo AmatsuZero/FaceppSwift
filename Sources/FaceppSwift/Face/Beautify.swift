@@ -26,11 +26,11 @@ public class BeautifyOption: FaceppBaseRequest {
      本参数默认值为 100
      */
     public var smoothing = 100
-    
+
     override var requsetURL: URL? {
        return kFaceappV1URL?.appendingPathComponent("beautify")
     }
-    
+
     override func paramsCheck() -> Bool {
         guard whitening >= 0 && whitening <= 100 else {
             return false
@@ -51,4 +51,3 @@ public struct BeautifyResponse: ResponseProtocol {
     /// 美化后的图片，jpg格式。base64 编码的二进制图片数据。图片尺寸大小与底图一致。
     public let result: String?
 }
-

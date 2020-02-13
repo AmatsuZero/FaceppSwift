@@ -59,7 +59,7 @@ extension RequestProtocol {
     func paramsCheck() -> Bool {
         return true
     }
-    
+
     func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?) {
         guard let url = requsetURL, paramsCheck() else {
             return (nil, nil)
@@ -73,25 +73,26 @@ typealias Params = [String: Any]
 
 func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
     var bodyData = Data()
-    
+
     params.forEach { (key: String, obj: Any) in
         bodyData += Data.boundaryData
-        
+
         if let data = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8) {
             bodyData += data
         }
-        
+
         if let data = "\(obj)\r\n".data(using: .utf8) {
             bodyData += data
         }
     }
-    
+
     fileData.forEach { dic in
         if let fieldName = dic["fieldName"] as? String,
             let fileData = dic["data"] as? Data,
             let fileType = dic["fileType"] as? String {
             bodyData += Data.boundaryData
-            if let data = "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fieldName)\"\r\n".data(using: .utf8) {
+            if let data = "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fieldName)\"\r\n"
+                .data(using: .utf8) {
                 bodyData += data
             }
             if let data = "Content-Type: \(fileType)\r\n\r\n".data(using: .utf8) {
@@ -103,11 +104,11 @@ func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
             }
         }
     }
-    
+
     if let data = "--boundary--\r\n".data(using: .utf8) {
         bodyData += data
     }
-    
+
     return bodyData
 }
 
@@ -134,13 +135,13 @@ extension DispatchQueue {
      - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
      - parameter block: Block to execute once
      */
-    class func once(token: String = UUID().uuidString, block: ()-> Void) {
+    class func once(token: String = UUID().uuidString, block: () -> Void) {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
-        
+
         if _onceTracker.contains(token) {
             return
         }
-        
+
         _onceTracker.append(token)
         block()
     }
@@ -159,53 +160,53 @@ extension Set where Element: Option {
 }
 
 public enum FaceppRequestError: CustomNSError, LocalizedError {
-    case NotInit
-    case MissingArguments
-    case FaceppError(reason: String)
-    
+    case notInit
+    case missingArguments
+    case faceppError(reason: String)
+
     public static var errorDomain: String {
         return "com.daubert.faceapp"
     }
-    
+
     public var errorDescription: String? {
         switch self {
-        case .NotInit:
+        case .notInit:
             return "没有初始化"
-        case .MissingArguments:
+        case .missingArguments:
             return "缺少参数"
-        case .FaceppError(let reason):
+        case .faceppError(let reason):
             return "服务器错误：\(reason)"
         }
     }
-    
+
     public var failureReason: String? {
         switch self {
-        case .NotInit:
+        case .notInit:
             return "没有初始化"
-        case .MissingArguments:
+        case .missingArguments:
             return "参数检查失败"
-        case .FaceppError(let reason):
+        case .faceppError(let reason):
             return reason
         }
     }
-    
+
     public var helpAnchor: String? {
         switch self {
-        case .NotInit: return "请重新调用初始化方法"
-        case .MissingArguments: return "请根据文档检查入参"
-        case .FaceppError(let reason): return "请根据 Wiki 排查失败原因：\(reason)"
+        case .notInit: return "请重新调用初始化方法"
+        case .missingArguments: return "请根据文档检查入参"
+        case .faceppError(let reason): return "请根据 Wiki 排查失败原因：\(reason)"
         }
     }
 
     public var errorCode: Int {
         switch self {
-        case .NotInit: return -100001
-        case .MissingArguments: return -100002
-        case .FaceppError: return -100003
+        case .notInit: return -100001
+        case .missingArguments: return -100002
+        case .faceppError: return -100003
         }
     }
-   
-    public var errorUserInfo: [String : Any] {
+
+    public var errorUserInfo: [String: Any] {
         return [
             localizedDescription: errorDescription ?? "Unknown"
         ]
@@ -228,7 +229,7 @@ extension CharacterSet {
     static let urlQueryValueAllowed: CharacterSet = {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
-        
+
         var allowed = CharacterSet.urlQueryAllowed
         allowed.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
         return allowed
@@ -236,7 +237,7 @@ extension CharacterSet {
 }
 
 extension URLRequest {
-    static func postRequest(url:URL,  body:Params, filesData: [Params] = []) -> (URLRequest?, Data?) {
+    static func postRequest(url: URL, body: Params, filesData: [Params] = []) -> (URLRequest?, Data?) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=boundary", forHTTPHeaderField: "Content-Type")
@@ -251,7 +252,7 @@ public struct FacialThreshHolds: Codable {
     public let middlePrecision: Float
     /// 误识率为十万分之一的置信度阈值
     public let hightPrecision: Float
-    
+
     private enum CodingKeys: String, CodingKey {
         case lowPrecision = "1e-3"
         case middlePrecision = "1e-4"
@@ -287,11 +288,11 @@ extension UseFaceppClientProtocol {
     func request() -> URLSessionTask? {
         return nil
     }
-    
+
     static func parse<R: ResponseProtocol>(option: RequestProtocol,
                                            completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         guard let client = FaceppClient.shared else {
-            completionHandler(FaceppRequestError.NotInit, nil)
+            completionHandler(FaceppRequestError.notInit, nil)
             return nil
         }
         return client.parse(option: option, completionHanlder: completionHandler)

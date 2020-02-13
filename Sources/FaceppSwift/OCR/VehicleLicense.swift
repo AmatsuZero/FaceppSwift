@@ -17,7 +17,7 @@ public struct OCRVehicleLicenseResponse: ResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
-    
+
     public struct Card: Codable {
         /// 证件版本。
         public let type: OCRType
@@ -43,7 +43,7 @@ public struct OCRVehicleLicenseResponse: ResponseProtocol {
         public let issueDate: Date?
         /// 签发机关。
         public let issuedBy: String?
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             type = try container.decode(OCRType.self, forKey: .type)
@@ -57,10 +57,18 @@ public struct OCRVehicleLicenseResponse: ResponseProtocol {
             } else {
                 issueDate = nil
             }
-            plateNo = container.contains(.plateNo) ? try container.decode(String.self, forKey: .plateNo) : nil
-            vehicleType = container.contains(.vehicleType) ? try container.decode(String.self, forKey: .vehicleType) : nil
-            owner = container.contains(.owner) ? try container.decode(String.self, forKey: .owner) : nil
-            useCharacter = container.contains(.useCharacter) ? try container.decode(String.self, forKey: .useCharacter) : nil
+            plateNo = container.contains(.plateNo)
+                ? try container.decode(String.self, forKey: .plateNo)
+                : nil
+            vehicleType = container.contains(.vehicleType)
+                ? try container.decode(String.self, forKey: .vehicleType)
+                : nil
+            owner = container.contains(.owner)
+                ? try container.decode(String.self, forKey: .owner)
+                : nil
+            useCharacter = container.contains(.useCharacter)
+                ? try container.decode(String.self, forKey: .useCharacter)
+                : nil
             model = container.contains(.model) ? try container.decode(String.self, forKey: .model) : nil
             vin = container.contains(.vin) ? try container.decode(String.self, forKey: .vin) : nil
             engineNo = container.contains(.engineNo) ? try container.decode(String.self, forKey: .engineNo) : nil

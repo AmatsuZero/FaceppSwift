@@ -14,7 +14,10 @@ public class OCRDriverLicenseV1Option: CardppV1Requst {
     }
 }
 
-/// 检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息。只可识别驾照正本(main sheet)正面和副本(second sheet)正面，一张照片最多可识别一个正本正面和一个副本正面。
+/**
+  检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息。
+ 只可识别驾照正本(main sheet)正面和副本(second sheet)正面，一张照片最多可识别一个正本正面和一个副本正面。
+ */
 public struct OCRDriverLicenseV2Option: RequestProtocol {
     /// 图片的URL
     public var imageURL: URL?
@@ -33,7 +36,7 @@ public struct OCRDriverLicenseV2Option: RequestProtocol {
      当经由api_key判断用户为已付费的正式用户，且此参数设定为true时，分别对每部分OCR识别结果同时输出置信度，并同时输出正本/副本的置信度。
      */
     public var needReturnScore = false
-    
+
     public enum Mode: String {
         /// 快速识别模式
         case fast
@@ -49,15 +52,15 @@ public struct OCRDriverLicenseV2Option: RequestProtocol {
      快速识别模式只可识别驾照正本(main sheet)正面；完备识别模式支持识别驾照正本和副本。
      */
     public var mode = Mode.fast
-    
+
     var requsetURL: URL? {
         return kCardppV2URL?.appendingPathComponent("ocrdriverlicense")
     }
-    
+
     func paramsCheck() -> Bool {
         return imageURL != nil || imageFile != nil
     }
-    
+
     func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
@@ -86,16 +89,16 @@ public struct DriverLicenseStringModel: Codable {
 public struct OCRDriverLicenseMain: Codable {
     /// 返回驾驶证正本置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
     public let confidence: Float?
-    
+
     public struct Version: Codable {
         /// 表示驾驶证正本版本，int型，返回 2，表示是2013版本驾驶证；返回 1，表示是2008或更早版本驾驶证
-        public let content: OCRDriverLicenseV1Response.Card.Version
+        public let content: OCRDriverLicenseV1Response.Version
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
         public let confidence: Float?
     }
     /// 驾驶证正本版本及其置信度
     public let version: Version
-    
+
     /**
      住址及其置信度，返回字段分为以下两部分：
      
@@ -103,27 +106,29 @@ public struct OCRDriverLicenseMain: Codable {
      confidence：表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
      */
     public let address: DriverLicenseStringModel
-    
+
     public struct DateModel: Codable {
         public let content: Date?
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回
         public let confidence: Float?
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let date = try container.decode(String.self, forKey: .content)
             let formatter = DateFormatter()
             formatter.dateFormat = "YYYY-MM-DD"
             content = formatter.date(from: date)
-            confidence = container.contains(.confidence) ? try container.decode(Float.self, forKey: .confidence) : nil
+            confidence = container.contains(.confidence)
+                ? try container.decode(Float.self, forKey: .confidence)
+                : nil
         }
     }
     /// 生日及其置信度
     public let birthday: DateModel
-    
+
     public struct Gender: Codable {
         /// 表示性别
-        public let content: OCRDriverLicenseV1Response.Card.Gender
+        public let content: OCRDriverLicenseV1Response.Gender
         public let confidence: Float?
     }
     /// 性别及其置信度
@@ -142,9 +147,9 @@ public struct OCRDriverLicenseMain: Codable {
      confidence：表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
      */
     public let name: DriverLicenseStringModel
-    
+
     public struct DriverLicenseClass: Codable {
-        public let content: OCRDriverLicenseV1Response.Card.Class
+        public let content: OCRDriverLicenseV1Response.Class
         public let confidence: Float?
     }
     /**
@@ -189,11 +194,11 @@ public struct OCRDriverLicenseMain: Codable {
      confidence：表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
      */
     public let validFor: DateModel?
-    
+
     public struct ValidDate: Codable {
         public let content: [Date?]
         public let confidence: Float?
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let date = try container.decode(String.self, forKey: .content)
@@ -201,13 +206,16 @@ public struct OCRDriverLicenseMain: Codable {
             formatter.dateFormat = "YYYY-MM-DD"
             content = date.components(separatedBy: "-")
                 .map { formatter.date(from: $0) }
-            confidence = container.contains(.confidence) ? try container.decode(Float.self, forKey: .confidence) : nil
+            confidence = container.contains(.confidence)
+                ? try container.decode(Float.self, forKey: .confidence)
+                : nil
         }
     }
     /**
      有效期限及置信度，返回字段分为以下两部分：
      
-     content：有效期限格式为：YYYY-MM-DD至YYYY-MM-DD，string型，根据驾驶证版本不同，可能会返回valid_from和valid_for两个字段，另一种情况只返回valid_date字段。
+     content：有效期限格式为：YYYY-MM-DD至YYYY-MM-DD，string型，
+     根据驾驶证版本不同，可能会返回valid_from和valid_for两个字段，另一种情况只返回valid_date字段。
      confidence：值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
      */
     public let validDate: ValidDate?
@@ -261,45 +269,48 @@ public struct OCRDriverLicenseV1Response: ResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
-    
+
+    public enum Version: Int, Codable {
+        /// 2008或更早版本驾驶证
+        case old = 1
+        /// 2013版本驾驶证
+        case new = 2
+    }
+
+    public enum Gender: String, Codable {
+        case male = "男"
+        case female = "女"
+    }
+
+    public enum Class: String, Codable {
+        case A1, A2, A3, B1, B2, C1, C2, C3, C4, C5, D, E, F, M, N, P
+    }
+
+    public enum Side: String, Codable {
+        case front, back
+    }
+
     public struct Card: Codable {
         /// 证件类型。
         public let type: OCRType
-        
-        public enum Version: Int, Codable {
-            /// 2008或更早版本驾驶证
-            case old = 1
-            /// 2013版本驾驶证
-            case new = 2
-        }
+
         /// 驾驶证版本
         public let version: Version
         /// 住址
         public let address: String
         /// 生日，格式为YYYY-MM-DD
         public let birthday: Date?
-        
-        public enum Gender: String, Codable {
-            case male = "男"
-            case female = "女"
-        }
-        
+
         /// 性别（男/女）
         public let gender: Gender
         /// 驾驶证号
         public let licenseNumber: String
         /// 姓名
         public let name: String
-        
-        public enum Class: String, Codable {
-            case A1, A2, A3, B1, B2, C1, C2, C3, C4, C5, D, E, F, M, N, P
-        }
+
         /// 准驾车型
         public let `class`: Class?
-        
-        public enum Side: String, Codable {
-            case front, back
-        }
+
         /// 表示驾驶证的正面或者反面。该字段目前只会返回“front”，表示是正面
         public let side: Side
         /// 国籍
@@ -318,7 +329,7 @@ public struct OCRDriverLicenseV1Response: ResponseProtocol {
          根据驾驶证版本不同，一种情况会返回valid_from和valid_for两个字段，另一种情况只返回valid_date字段
          */
         public let validDate: [Date?]?
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             type = try container.decode(OCRType.self, forKey: .type)
@@ -367,7 +378,7 @@ public struct OCRDriverLicenseV1Response: ResponseProtocol {
     }
     /**
      检测出证件的数组
-
+     
      注：如果没有检测出证件则为空数组
      */
     public let cards: [Card]?

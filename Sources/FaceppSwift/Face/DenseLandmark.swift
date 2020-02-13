@@ -14,11 +14,11 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
     /// 人脸标识 face_token，优先使用该参数
     public var faceToken: String?
     public var returnLandMark: Set<ReturnLandMark>
-    
+
     public init(returnLandMark: Set<ReturnLandMark>) {
         self.returnLandMark = returnLandMark
     }
-    
+
     public enum ReturnLandMark: String, Option {
         case leftEyeBrow = "left_eyebrow"
         case rightEyeBrow = "right_eyebrow"
@@ -28,15 +28,15 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
         case rightEyeEyelid = "right_eye_eyelid"
         case nose, mouse, face
     }
-    
+
     override var requsetURL: URL? {
         return kFaceBaseURL?.appendingPathComponent("thousandlandmark")
     }
-    
+
     override func paramsCheck() -> Bool {
         return faceToken != nil || super.paramsCheck()
     }
-    
+
     override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
         var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_landmark"] = returnLandMark == .all
@@ -59,7 +59,7 @@ public struct ThousandLandmarkResponse: ResponseProtocol {
     public var errorMessage: String?
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
-    
+
     public struct Face: Codable {
         /// 人脸矩形框的位置
         public let faceRectangle: FaceppRectangle
@@ -73,7 +73,7 @@ public struct ThousandLandmarkResponse: ResponseProtocol {
 public struct DenseLandmark: Codable {
     // MARK: - 面部轮廓关键点集合。返回值为：
     public struct Face: Codable {
-        //MARK: - 面部上半部分轮廓关键点，从右耳附近起始到左耳附近终，按逆时针顺序检测到的位置序列。
+        // MARK: - 面部上半部分轮廓关键点，从右耳附近起始到左耳附近终，按逆时针顺序检测到的位置序列。
         public let faceHairline0: FaceppPoint
         public let faceHairline1: FaceppPoint
         public let faceHairline2: FaceppPoint
@@ -490,9 +490,9 @@ public struct DenseLandmark: Codable {
     }
     /// 右眉毛关键点集合
     public let rightEyebrow: RightEyebrow?
-    
+
     public struct LeftEye: Codable {
-        //MARK: - 从左眼左端中心位置起始，按顺时针顺序检测到的左眼关键点位置序列。
+        // MARK: - 从左眼左端中心位置起始，按顺时针顺序检测到的左眼关键点位置序列。
         public let leftEye0: FaceppPoint
         public let leftEye1: FaceppPoint
         public let leftEye2: FaceppPoint
@@ -563,7 +563,7 @@ public struct DenseLandmark: Codable {
     }
     /// 左眼内圈关键点集合
     public let leftEye: LeftEye?
-    
+
     public struct LeftEyeEyelid: Codable {
         // MARK: - 从左眼外眼角位置起始，按顺时针顺序检测到的左眼外圈关键点位置序列。
         public let leftEyeEyelid0: FaceppPoint
@@ -633,7 +633,7 @@ public struct DenseLandmark: Codable {
     }
     /// 左眼外圈关键点集合
     public let leftEyeEyelid: LeftEyeEyelid?
-    
+
     public struct RightEye: Codable {
         // MARK: - 从右眼右端中心位置起始，按逆时针顺序检测到的右眼关键点位置序列
         public let rightEye0: FaceppPoint
@@ -706,7 +706,7 @@ public struct DenseLandmark: Codable {
     }
     /// 右眼内圈关键点集合
     public let rightEye: RightEye?
-    
+
     public struct RightEyeEyelid: Codable {
         // MARK: - 从右眼外眼角位置起始，按逆时针顺序检测到的左眼外圈关键点位置序列。
         public let rightEyeEyelid0: FaceppPoint
@@ -776,7 +776,7 @@ public struct DenseLandmark: Codable {
     }
     /// 右眼外圈关键点集合
     public let rightEyeEyelid: RightEyeEyelid?
-    
+
     public struct Nose: Codable {
         // MARK: - 从鼻子上部左端位置起始到鼻尖，顺序检测到的鼻子关键点位置序列。
         public let noseLeft0: FaceppPoint
@@ -974,7 +974,7 @@ public struct DenseLandmark: Codable {
     }
     /// 鼻子关键点集合
     public let nose: Nose?
-    
+
     public struct Mouth {
         // MARK: - 上嘴唇的上边缘。从左边嘴角开始，从左到右检测到的上嘴唇上边缘关键点位置序列。
         public let upperLip0: FaceppPoint

@@ -9,12 +9,12 @@ import Foundation
 
 public enum FaceppHumanBody: UseFaceppClientProtocol {
     case detect(option: HumanBodyDetectOption, handler: (Error?, HumanBodyDetectResponse?) -> Void)
-    
+
     @discardableResult
     public func request() -> URLSessionTask? {
         switch self {
-        case .detect(let opt, let handler):
-           return Self.parse(option: opt, completionHandler: handler)
+        case .detect(let option, let handler):
+           return Self.parse(option: option, completionHandler: handler)
         }
     }
 }

@@ -22,18 +22,24 @@ public struct OCRBankCardResponse: ResponseProtocol {
     public var timeUsed: Int?
     /// 被检测的图片在系统中的标识
     public let imageId: String?
-    
+
+    public struct Bound: Codable {
+        /// 银行卡右上角的像素点坐标
+        public let rightTop: FaceppPoint
+        /// 银行卡左上角的像素点坐标
+        public let leftTop: FaceppPoint
+        /// 银行卡右下角的像素点坐标
+        public let rightBottom: FaceppPoint
+        /// 银行卡左下角的像素点坐标
+        public let leftBottom: FaceppPoint
+    }
+
+    public enum Organization: String, Codable {
+        case union, master, visa, jcb
+    }
+
     public struct Card: Codable {
-        public struct Bound: Codable {
-            /// 银行卡右上角的像素点坐标
-            public let rightTop: FaceppPoint
-            /// 银行卡左上角的像素点坐标
-            public let leftTop: FaceppPoint
-            /// 银行卡右下角的像素点坐标
-            public let rightBottom: FaceppPoint
-            /// 银行卡左下角的像素点坐标
-            public let leftBottom: FaceppPoint
-        }
+
         /// 银行卡卡片四个角的像素点坐标
         public let bound: Bound
         /**
@@ -48,10 +54,7 @@ public struct OCRBankCardResponse: ResponseProtocol {
          如果没有识别到，则返回“null”
          */
         public let bank: String?
-        
-        public enum Organization: String, Codable {
-            case union, master, visa, jcb
-        }
+
         /// 表示所支持的金融组织服务
         public let organization: [Organization]?
     }
