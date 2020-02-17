@@ -16,7 +16,7 @@ public class SearchOption: FaceppBaseRequest {
     /// 用户自定义的 FaceSet 标识
     public var outerId: String?
     /// 控制返回比对置信度最高的结果的数量。合法值为一个范围 [1,5] 的整数。默认值为 1
-    public var returnResultCount = 1
+    public var returnResultCount: UInt = 1
     /**
      当传入图片进行人脸检测时，是否指定人脸框位置进行检测。
      
@@ -31,21 +31,24 @@ public class SearchOption: FaceppBaseRequest {
      */
     public var faceRectangle: FaceppRectangle?
 
-    override func paramsCheck() -> Bool {
-        guard returnResultCount >= 1, returnResultCount <= 5 else {
-            return false
+    override func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
         }
-
-        return (faceToken != nil || imageURL != nil || imageFile != nil || imageBase64 != nil)
-            && (facesetToken != nil || outerId != nil)
+        guard returnResultCount >= 1, returnResultCount <= 5 else {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "returnResultCount输入需要在[1, 5]: \(returnResultCount)"))
+        }
+        let result = try super.paramsCheck()
+        return (faceToken != nil || result) && (facesetToken != nil || outerId != nil)
     }
 
     override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("search")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_result_count"] = returnResultCount
         if let rectangle = faceRectangle {
             params["face_rectangle"] = "\(String(describing: rectangle))"
@@ -112,7 +115,7 @@ public extension FaceSet {
                 imageURL: URL? = nil,
                 imageFile: URL? = nil,
                 imageBase64: String? = nil,
-                returnResultCount: Int = 1,
+                returnResultCount: UInt = 1,
                 completionHanlder: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask? {
         let option = SearchOption()
         option.facesetToken = facesetToken

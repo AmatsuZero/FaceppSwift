@@ -44,8 +44,8 @@ public class FaceDetectOption: FaceppBaseRequest {
         return kFaceppV3URL?.appendingPathComponent("detect")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_landmark"] = returnLandmark.rawValue
         params["return_attributes"] = returnAttributes.map { $0.rawValue }.joined(separator: ",")
         if let ret = calculateAll {
@@ -181,25 +181,15 @@ public struct Attributes: Codable {
 }
 
 public struct FaceppRectangle: Codable {
-    public var top: Int = 0
-    public var left: Int = 0
-    public var width: Int = 0
-    public var height: Int = 0
-
-    @available(OSX 10.12, iOS 10, watchOS 3, tvOS 10, *)
-    public func asCGRect() -> CGRect {
-        return .init(x: left, y: top, width: width, height: height)
-    }
+    public var top = 0
+    public var left = 0
+    public var width = 0
+    public var height = 0
 }
 
 public struct FaceppPoint: Codable {
     public let x: Float
     public let y: Float
-
-    @available(OSX 10.12, iOS 10, watchOS 3, tvOS 10, *)
-    public func asCGPoint() -> CGPoint {
-        return .init(x: CGFloat(x), y: CGFloat(y))
-    }
 }
 
 public struct LandMark: Codable {

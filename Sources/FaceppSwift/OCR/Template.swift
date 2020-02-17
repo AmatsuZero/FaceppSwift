@@ -24,8 +24,8 @@ public class OCRTemplateOption: CardppV1Requst {
         return super.requsetURL?.appendingPathComponent("templateocr")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["template_id"] = templateId
         params["extra_info"] = extraInfo?.joined(separator: ",")
         return (params, files)

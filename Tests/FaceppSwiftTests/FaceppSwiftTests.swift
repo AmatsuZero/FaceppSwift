@@ -51,11 +51,25 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
-    func testBeautify() {
-        let exp = XCTestExpectation(description: "beautify")
-        let opt = BeautifyOption()
+    func testBeautifyV1() {
+        let exp = XCTestExpectation(description: "beautify V1")
+        let opt = BeautifyV1Option()
         opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
-        Facepp.beautify(option: opt) { err, _ in
+        Facepp.beautifyV1(option: opt) { err, _ in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testBeautifyV2() {
+        let exp = XCTestExpectation(description: "beautify V2")
+        let opt = BeautifyV2Option()
+        opt.filterType = .abao
+        opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
+        Facepp.beautifyV2(option: opt) { err, _ in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
@@ -331,11 +345,27 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    // MARK: - 图像识别
+    func testLicensePlate() {
+        let exp = XCTestExpectation(description: "车牌识别")
+        let opt = ImageppLicensePlateOption()
+        opt.imageURL = URL(string: "https://www.threetong.com/uploads/allimg/160514/9-160514164SDY.jpg")
+        Imagepp.licensePlate(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
         ("testFaceSetSuite", testFaceSetSuite),
         ("testSearch", testSearch),
+        ("testBeautifyV1", testBeautifyV1),
+        ("testBeautifyV2", testBeautifyV2),
         ("testDenseLandmark", testDenseLandmark),
         ("testFacialFeatures", testFacialFeatures),
         ("testSkinAnalyze", testSkinAnalyze),
@@ -349,7 +379,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testHumanBodyDetect", testHumanBodyDetect),
         ("testSkeleton", testSkeleton),
         ("testSegmentV1", testSegmentV1),
-        ("testSegmentV2", testSegmentV2)
+        ("testSegmentV2", testSegmentV2),
+        ("testLicensePlate", testLicensePlate)
     ]
 }
 

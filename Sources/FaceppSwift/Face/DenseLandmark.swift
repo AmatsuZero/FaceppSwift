@@ -33,12 +33,16 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
         return kFaceBaseURL?.appendingPathComponent("thousandlandmark")
     }
 
-    override func paramsCheck() -> Bool {
-        return faceToken != nil || super.paramsCheck()
+    override func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+        let result = try super.paramsCheck()
+        return faceToken != nil || result
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, files) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["return_landmark"] = returnLandMark == .all
             ? "all"
             : returnLandMark.map { $0.rawValue }.joined(separator: ",")

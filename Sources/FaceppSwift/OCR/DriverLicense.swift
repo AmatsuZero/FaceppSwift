@@ -18,15 +18,7 @@ public class OCRDriverLicenseV1Option: CardppV1Requst {
   检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息。
  只可识别驾照正本(main sheet)正面和副本(second sheet)正面，一张照片最多可识别一个正本正面和一个副本正面。
  */
-public struct OCRDriverLicenseV2Option: RequestProtocol {
-    /// 图片的URL
-    public var imageURL: URL?
-    /**
-     一个图片，二进制文件，需要用post multipart/form-data的方式上传。图像存储尺寸不能超过2MB，像素尺寸的长或宽都不能超过4096像素。
-     
-     如果同时传入了image_url和image_file参数，本API将使用image_file参数。
-     */
-    public var imageFile: URL?
+public class OCRDriverLicenseV2Option: CardppV1Requst {
     /**
      
      当传入照片输出OCR结果时，是否同时返回置信度
@@ -53,30 +45,14 @@ public struct OCRDriverLicenseV2Option: RequestProtocol {
      */
     public var mode = Mode.fast
 
-    var requsetURL: URL? {
+    override var requsetURL: URL? {
         return kCardppV2URL?.appendingPathComponent("ocrdriverlicense")
     }
 
-    func paramsCheck() -> Bool {
-        return imageURL != nil || imageFile != nil
-    }
-
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-            "return_score": needReturnScore ? 1 : 0,
-            "mode": mode.rawValue
-        ]
-        var files = [Params]()
-        params["image_url"] = imageURL
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
-            files.append([
-                "fieldName": "image_file",
-                "fileType": url.pathExtension,
-                "data": data
-            ])
-        }
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+        params["return_score"] = needReturnScore ? 1 : 0
+        params["mode"] = mode.rawValue
         return (params, files)
     }
 }

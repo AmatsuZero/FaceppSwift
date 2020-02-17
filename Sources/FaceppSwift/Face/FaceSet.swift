@@ -28,6 +28,8 @@ public struct FaceSet: Codable, UseFaceppClientProtocol {
  Wiki: https://console.faceplusplus.com.cn/documents/4888397
  */
 public struct FaceSetGetOption: RequestProtocol {
+    public var needCheckParams: Bool = true
+
     public var tags: [String]?
     /**
      一个数字 n，表示开始返回的 faceset_token 在传入的 API Key 下的序号。
@@ -42,7 +44,7 @@ public struct FaceSetGetOption: RequestProtocol {
         return kFaceSetBaseURL?.appendingPathComponent("getfacesets")
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret,
@@ -105,6 +107,8 @@ public extension FaceSet {
  Wiki: https://console.faceplusplus.com.cn/documents/4888393
  */
 public class FaceSetBaseRequest: RequestProtocol {
+    public var needCheckParams: Bool = true
+
     /// FaceSet的标识
     public var facesetToken: String?
     /// 用户提供的FaceSet标识
@@ -123,11 +127,14 @@ public class FaceSetBaseRequest: RequestProtocol {
         return kFaceSetBaseURL
     }
 
-    func paramsCheck() -> Bool {
+    func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
         return facesetToken != nil || outerId != nil
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
@@ -151,8 +158,8 @@ public class FaceSetsDeleteOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("delete")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["check_empty"] = checkEmpty ? 1 : 0
         return (params, nil)
     }
@@ -211,8 +218,8 @@ public class FacesetGetDetailOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("getdetail")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["start"] = 1
         return (params, nil)
     }
@@ -280,28 +287,30 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
 
     static let invalidUserDataCharacters = Set("^@,&=*'\"")
 
-    override func paramsCheck() -> Bool {
+    override func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
         guard (facesetToken != nil || outerId != nil)
             && (newOuterId != nil || displayName != nil || userData != nil || tags != nil) else {
                 return false
         }
-
-        if let data = userData {
-            guard data.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
-                return false
+        if let userData = userData {
+            guard userData.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc :"userData不能包括字符^@,&=*'"))
             }
 
-            guard let d = data.data(using: .utf8), d.count <= 16 * 1024 * 1024 else {
-                return false
+            guard let data = userData.data(using: .utf8), data.count <= 16 * 1024 else {
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc :"userData不能包超过16KB"))
             }
         }
 
         if let tags = tags, !tags.isEmpty {
             guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)})}) else {
-                return false
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc :"tag不能包括字符^@,&=*'"))
             }
             if tags.joined(separator: ",").unicodeScalars.count > 255 {
-                return false
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc :"tags不能超过255字符"))
             }
         }
 
@@ -312,8 +321,8 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("update")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, _) = super.params(apiKey: apiSecret, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, _) = try super.params(apiKey: apiSecret, apiSecret: apiSecret)
         params["new_outer_id"] = newOuterId
         params["display_name"] = displayName
         params["user_data"] = userData
@@ -379,13 +388,16 @@ public class FaceSetRemoveOption: FaceSetBaseRequest {
         return kFaceSetBaseURL?.appendingPathComponent("removeface")
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["face_tokens"] = removeAll ? "RemoveAllFaceTokens" : faceTokens.joined(separator: ",")
         return (params, nil)
     }
 
     override func paramsCheck() -> Bool {
+        guard needCheckParams else {
+            return true
+        }
         return removeAll || (!faceTokens.isEmpty && faceTokens.count <= 1000)
     }
 }
@@ -465,12 +477,18 @@ public class FaceSetAddFaceOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("addface")
     }
 
-    override func paramsCheck() -> Bool {
-        return (facesetToken != nil || outerId != nil) && faceTokens.count <= 5
+    override func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+        guard faceTokens.count <= 5 else {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc: "最多不超过5个faceToken"))
+        }
+        return (facesetToken != nil || outerId != nil)
     }
 
-    override func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
-        var (params, _) = super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
         params["face_tokens"] = faceTokens.joined(separator: ",")
         return (params, nil)
     }
@@ -514,6 +532,8 @@ public extension FaceSet {
  Wiki: https://console.faceplusplus.com.cn/documents/4888391
  */
 public struct FaceSetCreateOption: RequestProtocol {
+    public var needCheckParams: Bool = true
+
     /// 人脸集合的名字，最长256个字符，不能包括字符^@,&=*'"
     public var displayName: String?
     /// 账号下全局唯一的 FaceSet 自定义标识，可以用来管理 FaceSet 对象。最长255个字符，不能包括字符^@,&=*'"
@@ -535,23 +555,27 @@ public struct FaceSetCreateOption: RequestProtocol {
      */
     public var forceMerge = 1
 
-    func paramsCheck() -> Bool {
+    func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+
         if let data = userData {
             guard data.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
-                return false
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc: "userData不能包括字符^@,&=*'"))
             }
 
-            guard let d = data.data(using: .utf8), d.count <= 16 * 1024 * 1024 else {
-                return false
+            guard let d = data.data(using: .utf8), d.count <= 16 * 1024 else {
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc: "userData不能超过16KB"))
             }
         }
 
         if let tags = tags, !tags.isEmpty {
             guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)})}) else {
-                return false
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc: "tags不能包括字符^@,&=*'"))
             }
             if tags.joined(separator: ",").unicodeScalars.count > 255 {
-                return false
+                throw FaceppRequestError.argumentsError(.invalidArguments(desc: "tag不能超过255个字符"))
             }
         }
 
@@ -562,7 +586,7 @@ public struct FaceSetCreateOption: RequestProtocol {
         return kFaceSetBaseURL?.appendingPathComponent("create")
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
@@ -634,6 +658,8 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
  Wiki: https://console.faceplusplus.com.cn/documents/40622157
  */
 public struct FaceSetTaskQueryOption: RequestProtocol {
+    var needCheckParams: Bool = false
+
     /// 异步任务的唯一标识
     public var taskId: String
 
@@ -641,7 +667,7 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("task_status")
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         return ([
             "api_key": apiKey,
             "api_secret": apiSecret,

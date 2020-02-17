@@ -9,6 +9,8 @@
 import Foundation
 
 public struct ThreeDimensionFaceOption: RequestProtocol {
+    public var needCheckParams: Bool = true
+
     /**
      人脸正脸图片的 URL
      
@@ -48,7 +50,39 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
     /// 是否返回mtl文件
     public var needMtl = false
 
-    func paramsCheck() -> Bool {
+    func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+        if let url = imageFile1, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
+            throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
+        }
+
+        if let url = imageFile2, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
+            throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
+        }
+
+        if let url = imageFile3, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
+            throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
+        }
+        if let str = imageBase641,
+            let count = Data(base64Encoded: str)?.count,
+            Double(count) / 1024 / 1024 > uploadFileMBSize {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "imageBase641大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
+        }
+        if let str = imageBase642,
+            let count = Data(base64Encoded: str)?.count,
+            Double(count) / 1024 / 1024 > uploadFileMBSize {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "imageBase642大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
+        }
+        if let str = imageBase643,
+            let count = Data(base64Encoded: str)?.count,
+            Double(count) / 1024 / 1024 > uploadFileMBSize {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "imageBase643大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
+        }
         return (imageURL1 != nil || imageFile1 != nil || imageBase641 != nil)
             && (imageURL2 != nil || imageFile2 != nil || imageBase642 != nil)
             && (imageURL3 != nil || imageFile3 != nil || imageBase643 != nil)
@@ -58,7 +92,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         return kFaceappV1URL?.appendingPathComponent("3dface")
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
@@ -69,8 +103,8 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         var files = [Params]()
         params["image_url_1"] = imageURL1
         params["image_base64_1"] = imageBase641
-        if let url = imageFile1,
-            let data = try? Data(contentsOf: url) {
+        if let url = imageFile1 {
+            let data = try Data(contentsOf: url)
             files.append([
                 "fieldName": "image_file_1",
                 "fileType": url.pathExtension,
@@ -80,8 +114,8 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
 
         params["image_url_2"] = imageURL2
         params["image_base64_2"] = imageBase642
-        if let url = imageFile2,
-            let data = try? Data(contentsOf: url) {
+        if let url = imageFile2 {
+            let data = try Data(contentsOf: url)
             files.append([
                 "fieldName": "image_file_2",
                 "fileType": url.pathExtension,
@@ -91,8 +125,8 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
 
         params["image_url_3"] = imageURL3
         params["image_base64_3"] = imageBase643
-        if let url = imageFile3,
-            let data = try? Data(contentsOf: url) {
+        if let url = imageFile3 {
+            let data = try Data(contentsOf: url)
             files.append([
                 "fieldName": "image_file_3",
                 "fileType": url.pathExtension,
@@ -119,7 +153,7 @@ public struct ThreeDimensionFaceResponse: ResponseProtocol {
     public let mtlFile: String?
     /**
      16*n变幻矩阵，n为传入图片的个数
-
+     
      说明：输入图片视角对应的视变换矩阵（不含透视），obj文件对应的模型经过这个矩阵变化后跟图片中的视角一致
      */
     public let transferMatrix: [[Float]]?

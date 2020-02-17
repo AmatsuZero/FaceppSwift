@@ -25,8 +25,10 @@ public enum Facepp: UseFaceppClientProtocol {
         completionHanlder: (Error?, FaceDetectResponse?) -> Void)
     case compare(option: CompareOption,
         completionHanlder: (Error?, CompareResponse?) -> Void)
-    case beautify(option: BeautifyOption,
+    case beautifyV1(option: BeautifyV1Option,
         completionHanlder: (Error?, BeautifyResponse?) -> Void)
+    case beautifyV2(option: BeautifyV2Option,
+         completionHanlder: (Error?, BeautifyResponse?) -> Void)
     case thousandLandmark(option: ThousandLandMarkOption,
         completionHanlder: (Error?, ThousandLandmarkResponse?) -> Void)
     case facialFeatures(option: FacialFeaturesOption,
@@ -43,7 +45,9 @@ public enum Facepp: UseFaceppClientProtocol {
             return Self.parse(option: option, completionHandler: handler)
         case .compare(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
-        case .beautify(let option, let handler):
+        case .beautifyV1(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .beautifyV2(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
         case .thousandLandmark(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
@@ -61,11 +65,17 @@ extension FaceppClient {
     @discardableResult
     func parse<R: ResponseProtocol>(option: RequestProtocol,
                                     completionHanlder: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
-
-        let (request, data) = option.asRequest(apiKey: apiKey, apiSecret: apiSecret)
+        var request: URLRequest?
+        var data: Data?
+        do {
+            (request, data) = try option.asRequest(apiKey: apiKey, apiSecret: apiSecret)
+        } catch {
+            completionHanlder(error, nil)
+            return nil
+        }
 
         guard let req = request else {
-            completionHanlder(FaceppRequestError.missingArguments, nil)
+            completionHanlder(FaceppRequestError.argumentsError(.missingArguments), nil)
             return nil
         }
 
@@ -112,15 +122,30 @@ public class FaceppBaseRequest: RequestProtocol {
      */
     public var imageBase64: String?
 
+    /// 是否检查参数设置
+    public var needCheckParams: Bool = true
+
     var requsetURL: URL? {
         return kFaceBaseURL
     }
 
-    func paramsCheck() -> Bool {
+    func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+        if let url = imageFile, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
+            throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
+        }
+        if let str = imageBase64,
+            let count = Data(base64Encoded: str)?.count,
+            Double(count) / 1024 / 1024 > uploadFileMBSize {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "imageBase64大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
+        }
         return imageURL != nil || imageFile != nil || imageBase64 != nil
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
@@ -128,7 +153,8 @@ public class FaceppBaseRequest: RequestProtocol {
         var files = [Params]()
         params["image_url"] = imageURL
         params["image_base64"] = imageBase64
-        if let url = imageFile, let data = try? Data(contentsOf: url) {
+        if let url = imageFile {
+            let data = try Data(contentsOf: url)
             files.append([
                 "fieldName": "image_file",
                 "fileType": url.pathExtension,
@@ -136,6 +162,35 @@ public class FaceppBaseRequest: RequestProtocol {
             ])
         }
         return (params, files)
+    }
+}
+
+protocol RequestProtocol {
+    var needCheckParams: Bool { get set }
+    var requsetURL: URL? { get }
+    var uploadFileMBSize: Double { get }
+    func paramsCheck() throws -> Bool
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?)
+    func asRequest(apiKey: String, apiSecret: String) throws -> (URLRequest?, Data?)
+}
+
+extension RequestProtocol {
+    var uploadFileMBSize: Double {
+        return 2.0
+    }
+
+    func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+        return true
+    }
+    func asRequest(apiKey: String, apiSecret: String) throws -> (URLRequest?, Data?) {
+        guard let url = requsetURL, try paramsCheck() else {
+            return (nil, nil)
+        }
+        let (params, files) = try self.params(apiKey: apiKey, apiSecret: apiSecret)
+        return URLRequest.postRequest(url: url, body: params, filesData: files ?? [])
     }
 }
 

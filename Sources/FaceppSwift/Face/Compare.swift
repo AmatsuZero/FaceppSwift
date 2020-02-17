@@ -55,17 +55,41 @@ public struct CompareOption: RequestProtocol {
      注：只有在传入image_url2、image_file2 和image_base64_2 三个参数中任意一个后本参数才生效。
      */
     public var faceRectangle2: FaceppRectangle?
+    /// 是否检查入参
+    public var needCheckParams: Bool = true
 
     var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("compare")
     }
 
-    func paramsCheck() -> Bool {
+    func paramsCheck() throws -> Bool {
+        guard needCheckParams else {
+            return true
+        }
+        if let url = imageFile1, try !url.fileSizeNotExceed(mb: 2) {
+            throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
+        }
+
+        if let url = imageFile2, try !url.fileSizeNotExceed(mb: 2) {
+            throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
+        }
+        if let str = imageBase641,
+            let count = Data(base64Encoded: str)?.count,
+            Double(count) / 1024 / 1024 > uploadFileMBSize {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "imageBase641大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
+        }
+        if let str = imageBase642,
+            let count = Data(base64Encoded: str)?.count,
+            Double(count) / 1024 / 1024 > uploadFileMBSize {
+            throw FaceppRequestError.argumentsError(.invalidArguments(desc:
+                "imageBase641大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
+        }
         return (faceToken1 != nil || imageURL1 != nil || imageBase641 != nil || imageFile1 != nil)
-        && (faceToken2 != nil || imageURL2 != nil || imageBase642 != nil || imageFile2 != nil)
+            && (faceToken2 != nil || imageURL2 != nil || imageBase642 != nil || imageFile2 != nil)
     }
 
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?) {
+    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
         var params: Params = [
             "api_key": apiKey,
             "api_secret": apiSecret
@@ -75,8 +99,8 @@ public struct CompareOption: RequestProtocol {
         params["face_token1"] = faceToken1
         params["image_url1"] = imageURL1
         params["image_base64_1"] = imageBase641
-        if let url = imageFile1,
-            let data = try? Data(contentsOf: url) {
+        if let url = imageFile1 {
+            let data = try Data(contentsOf: url)
             files.append([
                 "fieldName": "image_file1",
                 "fileType": url.pathExtension,
@@ -87,8 +111,8 @@ public struct CompareOption: RequestProtocol {
         params["face_token2"] = faceToken2
         params["image_url2"] = imageURL2
         params["image_base64_2"] = imageBase642
-        if let url = imageFile2,
-            let data = try? Data(contentsOf: url) {
+        if let url = imageFile2 {
+            let data = try Data(contentsOf: url)
             files.append([
                 "fieldName": "image_file2",
                 "fileType": url.pathExtension,
@@ -144,13 +168,13 @@ public struct CompareResponse: ResponseProtocol {
     public let imageId2: String?
     /**
      通过 image_url1、image_file1 或 image_base64_1 传入的图片中检测出的人脸数组，采用数组中的第一个人脸进行人脸比对。
-
+     
      注：如果未传入图片，本字段不返回。如果没有检测出人脸则为空数组
      */
     public let faces1: [Face]?
     /**
      通过 image_url2、image_file2 或 image_base64_2 传入的图片中检测出的人脸数组，采用数组中的第一个人脸进行人脸比对。
-
+     
      注：如果未传入图片，本字段不返回。如果没有检测出人脸则为空数组
      */
     public let faces2: [Face]?

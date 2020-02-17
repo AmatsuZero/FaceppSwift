@@ -12,21 +12,31 @@ let kBaseURL = URL(string: "https://api-cn.faceplusplus.com")
 let kBaseFaceppURL: URL? = {
     return kBaseURL?.appendingPathComponent("facepp")
 }()
+
 let kBaseCardppURL: URL? = {
     return kBaseURL?.appendingPathComponent("cardpp")
 }()
+
 let kFaceappV1URL: URL? = {
     return kBaseFaceppURL?.appendingPathComponent("v1")
 }()
+
+let kFaceappV2URL: URL? = {
+    return kBaseFaceppURL?.appendingPathComponent("v2")
+}()
+
 let kFaceppV3URL: URL? = {
     return kBaseFaceppURL?.appendingPathComponent("v3")
 }()
+
 let kCardppV1URL: URL? = {
     return kBaseCardppURL?.appendingPathComponent("v1")
 }()
+
 let kCardppV2URL: URL? = {
     return kBaseCardppURL?.appendingPathComponent("v2")
 }()
+
 let kCardppBetaURL: URL? = {
     return kBaseCardppURL?.appendingPathComponent("beta")
 }()
@@ -43,6 +53,14 @@ let kHumanBodyBaseV2URL: URL? = {
     return kHumanBodyBaseURL?.appendingPathComponent("v2")
 }()
 
+let kImageppBaseURL: URL? = {
+    return kBaseURL?.appendingPathComponent("imagepp")
+}()
+
+let kImageppBaseV1URL: URL? = {
+    return kImageppBaseURL?.appendingPathComponent("v1")
+}()
+
 protocol ResponseProtocol: Codable {
     // 用于区分每一次请求的唯一的字符串。
     var requestId: String? { get }
@@ -50,27 +68,6 @@ protocol ResponseProtocol: Codable {
     var errorMessage: String? { get }
     /// 整个请求所花费的时间，单位为毫秒。
     var timeUsed: Int? { get }
-}
-
-protocol RequestProtocol {
-    var requsetURL: URL? { get }
-    func paramsCheck() -> Bool
-    func params(apiKey: String, apiSecret: String) -> (Params, [Params]?)
-    func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?)
-}
-
-extension RequestProtocol {
-    func paramsCheck() -> Bool {
-        return true
-    }
-
-    func asRequest(apiKey: String, apiSecret: String) -> (URLRequest?, Data?) {
-        guard let url = requsetURL, paramsCheck() else {
-            return (nil, nil)
-        }
-        let (params, files) = self.params(apiKey: apiKey, apiSecret: apiSecret)
-        return URLRequest.postRequest(url: url, body: params, filesData: files ?? [])
-    }
 }
 
 typealias Params = [String: Any]
@@ -164,8 +161,15 @@ extension Set where Element: Option {
 }
 
 public enum FaceppRequestError: CustomNSError, LocalizedError {
+
+    public enum ArgumentsError {
+        case fileTooLarge(size: Double, path: URL)
+        case missingArguments
+        case invalidArguments(desc: String)
+    }
+
     case notInit
-    case missingArguments
+    case argumentsError(ArgumentsError)
     case faceppError(reason: String)
 
     public static var errorDomain: String {
@@ -176,8 +180,15 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
         switch self {
         case .notInit:
             return "没有初始化"
-        case .missingArguments:
-            return "缺少参数"
+        case .argumentsError(let err):
+            switch err {
+            case .missingArguments:
+                return "缺少参数"
+            case .invalidArguments(let desc):
+                return desc
+            case .fileTooLarge(let size, let path):
+                return "文件\(path)超过\(size)MB"
+            }
         case .faceppError(let reason):
             return "服务器错误：\(reason)"
         }
@@ -187,7 +198,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
         switch self {
         case .notInit:
             return "没有初始化"
-        case .missingArguments:
+        case .argumentsError:
             return "参数检查失败"
         case .faceppError(let reason):
             return reason
@@ -197,7 +208,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
     public var helpAnchor: String? {
         switch self {
         case .notInit: return "请重新调用初始化方法"
-        case .missingArguments: return "请根据文档检查入参"
+        case .argumentsError: return "请根据文档检查入参"
         case .faceppError(let reason): return "请根据 Wiki 排查失败原因：\(reason)"
         }
     }
@@ -205,7 +216,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
     public var errorCode: Int {
         switch self {
         case .notInit: return -100001
-        case .missingArguments: return -100002
+        case .argumentsError: return -100002
         case .faceppError: return -100003
         }
     }
@@ -300,5 +311,14 @@ extension UseFaceppClientProtocol {
             return nil
         }
         return client.parse(option: option, completionHanlder: completionHandler)
+    }
+}
+
+extension URL {
+    func fileSizeNotExceed(mb: Double) throws -> Bool {
+        guard let fileSize = try resourceValues(forKeys: [.fileSizeKey]).fileSize else {
+            return false
+        }
+        return (Double(fileSize) / 1024 / 1024) <= mb
     }
 }
