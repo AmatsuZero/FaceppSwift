@@ -13,7 +13,7 @@ import Foundation
  */
 public class ImageppLicensePlateOption: FaceppBaseRequest {
     override var requsetURL: URL? {
-        return kImageppBaseV1URL?.appendingPathComponent("licenseplate")
+        return kImageppV1URL?.appendingPathComponent("licenseplate")
     }
 }
 

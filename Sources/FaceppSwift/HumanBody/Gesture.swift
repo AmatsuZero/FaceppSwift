@@ -18,7 +18,7 @@ public class HumanBodyGestureOption: FaceppBaseRequest {
     public var returnGesture = true
 
     override var requsetURL: URL? {
-        return kHumanBodyBaseV1URL?.appendingPathComponent("gesture")
+        return kHumanBodyV1URL?.appendingPathComponent("gesture")
     }
 
     override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {

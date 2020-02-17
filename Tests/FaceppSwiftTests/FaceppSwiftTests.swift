@@ -214,7 +214,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testDriverLicenseV2() {
         let exp1 = XCTestExpectation(description: "驾驶证 V2")
-        var opt = OCRDriverLicenseV2Option()
+        let opt = OCRDriverLicenseV2Option()
         opt.imageURL = URL(string: "http://pic.wodingche.com/carimg/kqfmpmny.jpeg")
         Cardpp.driverLicenseV2(option: opt) { err, _ in
             if let err = err {
@@ -359,6 +359,32 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    func testRecognizeRText() {
+        let exp = XCTestExpectation(description: "文字识别")
+        let opt = ImageppRecognizeTextOption()
+        opt.imageURL = URL(string: "http://img.yao51.com/jiankangtuku/obhfpfpejz.jpeg")
+        Imagepp.recognizeText(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testDetectSceneAndObject() {
+        let exp = XCTestExpectation(description: "识别图片场景和图片主体")
+        let opt = ImageppDetectScenceAndObjectOption()
+        opt.imageURL = URL(string: "https://pic.pingguolv.com/uploads/allimg/160715/124-160G5141339.jpg")
+        Imagepp.detectsceneandobject(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
@@ -380,7 +406,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testSkeleton", testSkeleton),
         ("testSegmentV1", testSegmentV1),
         ("testSegmentV2", testSegmentV2),
-        ("testLicensePlate", testLicensePlate)
+        ("testLicensePlate", testLicensePlate),
+        ("testRecognizeRText", testRecognizeRText)
     ]
 }
 

@@ -45,11 +45,11 @@ let kHumanBodyBaseURL: URL? = {
     return kBaseURL?.appendingPathComponent("humanbodypp")
 }()
 
-let kHumanBodyBaseV1URL: URL? = {
+let kHumanBodyV1URL: URL? = {
     return kHumanBodyBaseURL?.appendingPathComponent("v1")
 }()
 
-let kHumanBodyBaseV2URL: URL? = {
+let kHumanBodyV2URL: URL? = {
     return kHumanBodyBaseURL?.appendingPathComponent("v2")
 }()
 
@@ -57,8 +57,12 @@ let kImageppBaseURL: URL? = {
     return kBaseURL?.appendingPathComponent("imagepp")
 }()
 
-let kImageppBaseV1URL: URL? = {
+let kImageppV1URL: URL? = {
     return kImageppBaseURL?.appendingPathComponent("v1")
+}()
+
+let kImageppBetaURL: URL? = {
+    return kImageppBaseURL?.appendingPathComponent("beta")
 }()
 
 protocol ResponseProtocol: Codable {

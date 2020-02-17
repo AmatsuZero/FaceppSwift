@@ -15,7 +15,7 @@ import Foundation
  */
 public class SkeletonDetectOption: FaceppBaseRequest {
     override var requsetURL: URL? {
-        return kHumanBodyBaseV1URL?.appendingPathComponent("skeleton")
+        return kHumanBodyV1URL?.appendingPathComponent("skeleton")
     }
 }
 

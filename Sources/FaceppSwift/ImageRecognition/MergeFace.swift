@@ -52,7 +52,7 @@ public struct ImageppMergeFaceOption: RequestProtocol {
     public var featureRate: UInt = 45
 
     public var requsetURL: URL? {
-        return kImageppBaseV1URL?.appendingPathComponent("mergeface")
+        return kImageppV1URL?.appendingPathComponent("mergeface")
     }
 
     func paramsCheck() throws -> Bool {

@@ -14,7 +14,7 @@ import Foundation
  */
 public class HumanBodySegmentV1Option: FaceppBaseRequest {
     override var requsetURL: URL? {
-        return kHumanBodyBaseV1URL?.appendingPathComponent("segment")
+        return kHumanBodyV1URL?.appendingPathComponent("segment")
     }
 }
 
@@ -42,7 +42,7 @@ public class HumanBodySegmentV2Option: FaceppBaseRequest {
     public var returnGrayScale = ReturnGrayScale.figureOnly
 
     override var requsetURL: URL? {
-        return kHumanBodyBaseV2URL?.appendingPathComponent("segment")
+        return kHumanBodyV2URL?.appendingPathComponent("segment")
     }
 
     override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
