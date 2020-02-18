@@ -149,7 +149,7 @@ public class FaceSetsDeleteOption: FaceSetBaseRequest {
     /// 删除时是否检查FaceSet中是否存在face_token
     public var checkEmpty = true
 
-    init(facesetToken: String?, outerId: String?, checkEmpty: Bool = true) {
+    public init(facesetToken: String?, outerId: String?, checkEmpty: Bool = true) {
         super.init(facesetToken: facesetToken, outerId: outerId)
         self.checkEmpty = checkEmpty
     }
@@ -209,7 +209,7 @@ public class FacesetGetDetailOption: FaceSetBaseRequest {
      */
     public var start = 1
 
-    init(facesetToken: String?, outerId: String?, start: Int = 1) {
+    public init(facesetToken: String?, outerId: String?, start: Int = 1) {
         super.init(facesetToken: facesetToken, outerId: outerId)
         self.start = start
     }
@@ -379,7 +379,7 @@ public class FaceSetRemoveOption: FaceSetBaseRequest {
      */
     public var faceTokens = [String]()
 
-    init(facesetToken: String?, outerId: String?, tokens: [String] = []) {
+    public init(facesetToken: String?, outerId: String?, tokens: [String] = []) {
         super.init(facesetToken: facesetToken, outerId: outerId)
         faceTokens = tokens
     }
@@ -462,13 +462,13 @@ public class FaceSetAddFaceOption: FaceSetBaseRequest {
      */
     public var faceTokens: [String]
 
-    init(facesetToken: String?, outerId: String?, tokens: [String]) {
+    public init(facesetToken: String?, outerId: String?, tokens: [String]) {
         faceTokens = tokens
         super.init(facesetToken: facesetToken, outerId: outerId)
 
     }
 
-    init(faceset: FaceSet, tokens: [String]) {
+    public init(faceset: FaceSet, tokens: [String]) {
         faceTokens = tokens
         super.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
     }
