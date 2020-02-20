@@ -92,11 +92,8 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         return kFaceappV1URL?.appendingPathComponent("3dface")
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
+    func params() throws -> (Params, [Params]?) {
+        var params = Params()
         params["texture"] = needTexture ? 1 : 0
         params["mtl"] = needMtl ? 1 : 0
 

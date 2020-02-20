@@ -45,8 +45,8 @@ public class HumanBodySegmentV2Option: FaceppBaseRequest {
         return kHumanBodyV2URL?.appendingPathComponent("segment")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_grayscale"] = returnGrayScale.rawValue
         return (params, files)
     }

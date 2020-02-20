@@ -47,8 +47,8 @@ public class SearchOption: FaceppBaseRequest {
         return kFaceppV3URL?.appendingPathComponent("search")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_result_count"] = returnResultCount
         if let rectangle = faceRectangle {
             params["face_rectangle"] = "\(String(describing: rectangle))"

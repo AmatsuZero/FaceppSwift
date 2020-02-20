@@ -49,8 +49,8 @@ public class OCRDriverLicenseV2Option: CardppV1Requst {
         return kCardppV2URL?.appendingPathComponent("ocrdriverlicense")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_score"] = needReturnScore ? 1 : 0
         params["mode"] = mode.rawValue
         return (params, files)

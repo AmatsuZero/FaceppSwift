@@ -50,8 +50,8 @@ public class BeautifyV1Option: FaceppBaseRequest {
         return try super.paramsCheck()
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["whitening"] = whitening
         params["smoothing"] = smoothing
         return (params, files)
@@ -198,8 +198,8 @@ public class BeautifyV2Option: BeautifyV1Option {
         return try super.paramsCheck()
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["thinface"] = thinface
         params["shrink_face"] = shrinkFace
         params["enlarge_eye"] = enlargeEye

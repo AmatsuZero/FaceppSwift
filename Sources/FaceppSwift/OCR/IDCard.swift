@@ -23,8 +23,8 @@ public class OCRIDCardOption: CardppV1Requst {
         return super.requsetURL?.appendingPathComponent("ocridcard")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["legality"] = needLegality ? 1 : 0
         return (params, files)
     }

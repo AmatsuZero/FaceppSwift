@@ -22,15 +22,15 @@ public class FaceppClient {
 
 public enum Facepp: UseFaceppClientProtocol {
     case detect(option: FaceDetectOption,
-        completionHanlder: (Error?, FaceDetectResponse?) -> Void)
+        completionHandler: (Error?, FaceDetectResponse?) -> Void)
     case compare(option: CompareOption,
-        completionHanlder: (Error?, CompareResponse?) -> Void)
+        completionHandler: (Error?, CompareResponse?) -> Void)
     case beautifyV1(option: BeautifyV1Option,
-        completionHanlder: (Error?, BeautifyResponse?) -> Void)
+        completionHandler: (Error?, BeautifyResponse?) -> Void)
     case beautifyV2(option: BeautifyV2Option,
-         completionHanlder: (Error?, BeautifyResponse?) -> Void)
+         completionHandler: (Error?, BeautifyResponse?) -> Void)
     case thousandLandmark(option: ThousandLandMarkOption,
-        completionHanlder: (Error?, ThousandLandmarkResponse?) -> Void)
+        completionHandler: (Error?, ThousandLandmarkResponse?) -> Void)
     case facialFeatures(option: FacialFeaturesOption,
         completionHandler:  (Error?, FacialFeaturesResponse?) -> Void)
     case threeDimensionFace(option: ThreeDimensionFaceOption,
@@ -64,24 +64,24 @@ public enum Facepp: UseFaceppClientProtocol {
 extension FaceppClient {
     @discardableResult
     func parse<R: ResponseProtocol>(option: RequestProtocol,
-                                    completionHanlder: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
+                                    completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         var request: URLRequest?
         var data: Data?
         do {
             (request, data) = try option.asRequest(apiKey: apiKey, apiSecret: apiSecret)
         } catch {
-            completionHanlder(error, nil)
+            completionHandler(error, nil)
             return nil
         }
 
         guard let req = request else {
-            completionHanlder(FaceppRequestError.argumentsError(.missingArguments), nil)
+            completionHandler(FaceppRequestError.argumentsError(.missingArguments), nil)
             return nil
         }
 
         let task = session.uploadTask(with: req, from: data) { data, _, error in
             guard error == nil, let data = data else {
-                return completionHanlder(error, nil)
+                return completionHandler(error, nil)
             }
             do {
                 let decoder = JSONDecoder()
@@ -93,12 +93,12 @@ extension FaceppClient {
                     原因：\(msg)
                     耗时：\(TimeInterval(resp.timeUsed ?? 0) / 1000)s
                     """
-                    completionHanlder(FaceppRequestError.faceppError(reason: text), nil)
+                    completionHandler(FaceppRequestError.faceppError(reason: text), nil)
                 } else {
-                    completionHanlder(error, resp)
+                    completionHandler(error, resp)
                 }
             } catch let err {
-                completionHanlder(err, nil)
+                completionHandler(FaceppRequestError.parseError(error: err, originalData: data), nil)
             }
         }
         task.resume()
@@ -145,11 +145,8 @@ public class FaceppBaseRequest: RequestProtocol {
         return imageURL != nil || imageFile != nil || imageBase64 != nil
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
+    func params() throws -> (Params, [Params]?) {
+        var params = Params()
         var files = [Params]()
         params["image_url"] = imageURL
         params["image_base64"] = imageBase64
@@ -170,7 +167,7 @@ protocol RequestProtocol {
     var requsetURL: URL? { get }
     var uploadFileMBSize: Double { get }
     func paramsCheck() throws -> Bool
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?)
+    func params() throws -> (Params, [Params]?)
     func asRequest(apiKey: String, apiSecret: String) throws -> (URLRequest?, Data?)
 }
 
@@ -189,7 +186,9 @@ extension RequestProtocol {
         guard let url = requsetURL, try paramsCheck() else {
             return (nil, nil)
         }
-        let (params, files) = try self.params(apiKey: apiKey, apiSecret: apiSecret)
+        var (params, files) = try self.params()
+        params["api_key"] = apiKey
+        params["api_secret"] = apiSecret
         return URLRequest.postRequest(url: url, body: params, filesData: files ?? [])
     }
 }

@@ -44,10 +44,8 @@ public struct FaceSetGetOption: RequestProtocol {
         return kFaceSetBaseURL?.appendingPathComponent("getfacesets")
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
+    func params() throws -> (Params, [Params]?) {
         var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret,
             "start": start
         ]
         params["tags"] = tags?.joined(separator: ",")
@@ -134,11 +132,8 @@ public class FaceSetBaseRequest: RequestProtocol {
         return facesetToken != nil || outerId != nil
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
+    func params() throws -> (Params, [Params]?) {
+        var params = Params()
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
         return (params, nil)
@@ -158,8 +153,8 @@ public class FaceSetsDeleteOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("delete")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, _) = try super.params()
         params["check_empty"] = checkEmpty ? 1 : 0
         return (params, nil)
     }
@@ -218,8 +213,8 @@ public class FacesetGetDetailOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("getdetail")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, _) = try super.params()
         params["start"] = 1
         return (params, nil)
     }
@@ -321,8 +316,8 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
         return super.requsetURL?.appendingPathComponent("update")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, _) = try super.params(apiKey: apiSecret, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, _) = try super.params()
         params["new_outer_id"] = newOuterId
         params["display_name"] = displayName
         params["user_data"] = userData
@@ -388,8 +383,8 @@ public class FaceSetRemoveOption: FaceSetBaseRequest {
         return kFaceSetBaseURL?.appendingPathComponent("removeface")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, _) = try super.params()
         params["face_tokens"] = removeAll ? "RemoveAllFaceTokens" : faceTokens.joined(separator: ",")
         return (params, nil)
     }
@@ -487,8 +482,8 @@ public class FaceSetAddFaceOption: FaceSetBaseRequest {
         return (facesetToken != nil || outerId != nil)
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, _) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, _) = try super.params()
         params["face_tokens"] = faceTokens.joined(separator: ",")
         return (params, nil)
     }
@@ -586,11 +581,8 @@ public struct FaceSetCreateOption: RequestProtocol {
         return kFaceSetBaseURL?.appendingPathComponent("create")
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
+    func params() throws -> (Params, [Params]?) {
+        var params = Params()
         params["outer_id"] = outerId
         params["tags"] = tags?.joined(separator: ",")
         params["face_tokens"] = faceTokens?.joined(separator: ",")
@@ -667,12 +659,8 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("task_status")
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        return ([
-            "api_key": apiKey,
-            "api_secret": apiSecret,
-            "task_id": taskId
-        ], nil)
+    func params() throws -> (Params, [Params]?) {
+        return ([ "task_id": taskId], nil)
     }
 }
 

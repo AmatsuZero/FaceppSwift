@@ -24,8 +24,8 @@ public class HumanBodyDetectOption: FaceppBaseRequest {
         return kHumanBodyV1URL?.appendingPathComponent("detect")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_attributes"] = returnAttributes.map { $0.rawValue }.joined(separator: ",")
         return (params, files)
     }

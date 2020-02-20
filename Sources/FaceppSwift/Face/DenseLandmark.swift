@@ -41,8 +41,8 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
         return faceToken != nil || result
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_landmark"] = returnLandMark == .all
             ? "all"
             : returnLandMark.map { $0.rawValue }.joined(separator: ",")

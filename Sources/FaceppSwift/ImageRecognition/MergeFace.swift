@@ -87,11 +87,8 @@ public struct ImageppMergeFaceOption: RequestProtocol {
             || (mergeURL != nil || mergeBase64 != nil || mergeFile != nil)
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
+    func params() throws -> (Params, [Params]?) {
+        var params = Params()
         var files = [Params]()
         params["template_url"] = templateURL
         params["template_base64"] = templateBase64

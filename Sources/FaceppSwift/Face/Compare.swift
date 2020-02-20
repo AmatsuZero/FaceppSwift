@@ -89,12 +89,8 @@ public struct CompareOption: RequestProtocol {
             && (faceToken2 != nil || imageURL2 != nil || imageBase642 != nil || imageFile2 != nil)
     }
 
-    func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var params: Params = [
-            "api_key": apiKey,
-            "api_secret": apiSecret
-        ]
-
+    func params() throws -> (Params, [Params]?) {
+        var params = Params()
         var files = [Params]()
         params["face_token1"] = faceToken1
         params["image_url1"] = imageURL1

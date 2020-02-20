@@ -165,7 +165,6 @@ extension Set where Element: Option {
 }
 
 public enum FaceppRequestError: CustomNSError, LocalizedError {
-
     public enum ArgumentsError {
         case fileTooLarge(size: Double, path: URL)
         case missingArguments
@@ -175,6 +174,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
     case notInit
     case argumentsError(ArgumentsError)
     case faceppError(reason: String)
+    case parseError(error: Error, originalData: Data?)
 
     public static var errorDomain: String {
         return "com.daubert.faceapp"
@@ -195,6 +195,8 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
             }
         case .faceppError(let reason):
             return "服务器错误：\(reason)"
+        case .parseError(let error, _):
+            return "数据解析失败: \(error)"
         }
     }
 
@@ -206,6 +208,8 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
             return "参数检查失败"
         case .faceppError(let reason):
             return reason
+        case .parseError(let error, _):
+            return "数据解析失败: \(error.localizedDescription)"
         }
     }
 
@@ -214,6 +218,8 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
         case .notInit: return "请重新调用初始化方法"
         case .argumentsError: return "请根据文档检查入参"
         case .faceppError(let reason): return "请根据 Wiki 排查失败原因：\(reason)"
+        case .parseError:
+            return "数据解析失败，可能是数据结构发生了变化，请尝试用originalData进行解析"
         }
     }
 
@@ -222,6 +228,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
         case .notInit: return -100001
         case .argumentsError: return -100002
         case .faceppError: return -100003
+        case .parseError: return -100004
         }
     }
 
@@ -314,7 +321,7 @@ extension UseFaceppClientProtocol {
             completionHandler(FaceppRequestError.notInit, nil)
             return nil
         }
-        return client.parse(option: option, completionHanlder: completionHandler)
+        return client.parse(option: option, completionHandler: completionHandler)
     }
 }
 

@@ -44,8 +44,8 @@ public class FaceDetectOption: FaceppBaseRequest {
         return kFaceppV3URL?.appendingPathComponent("detect")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_landmark"] = returnLandmark.rawValue
         params["return_attributes"] = returnAttributes.map { $0.rawValue }.joined(separator: ",")
         if let ret = calculateAll {

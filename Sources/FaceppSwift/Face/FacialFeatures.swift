@@ -16,8 +16,8 @@ public class FacialFeaturesOption: FaceppBaseRequest {
         return kFaceappV1URL?.appendingPathComponent("facialfeatures")
     }
 
-    override func params(apiKey: String, apiSecret: String) throws -> (Params, [Params]?) {
-        var (params, files) = try super.params(apiKey: apiKey, apiSecret: apiSecret)
+    override func params() throws -> (Params, [Params]?) {
+        var (params, files) = try super.params()
         params["return_imagereset"] = returnImageReset ? 1 : 0
         return (params, files)
     }
