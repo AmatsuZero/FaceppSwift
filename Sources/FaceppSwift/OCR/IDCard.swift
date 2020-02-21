@@ -84,12 +84,6 @@ public struct OCRIDCard: Codable {
      */
     public let legality: Legality
 
-    private enum CodingKeys: String, CodingKey {
-        case type, address, birthday, gender, name, race, side, legality, idCardNumber
-        case issuedBy
-        case validDate
-    }
-
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         type = try container.decode(OCRType.self, forKey: .type)

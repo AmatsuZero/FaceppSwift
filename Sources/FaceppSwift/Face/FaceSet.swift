@@ -176,8 +176,8 @@ public struct FacesetDeleteResponse: ResponseProtocol {
 public extension FaceSet {
     @discardableResult
     func delete(completionHanlder: @escaping (Error?, FacesetDeleteResponse?) -> Void) -> URLSessionTask? {
-        return FaceSet.delete(option: .init(facesetToken: facesetToken, outerId: outerId),
-                              completionHanlder: completionHanlder)
+        return Self.delete(option: .init(facesetToken: facesetToken, outerId: outerId),
+                           completionHanlder: completionHanlder)
     }
     @discardableResult
     static func delete(option: FaceSetsDeleteOption,
@@ -254,7 +254,7 @@ public extension FaceSet {
     func detail(start: Int = 1, completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) -> URLSessionTask? {
         let option = FacesetGetDetailOption(facesetToken: facesetToken, outerId: outerId, start: start)
         option.start = start
-        return FaceSet.detail(option: option, completionHandler: completionHandler)
+        return Self.detail(option: option, completionHandler: completionHandler)
     }
 
     @discardableResult
@@ -349,7 +349,7 @@ public extension FaceSet {
         option.displayName = displayName
         option.userData = userData
         option.tags = tags
-        return FaceSet.update(option: option, completionHandler: completionHandler)
+        return Self.update(option: option, completionHandler: completionHandler)
     }
     @discardableResult
     static func update(option: FacesetUpdateOption,
@@ -427,15 +427,15 @@ public extension FaceSet {
     @discardableResult
     func remove(faceTokens: [String],
                 completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
-        return FaceSet.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
-                              completionHandler: completionHandler)
+        return Self.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
+                           completionHandler: completionHandler)
     }
 
     @discardableResult
     func removeAll(completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
         let option = FaceSetRemoveOption(facesetToken: facesetToken, outerId: outerId)
         option.removeAll = true
-        return FaceSet.remove(option: option, completionHandler: completionHandler)
+        return Self.remove(option: option, completionHandler: completionHandler)
     }
 
     @discardableResult
@@ -508,7 +508,7 @@ public extension FaceSet {
     @discardableResult
     func add(faceTokens: [String],
              completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
-        return FaceSet.add(option: .init(faceset: self, tokens: faceTokens), completionHandler: completionHandler)
+        return Self.add(option: .init(faceset: self, tokens: faceTokens), completionHandler: completionHandler)
     }
 
     @discardableResult
@@ -734,7 +734,7 @@ public extension FaceSet {
     @discardableResult
     func asyncAdd(faceTokens: [String],
                   completionHandler: @escaping (Error?, String?) -> Void) -> URLSessionTask? {
-        return FaceSet.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
+        return Self.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
             if let err = error {
                 completionHandler(err, nil)
             } else {
@@ -764,7 +764,7 @@ public class FaceSetAsyncRemoveOption: FaceSetRemoveOption {
 public extension FaceSet {
     @discardableResult
     func asyncRemove(faceTokens: [String], completionHandler: @escaping (Error?, String?) -> Void) -> URLSessionTask? {
-        return FaceSet.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
+        return Self.asyncAdd(option: .init(faceset: self, tokens: faceTokens)) { error, resp in
             if let err = error {
                 completionHandler(err, nil)
             } else {
