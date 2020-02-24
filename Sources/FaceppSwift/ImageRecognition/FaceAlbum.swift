@@ -15,6 +15,10 @@ let kFaceAlbumBaseURL: URL? = {
 public struct FaceAlbum: Codable, UseFaceppClientProtocol {
     /// faceAlbum 的标识
     public let facealbumToken: String
+
+    public init(facealbumToken: String) {
+        self.facealbumToken = facealbumToken
+    }
 }
 
 public class FaceAlbumBaseRequest: RequestProtocol {
@@ -52,6 +56,8 @@ public struct CreateFaceAlbumOption: RequestProtocol {
     var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("createalbum")
     }
+
+    public init() {}
 
     func params() throws -> (Params, [Params]?) {
         return ([:], nil)
@@ -664,7 +670,11 @@ public struct FaceAblumGetAllOption: RequestProtocol {
      默认值为 1。
      您可以输入之前请求本 API 返回的 next 值，用以获得接下来的 100 个 faceset_token。
      */
-    public var start = 1
+    public var start: Int
+
+    public init(start: Int = 1) {
+        self.start = start
+    }
 
     var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("getfacealbums")

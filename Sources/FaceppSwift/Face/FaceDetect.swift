@@ -185,11 +185,23 @@ public struct FaceppRectangle: Codable {
     public var left = 0
     public var width = 0
     public var height = 0
+
+    public init(top: Int, left: Int, width: Int, height: Int) {
+        self.top = top
+        self.left = left
+        self.width = width
+        self.height = height
+    }
 }
 
 public struct FaceppPoint: Codable {
     public let x: Float
     public let y: Float
+
+    public init(x: Float, y: Float) {
+        self.x = x
+        self.y = y
+    }
 }
 
 public struct LandMark: Codable {

@@ -18,7 +18,42 @@ public struct FaceSet: Codable, UseFaceppClientProtocol {
     /// FaceSet的名字，如果未提供为""
     public var displayName: String?
     /// FaceSet的标签，如果未提供为""
-    public var tags: String?
+    public var tags: [String]?
+
+    public init(facesetToken: String?,
+                outerId: String?,
+                displayName: String?,
+                tags: [String]?) {
+        self.facesetToken = facesetToken
+        self.outerId = outerId
+        self.displayName = displayName
+        self.tags = tags
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if container.contains(.facesetToken) {
+            facesetToken = try container.decode(String.self, forKey: .facesetToken)
+        } else {
+            facesetToken = nil
+        }
+        if container.contains(.outerId) {
+            outerId = try container.decode(String.self, forKey: .outerId)
+        } else {
+            outerId = nil
+        }
+        if container.contains(.displayName) {
+            displayName = try container.decode(String.self, forKey: .displayName)
+        } else {
+            displayName = nil
+        }
+        if container.contains(.tags) {
+            let str = try container.decode(String.self, forKey: .tags)
+            tags = str.components(separatedBy: ",")
+        } else {
+            tags = nil
+        }
+    }
 }
 
 // MARK: - 获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息。
@@ -38,7 +73,12 @@ public struct FaceSetGetOption: RequestProtocol {
      
      默认值为1。
      */
-    public var start = 1
+    public var start: Int
+
+    public init(start: Int = 1, tags: [String]?) {
+        self.start = start
+        self.tags = tags
+    }
 
     var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("getfacesets")
@@ -81,7 +121,7 @@ public extension FaceSet {
     static func getFaceSets(tags: [String] = [],
                             start: Int = 1,
                             completionHanlder: @escaping (Error?, [FaceSet]?) -> Void) -> URLSessionTask? {
-        let option = FaceSetGetOption(tags: tags, start: start)
+        let option = FaceSetGetOption(start: start, tags: tags)
         return getFaceSets(option: option) { (error, resp) in
             if let err = error {
                 completionHanlder(err, nil)
@@ -550,6 +590,8 @@ public struct FaceSetCreateOption: RequestProtocol {
      */
     public var forceMerge = 1
 
+    public init() {}
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -654,6 +696,10 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
 
     /// 异步任务的唯一标识
     public var taskId: String
+
+    public init(taskId: String) {
+        self.taskId = taskId
+    }
 
     var requsetURL: URL? {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("task_status")

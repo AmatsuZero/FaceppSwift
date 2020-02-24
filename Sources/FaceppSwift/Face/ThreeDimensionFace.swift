@@ -50,6 +50,8 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
     /// 是否返回mtl文件
     public var needMtl = false
 
+    public init() {}
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true

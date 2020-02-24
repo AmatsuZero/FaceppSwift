@@ -58,6 +58,8 @@ public struct CompareOption: RequestProtocol {
     /// 是否检查入参
     public var needCheckParams: Bool = true
 
+    public init() {}
+
     var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("compare")
     }

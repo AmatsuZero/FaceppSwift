@@ -51,6 +51,8 @@ public struct ImageppMergeFaceOption: RequestProtocol {
      */
     public var featureRate: UInt = 45
 
+    public init() {}
+
     public var requsetURL: URL? {
         return kImageppV1URL?.appendingPathComponent("mergeface")
     }
