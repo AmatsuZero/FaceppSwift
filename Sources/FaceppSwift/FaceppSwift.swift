@@ -125,6 +125,8 @@ public class FaceppBaseRequest: RequestProtocol {
     /// 是否检查参数设置
     public var needCheckParams: Bool = true
 
+    public init() {}
+
     var requsetURL: URL? {
         return kFaceBaseURL
     }

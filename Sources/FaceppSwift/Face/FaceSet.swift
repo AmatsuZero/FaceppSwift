@@ -660,7 +660,7 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
     }
 
     func params() throws -> (Params, [Params]?) {
-        return ([ "task_id": taskId], nil)
+        return (["task_id": taskId], nil)
     }
 }
 
