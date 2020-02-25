@@ -667,11 +667,11 @@ public extension FaceSet {
             if error != nil {
                 completionHandler(error, nil)
             } else if let resp = response {
-                completionHandler(nil, .
-                    init(facesetToken: resp.facesetToken,
-                         outerId: resp.outerId, displayName:
-                        option.displayName,
-                         tags: option.tags?.joined(separator: ",")))
+                completionHandler(nil,
+                    .init(facesetToken: resp.facesetToken,
+                          outerId: resp.outerId,
+                          displayName: option.displayName,
+                          tags: option.tags))
             } else {
                 completionHandler(nil, nil)
             }
