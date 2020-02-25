@@ -460,8 +460,7 @@ extension FaceppSwiftTests {
     
     func getFaceSets() {
         let exp = XCTestExpectation(description: "Get Facesets")
-        var opt = FaceSetGetOption()
-        opt.tags = ["test"]
+        let opt = FaceSetGetOption(tags: ["test"])
         FaceSet.getFaceSets(option: opt, completionHanlder: { (err, _) in
             if let err = err {
                 XCTFail(err.localizedDescription)
