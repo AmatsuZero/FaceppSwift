@@ -27,7 +27,7 @@ public class BeautifyV1Option: FaceppBaseRequest {
      */
     public var smoothing: UInt
 
-    override init() {
+    public override init() {
         whitening = 100
         smoothing = 100
         super.init()
@@ -173,7 +173,7 @@ public class BeautifyV2Option: BeautifyV1Option {
         return kFaceappV2URL?.appendingPathComponent("beautify")
     }
 
-    override init() {
+    public override init() {
         super.init()
         whitening = 50
         smoothing = 50
