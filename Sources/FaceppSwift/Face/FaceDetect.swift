@@ -38,7 +38,7 @@ public class FaceDetectOption: FaceppBaseRequest {
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
     /// beauty_score_max
-    public var beautyScoreNax = 100
+    public var beautyScoreMax = 100
 
     override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("detect")
@@ -55,7 +55,7 @@ public class FaceDetectOption: FaceppBaseRequest {
             params["face_rectangle"] = "\(String(describing: rectangle))"
         }
         params["beauty_score_min"] = beautyScoreMin
-        params["beauty_score_max"] = beautyScoreNax
+        params["beauty_score_max"] = beautyScoreMax
         return (params, files)
     }
 }
