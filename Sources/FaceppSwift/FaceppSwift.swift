@@ -5,6 +5,7 @@ public class FaceppClient {
     private let apiSecret: String
     private let session = URLSession(configuration: .default)
     static private(set) var shared: FaceppClient?
+
     public class func initialization(key: String, secret: String) {
         DispatchQueue.once(token: "com.daubert.faceapp.init") {
             shared = FaceppClient(apikey: key, apiSecret: secret)
@@ -105,12 +106,15 @@ extension FaceppClient {
                 completionHandler(FaceppRequestError.parseError(error: err, originalData: data), nil)
             }
         }
+
         task.resume()
         return task
     }
 }
 
 public class FaceppBaseRequest: RequestProtocol {
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /// 图片的URL
     public var imageURL: URL?
     /**
@@ -169,6 +173,7 @@ public class FaceppBaseRequest: RequestProtocol {
 }
 
 protocol RequestProtocol {
+    var timeoutInterval: TimeInterval { get set }
     var needCheckParams: Bool { get set }
     var requsetURL: URL? { get }
     var uploadFileMBSize: Double { get }
@@ -195,7 +200,9 @@ extension RequestProtocol {
         var (params, files) = try self.params()
         params["api_key"] = apiKey
         params["api_secret"] = apiSecret
-        return URLRequest.postRequest(url: url, body: params, filesData: files ?? [])
+        var (request, bodyData) = URLRequest.postRequest(url: url, body: params, filesData: files ?? [])
+        request?.timeoutInterval = timeoutInterval
+        return (request, bodyData)
     }
 }
 

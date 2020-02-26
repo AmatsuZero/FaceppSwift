@@ -64,6 +64,8 @@ public struct FaceSet: Codable, UseFaceppClientProtocol {
  */
 public struct FaceSetGetOption: RequestProtocol {
     public var needCheckParams: Bool = true
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
 
     public var tags: [String]?
     /**
@@ -146,7 +148,8 @@ public extension FaceSet {
  */
 public class FaceSetBaseRequest: RequestProtocol {
     public var needCheckParams: Bool = true
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /// FaceSet的标识
     public var facesetToken: String?
     /// 用户提供的FaceSet标识
@@ -568,7 +571,8 @@ public extension FaceSet {
  */
 public struct FaceSetCreateOption: RequestProtocol {
     public var needCheckParams: Bool = true
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /// 人脸集合的名字，最长256个字符，不能包括字符^@,&=*'"
     public var displayName: String?
     /// 账号下全局唯一的 FaceSet 自定义标识，可以用来管理 FaceSet 对象。最长255个字符，不能包括字符^@,&=*'"
@@ -693,7 +697,8 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
  */
 public struct FaceSetTaskQueryOption: RequestProtocol {
     var needCheckParams: Bool = false
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /// 异步任务的唯一标识
     public var taskId: String
 

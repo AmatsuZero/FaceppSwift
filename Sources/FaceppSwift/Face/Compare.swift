@@ -9,6 +9,8 @@
 import Foundation
 
 public struct CompareOption: RequestProtocol {
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /// 第一个人脸标识 face_token，优先使用该参数
     public var faceToken1: String?
     /// 第一张图片的 URL

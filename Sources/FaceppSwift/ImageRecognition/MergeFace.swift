@@ -9,7 +9,8 @@ import Foundation
 
 public struct ImageppMergeFaceOption: RequestProtocol {
     public var needCheckParams: Bool = true
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /**
      用于人脸融合的模板图
      如果未传入 template_rectangle 参数，则会取此图片中人脸框面积最大的人脸用以融合。

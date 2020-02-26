@@ -10,7 +10,8 @@ import Foundation
 
 public struct ThreeDimensionFaceOption: RequestProtocol {
     public var needCheckParams: Bool = true
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /**
      人脸正脸图片的 URL
      

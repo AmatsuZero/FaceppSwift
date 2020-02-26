@@ -24,7 +24,8 @@ public struct FaceAlbum: Codable, UseFaceppClientProtocol {
 public class FaceAlbumBaseRequest: RequestProtocol {
     /// 是否检查参数
     public var needCheckParams: Bool
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     /// FaceAlbum 标识
     public var facealbumToken: String
 
@@ -52,7 +53,8 @@ public class FaceAlbumBaseRequest: RequestProtocol {
  */
 public struct CreateFaceAlbumOption: RequestProtocol {
     var needCheckParams: Bool = false
-
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("createalbum")
     }
@@ -283,6 +285,8 @@ public extension FaceAlbum {
 public class FaceAlbumTaskQueryBaseOption: RequestProtocol {
     /// 异步任务的唯一标识
     public let taskId: String
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
 
     var needCheckParams: Bool = false
 
@@ -662,6 +666,8 @@ public extension FaceAlbum {
 }
 
 public struct FaceAblumGetAllOption: RequestProtocol {
+    /// 超时时间
+    public var timeoutInterval: TimeInterval = 60
     var needCheckParams: Bool = false
     /**
      一个数字 n，表示开始返回的 faceset_token 在传入的 API Key 下的序号。 n 是 [1,9999999] 间的一个整数。
