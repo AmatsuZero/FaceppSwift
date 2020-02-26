@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// 该API可对人脸图片，进行面部皮肤状态检测分析。
 public class SkinAnalyzeOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("skinanalyze")
@@ -119,6 +120,8 @@ public struct SkinAnalyzeSkinType: Codable {
     /// 皮肤类型
     public let skinType: SkinType
 
+    public let details: SkinTypeResult
+
     public struct SkinTypeResult: Codable {
         public let oilySkin: SkinAnalyzeHasResult
         public let drySkin: SkinAnalyzeHasResult
@@ -147,4 +150,123 @@ extension SkinAnalyzeHasResult {
         doseExist = value == 1
         confidence = try container.decode(Double.self, forKey: .confidence)
     }
+}
+
+/// 该API可对人脸图片，进行面部皮肤状态检测分析。
+public class SkinAnalyzeAdvancedOption: FaceppBaseRequest {
+    override var requsetURL: URL? {
+        return kFaceappV1URL?.appendingPathComponent("skinanalyze_advanced")
+    }
+}
+
+public struct SkinAnalyzeAdvancedResponse: ResponseProtocol {
+    /// 用于区分每一次请求的唯一的字符串
+    public var requestId: String?
+    /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
+    public var errorMessage: String?
+    /// 整个请求所花费的时间，单位为毫秒。
+    public var timeUsed: Int?
+    /// 人脸矩形框的位置
+    public let faceRectangle: FaceppRectangle?
+    /**
+     表示影响计算结果的干扰因素.
+     
+     干扰因素可能有:
+     
+     imporper_headpose：头部角度不当 (判断条件roll,yaw,pitch超过[-45,45])
+     
+     当有影响因素存在时返回（有影响即返回相应字段）：["improper_headpose"]
+     无影响因素的返回：[]
+     */
+    public let warning: [String]?
+
+    /// 肤色
+    public enum SkinColorType: Int, Codable {
+        /// 透白
+        case seeThroughWhite = 0
+        /// 白皙
+        case fairSkinned
+        /// 自然
+        case natural
+        /// 小麦色
+        case wheat
+        /// 黝黑
+        case dark
+    }
+
+    public struct SkinColor: Codable {
+        /// 肤色
+        public let value: SkinColorType
+        /// 置信度
+        public let confidence: Float
+    }
+    public struct SkinAge: Codable {
+        public let value: Int
+    }
+
+    public enum BlackHeadDegree: Int, Codable {
+        /// 无
+        case none = 0
+        /// 轻度
+        case mild
+        /// 中度
+        case moderate
+        /// 重度
+        case serious
+    }
+
+    public struct BlackHead: Codable {
+        public let value: BlackHeadDegree
+        public let confidence: Double
+    }
+
+    public struct Spot: Codable {
+        public let rectangle: [FaceppRectangle]
+    }
+
+    public struct Result: Codable {
+        /// 肤色
+        public let skinColor: SkinColor?
+        /// 肤龄
+        public let skinAge: SkinAge?
+        /// 左眼双眼皮检测结果：
+        public let leftEyelids: SkinAnalyzeEyelids?
+        /// 右眼双眼皮检测结果：
+        public let rightEyelids: SkinAnalyzeEyelids?
+        /// 眼袋检测结果
+        public let eyePouch: SkinAnalyzeHasResult?
+        /// 黑眼圈检测结果
+        public let darkCircle: SkinAnalyzeHasResult?
+        /// 抬头纹检测结果
+        public let foreheadWrinkle: SkinAnalyzeHasResult?
+        /// 鱼尾纹检测结果
+        public let crowsFeet: SkinAnalyzeHasResult?
+        /// 眼部细纹检测结果
+        public let eyeFinelines: SkinAnalyzeHasResult?
+        /// 眉间纹检测结果
+        public let glabellaWrinkle: SkinAnalyzeHasResult?
+        /// 法令纹检测结果
+        public let nasolabialFold: SkinAnalyzeHasResult?
+        /// 肤质检测结果
+        public let skinType: SkinAnalyzeSkinType?
+        /// 前额毛孔检测结果
+        public let poresForehead: SkinAnalyzeHasResult?
+        /// 左脸颊毛孔检测结果
+        public let poresLeftCheek: SkinAnalyzeHasResult?
+        /// 右脸颊毛孔检测结果
+        public let poresRightCheek: SkinAnalyzeHasResult?
+        /// 下巴毛孔检测结果
+        public let poresJaw: SkinAnalyzeHasResult?
+        /// 黑头检测结果
+        public let blackhead: BlackHead?
+        /// 青春痘
+        public let acne: Spot?
+        /// 痣
+        public let mole: Spot?
+        /// 斑点
+        public let skinSpot: Spot?
+    }
+
+    /// 人脸皮肤分析的结果
+    public let result: Result?
 }

@@ -35,8 +35,10 @@ public enum Facepp: UseFaceppClientProtocol {
         completionHandler:  (Error?, FacialFeaturesResponse?) -> Void)
     case threeDimensionFace(option: ThreeDimensionFaceOption,
         completionHandler: (Error?, ThreeDimensionFaceResponse?) -> Void)
-    case skinanalyze(option: SkinAnalyzeOption,
+    case skinAnalyze(option: SkinAnalyzeOption,
         completionHandler: (Error?, SkinAnalyzeResponse?) -> Void)
+    case skinAnalyzeAdvanced(option: SkinAnalyzeAdvancedOption,
+        completionHandler: (Error?, SkinAnalyzeAdvancedResponse?) -> Void)
 
     @discardableResult
     public func request() -> URLSessionTask? {
@@ -55,7 +57,9 @@ public enum Facepp: UseFaceppClientProtocol {
             return Self.parse(option: option, completionHandler: handler)
         case .threeDimensionFace(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
-        case .skinanalyze(let option, let handler):
+        case .skinAnalyze(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .skinAnalyzeAdvanced(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
         }
     }

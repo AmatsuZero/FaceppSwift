@@ -128,7 +128,20 @@ final class FaceppSwiftTests: XCTestCase {
         let exp = XCTestExpectation(description: "Skin Analyze")
         let opt = SkinAnalyzeOption()
         opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Candye_Kane_2012.jpg/500px-Candye_Kane_2012.jpg")
-        Facepp.skinanalyze(option: opt) { err, _ in
+        Facepp.skinAnalyze(option: opt) { err, _ in
+            if let err = err {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testSkinAnalyzeAdvance() {
+        let exp = XCTestExpectation(description: "Skin Analyze Advanced")
+        let opt = SkinAnalyzeAdvancedOption()
+        opt.imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Candye_Kane_2012.jpg/500px-Candye_Kane_2012.jpg")
+        Facepp.skinAnalyzeAdvanced(option: opt) { err, _ in
             if let err = err {
                 XCTFail(err.localizedDescription)
             }
@@ -407,7 +420,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testSegmentV1", testSegmentV1),
         ("testSegmentV2", testSegmentV2),
         ("testLicensePlate", testLicensePlate),
-        ("testRecognizeRText", testRecognizeRText)
+        ("testRecognizeRText", testRecognizeRText),
+        ("testSkinAnalyzeAdvance", testSkinAnalyzeAdvance)
     ]
 }
 
