@@ -372,7 +372,7 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
-    func testRecognizeRText() {
+    func testRecognizeText() {
         let exp = XCTestExpectation(description: "文字识别")
         let opt = ImageppRecognizeTextOption()
         opt.imageURL = URL(string: "http://img.yao51.com/jiankangtuku/obhfpfpejz.jpeg")
@@ -447,7 +447,7 @@ final class FaceppSwiftTests: XCTestCase {
         ("testSegmentV1", testSegmentV1),
         ("testSegmentV2", testSegmentV2),
         ("testLicensePlate", testLicensePlate),
-        ("testRecognizeRText", testRecognizeRText),
+        ("testRecognizeText", testRecognizeText),
         ("testSkinAnalyzeAdvance", testSkinAnalyzeAdvance),
         ("testSerialization", testSerialization)
     ]

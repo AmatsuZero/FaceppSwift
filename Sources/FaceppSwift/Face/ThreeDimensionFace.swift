@@ -51,6 +51,8 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
     /// 是否返回mtl文件
     public var needMtl = false
 
+    public weak var metricsReporter: FaceppMetricsReporter?
+
     public init() {}
 
     func paramsCheck() throws -> Bool {

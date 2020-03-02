@@ -60,6 +60,8 @@ public struct CompareOption: RequestProtocol {
     /// 是否检查入参
     public var needCheckParams: Bool = true
 
+    public weak var metricsReporter: FaceppMetricsReporter?
+
     public init() {}
 
     var requsetURL: URL? {

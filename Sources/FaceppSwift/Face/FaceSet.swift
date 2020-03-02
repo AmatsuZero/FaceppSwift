@@ -77,6 +77,8 @@ public struct FaceSetGetOption: RequestProtocol {
      */
     public var start: Int
 
+    public weak var metricsReporter: FaceppMetricsReporter?
+
     public init(start: Int = 1, tags: [String]?) {
         self.start = start
         self.tags = tags
@@ -154,6 +156,8 @@ public class FaceSetBaseRequest: RequestProtocol {
     public var facesetToken: String?
     /// 用户提供的FaceSet标识
     public var outerId: String?
+
+    public weak var metricsReporter: FaceppMetricsReporter?
 
     convenience init(faceset: FaceSet) {
         self.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
@@ -594,6 +598,8 @@ public struct FaceSetCreateOption: RequestProtocol {
      */
     public var forceMerge = 1
 
+    public weak var metricsReporter: FaceppMetricsReporter?
+
     public init() {}
 
     func paramsCheck() throws -> Bool {
@@ -696,11 +702,13 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
  Wiki: https://console.faceplusplus.com.cn/documents/40622157
  */
 public struct FaceSetTaskQueryOption: RequestProtocol {
-    var needCheckParams: Bool = false
+    public var needCheckParams: Bool = false
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
     /// 异步任务的唯一标识
     public var taskId: String
+
+    public weak var metricsReporter: FaceppMetricsReporter?
 
     public init(taskId: String) {
         self.taskId = taskId

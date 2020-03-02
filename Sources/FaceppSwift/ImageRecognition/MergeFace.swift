@@ -52,6 +52,8 @@ public struct ImageppMergeFaceOption: RequestProtocol {
      */
     public var featureRate: UInt = 45
 
+    public weak var metricsReporter: FaceppMetricsReporter?
+
     public init() {}
 
     public var requsetURL: URL? {

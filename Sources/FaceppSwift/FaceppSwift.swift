@@ -1,23 +1,27 @@
 import Foundation
 
-public class FaceppClient {
+public class FaceppClient: NSObject {
     private let apiKey: String
     private let apiSecret: String
-    private let session = URLSession(configuration: .default)
+    private lazy var session: URLSession = {
+        return URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+    }()
     static private(set) var shared: FaceppClient?
+    private var tasksMap = [URLSessionTask: RequestProtocol]()
 
     public class func initialization(key: String, secret: String) {
         DispatchQueue.once(token: "com.daubert.faceapp.init") {
             shared = FaceppClient(apikey: key, apiSecret: secret)
         }
     }
-    private init() {
+    private override init() {
         fatalError("不要调用原来的初始化")
     }
 
     private init(apikey key: String, apiSecret secret: String) {
         self.apiKey = key
         self.apiSecret = secret
+        super.init()
     }
 }
 
@@ -112,7 +116,7 @@ extension FaceppClient {
                 completionHandler(FaceppRequestError.parseError(error: err, originalData: data), nil)
             }
         }
-
+        tasksMap[task] = option
         task.resume()
         return task
     }
@@ -138,6 +142,8 @@ public class FaceppBaseRequest: RequestProtocol {
 
     /// 是否检查参数设置
     public var needCheckParams: Bool = true
+
+    public weak var metricsReporter: FaceppMetricsReporter?
 
     public init() {}
 
@@ -178,9 +184,25 @@ public class FaceppBaseRequest: RequestProtocol {
     }
 }
 
-protocol RequestProtocol {
+public protocol FaceppMetricsReporter: class {
+    @available(OSX 10.12, iOS 10.0, *)
+    func option(_ option: FaceppRequestConfigProtocol, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics)
+}
+
+public extension FaceppMetricsReporter {
+    @available(OSX 10.12, iOS 10.0, *)
+    func option(_ option: FaceppRequestConfigProtocol,
+                task: URLSessionTask,
+                didFinishCollecting metrics: URLSessionTaskMetrics) {}
+}
+
+public protocol FaceppRequestConfigProtocol {
     var timeoutInterval: TimeInterval { get set }
     var needCheckParams: Bool { get set }
+    var metricsReporter: FaceppMetricsReporter? { get set }
+}
+
+protocol RequestProtocol: FaceppRequestConfigProtocol {
     var requsetURL: URL? { get }
     var uploadFileMBSize: Double { get }
     func paramsCheck() throws -> Bool
@@ -215,5 +237,15 @@ extension RequestProtocol {
 public class CardppV1Requst: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kCardppV1URL
+    }
+}
+
+extension FaceppClient: URLSessionTaskDelegate {
+    @available(OSX 10.12, iOS 10.0, *)
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        guard let option = tasksMap.removeValue(forKey: task) else {
+            return
+        }
+        option.metricsReporter?.option(option, task: task, didFinishCollecting: metrics)
     }
 }

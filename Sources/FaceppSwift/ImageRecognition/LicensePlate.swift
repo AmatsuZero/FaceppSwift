@@ -27,7 +27,7 @@ public struct ImageppLicensePlateResponse: FaceppResponseProtocol {
     /// 被检测的图片在系统中的标识
     public let imageId: String?
 
-    public enum Color: Int, Codable, Hashable {
+    public enum Color: Int, Codable {
         case blue = 0, yellow, black, white, green
         /// 小型新能源
         case smallNewEnergy
