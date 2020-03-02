@@ -15,7 +15,7 @@ public class SkinAnalyzeOption: FaceppBaseRequest {
     }
 }
 
-public struct SkinAnalyzeEyelids: Codable {
+public struct SkinAnalyzeEyelids: Codable, Hashable {
     public enum EyelidType: Int, Codable {
         /// 单眼皮
         case singleFoldEyelid = 0
@@ -33,12 +33,12 @@ public struct SkinAnalyzeEyelids: Codable {
     }
 }
 
-public struct SkinAnalyzeHasResult: Codable {
+public struct SkinAnalyzeHasResult: Codable, Hashable {
     public let doseExist: Bool
     public let confidence: Double
 }
 
-public struct SkinAnalyzeResponse: ResponseProtocol {
+public struct SkinAnalyzeResponse: FaceppResponseProtocol, Hashable {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -66,7 +66,7 @@ public struct SkinAnalyzeResponse: ResponseProtocol {
      */
     public let warning: [String]?
 
-    public struct Result: Codable {
+    public struct Result: Codable, Hashable {
         /// 左眼双眼皮检测结果：
         public let leftEyelids: SkinAnalyzeEyelids?
         /// 右眼双眼皮检测结果：
@@ -106,7 +106,7 @@ public struct SkinAnalyzeResponse: ResponseProtocol {
     public let result: Result?
 }
 
-public struct SkinAnalyzeSkinType: Codable {
+public struct SkinAnalyzeSkinType: Codable, Hashable {
     public enum SkinType: Int, Codable {
         /// 油性皮肤
         case oilySkin = 0
@@ -122,7 +122,7 @@ public struct SkinAnalyzeSkinType: Codable {
 
     public let details: SkinTypeResult
 
-    public struct SkinTypeResult: Codable {
+    public struct SkinTypeResult: Codable, Hashable {
         public let oilySkin: SkinAnalyzeHasResult
         public let drySkin: SkinAnalyzeHasResult
         public let neutralSkin: SkinAnalyzeHasResult
@@ -159,7 +159,7 @@ public class SkinAnalyzeAdvancedOption: FaceppBaseRequest {
     }
 }
 
-public struct SkinAnalyzeAdvancedResponse: ResponseProtocol {
+public struct SkinAnalyzeAdvancedResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -194,13 +194,13 @@ public struct SkinAnalyzeAdvancedResponse: ResponseProtocol {
         case dark
     }
 
-    public struct SkinColor: Codable {
+    public struct SkinColor: Codable, Hashable {
         /// 肤色
         public let value: SkinColorType
         /// 置信度
         public let confidence: Float
     }
-    public struct SkinAge: Codable {
+    public struct SkinAge: Codable, Hashable {
         public let value: Int
     }
 
@@ -215,16 +215,16 @@ public struct SkinAnalyzeAdvancedResponse: ResponseProtocol {
         case serious
     }
 
-    public struct BlackHead: Codable {
+    public struct BlackHead: Codable, Hashable {
         public let value: BlackHeadDegree
         public let confidence: Double
     }
 
-    public struct Spot: Codable {
+    public struct Spot: Codable, Hashable {
         public let rectangle: [FaceppRectangle]
     }
 
-    public struct Result: Codable {
+    public struct Result: Codable, Hashable {
         /// 肤色
         public let skinColor: SkinColor?
         /// 肤龄

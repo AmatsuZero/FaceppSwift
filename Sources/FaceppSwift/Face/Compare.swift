@@ -131,7 +131,7 @@ public struct CompareOption: RequestProtocol {
     }
 }
 
-public struct CompareResponse: ResponseProtocol {
+public struct CompareResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public let requestId: String?
     /**

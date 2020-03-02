@@ -209,8 +209,8 @@ public class BeautifyV2Option: BeautifyV1Option {
     }
 }
 
-public struct BeautifyResponse: ResponseProtocol {
-    var requestId: String?
+public struct BeautifyResponse: FaceppResponseProtocol {
+    public var requestId: String?
     /// 当发生错误时才返回。
     public var errorMessage: String?
     /// 整个请求所花费的时间，单位为毫秒。

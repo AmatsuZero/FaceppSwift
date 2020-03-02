@@ -30,7 +30,7 @@ public class OCRIDCardOption: CardppV1Requst {
     }
 }
 
-public struct OCRIDCard: Codable {
+public struct OCRIDCard: Codable, Hashable {
     /// 证件类型。
     public let type: OCRType
     /// 住址
@@ -66,7 +66,7 @@ public struct OCRIDCard: Codable {
      */
     public let validDate: [Date?]?
 
-    public struct Legality: Codable {
+    public struct Legality: Codable, Hashable {
         /// 正式身份证照片
         public let idPhoto: Float
         /// 临时身份证照片
@@ -125,7 +125,7 @@ extension OCRIDCard.Legality {
     }
 }
 
-public struct OCRIDCardResponse: ResponseProtocol {
+public struct OCRIDCardResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。

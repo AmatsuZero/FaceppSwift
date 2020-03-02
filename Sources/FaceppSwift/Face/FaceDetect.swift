@@ -60,14 +60,14 @@ public class FaceDetectOption: FaceppBaseRequest {
     }
 }
 
-public struct Attributes: Codable {
+public struct Attributes: Codable, Hashable {
 
-    public struct Threshold: Codable {
+    public struct Threshold: Codable, Hashable {
         public let threshold: Float
         public let value: Float
     }
 
-    public struct EyeStatusInfo: Codable {
+    public struct EyeStatusInfo: Codable, Hashable {
         /// 眼睛被遮挡的置信度
         public let occlusion: Float
         /// 佩戴普通眼镜且睁眼的置信度
@@ -82,20 +82,20 @@ public struct Attributes: Codable {
         public let darkGlasses: Float
     }
 
-    public struct Age: Codable {
+    public struct Age: Codable, Hashable {
         public let value: Int
     }
     /// 年龄分析结果。返回值为一个非负整数。
     public let age: Age?
 
-    public struct Beauty: Codable {
+    public struct Beauty: Codable, Hashable {
         public let femaleScore: Float
         public let maleScore: Float
     }
     /// 颜值识别结果。返回值包含以下两个字段。每个字段的值是一个浮点数，范围 [0,100]，小数点后 3 位有效数字。
     public let beauty: Beauty?
 
-    public struct Blur: Codable {
+    public struct Blur: Codable, Hashable {
         public let blurness: Threshold
         public let gaussianblur: Threshold
         public let motionblur: Threshold
@@ -103,7 +103,7 @@ public struct Attributes: Codable {
     /// 人脸模糊分析结果
     public let blur: Blur?
 
-    public struct Emotion: Codable {
+    public struct Emotion: Codable, Hashable {
         public let anger: Float
         public let disgust: Float
         public let fear: Float
@@ -115,7 +115,7 @@ public struct Attributes: Codable {
     /// 情绪识别结果。返回值包含以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let emotion: Emotion?
 
-    public struct EyeStatus: Codable {
+    public struct EyeStatus: Codable, Hashable {
         public let leftEyeStatus: EyeStatusInfo
         public let rightEyeStatus: EyeStatusInfo
     }
@@ -127,7 +127,7 @@ public struct Attributes: Codable {
     /// 人脸姿势分析结果
     public let headpose: FacialHeadPose?
 
-    public struct SkinStatus: Codable {
+    public struct SkinStatus: Codable, Hashable {
         /// 健康
         public let health: Float
         /// 色斑
@@ -141,7 +141,7 @@ public struct Attributes: Codable {
     /// 面部特征识别结果，包括以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let skinstatus: SkinStatus?
 
-    public struct EyeGazeInfo: Codable {
+    public struct EyeGazeInfo: Codable, Hashable {
         /// 眼球中心位置的 X 轴坐标
         public let positionXCoordinate: Float
         /// 眼球中心位置的 Y 轴坐标
@@ -154,7 +154,7 @@ public struct Attributes: Codable {
         public let vectorZComponent: Float
     }
 
-    public struct EyeGaze: Codable {
+    public struct EyeGaze: Codable, Hashable {
         /// 左眼的位置与视线状态
         public let leftEyeGaze: EyeGazeInfo
         /// 右眼的位置与视线状态
@@ -164,7 +164,7 @@ public struct Attributes: Codable {
     /// 眼球位置与视线方向信息
     public let eyegaze: EyeGaze?
 
-    public struct MouthStatus: Codable {
+    public struct MouthStatus: Codable, Hashable {
         /// 嘴部被医用口罩或呼吸面罩遮挡的置信度
         public let surgicalMaskOrRespirator: Float
         /// 嘴部被其他物体遮挡的置信度
@@ -180,7 +180,7 @@ public struct Attributes: Codable {
     public let smile: Threshold?
 }
 
-public struct FaceppRectangle: Codable {
+public struct FaceppRectangle: Codable, Hashable {
     public var top = 0
     public var left = 0
     public var width = 0
@@ -194,7 +194,7 @@ public struct FaceppRectangle: Codable {
     }
 }
 
-public struct FaceppPoint: Codable {
+public struct FaceppPoint: Codable, Hashable {
     public let x: Float
     public let y: Float
 
@@ -204,7 +204,7 @@ public struct FaceppPoint: Codable {
     }
 }
 
-public struct LandMark: Codable {
+public struct LandMark: Codable, Hashable {
     // MARK: - 83个特征点：https://console.faceplusplus.com.cn/documents/5671270
     public let contourChin: FaceppPoint
     public let contourLeft1: FaceppPoint
@@ -327,15 +327,14 @@ public struct LandMark: Codable {
     public let mouthUupperLipRightContour4: FaceppPoint?
 }
 
-public struct Face: Codable {
+public struct Face: Codable, Hashable {
     public let faceToken: String
     public let faceRectangle: FaceppRectangle
     public let attributes: Attributes?
     public let landmark: LandMark?
 }
 
-public struct FaceDetectResponse: ResponseProtocol {
-
+public struct FaceDetectResponse: FaceppResponseProtocol, Hashable {
     public let requestId: String?
     public let imageId: String?
     public let timeUsed: Int?

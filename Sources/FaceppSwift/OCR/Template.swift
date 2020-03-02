@@ -32,12 +32,12 @@ public class OCRTemplateOption: CardppV1Requst {
     }
 }
 
-public struct OCRTemplateResponse: ResponseProtocol {
+public struct OCRTemplateResponse: FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
-    public struct Value: Codable {
+    public struct Value: Codable, Hashable {
         /// 创建模板时定义的识别域名
         public let text: String
         /**
@@ -49,7 +49,7 @@ public struct OCRTemplateResponse: ResponseProtocol {
         public let position: [FaceppPoint]?
     }
 
-    public struct Result: Codable {
+    public struct Result: Codable, Hashable {
         public let key: String
         public let value: Value
     }

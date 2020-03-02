@@ -13,12 +13,12 @@ public class OCRVehicleLicenseOption: CardppV1Requst {
     }
 }
 
-public struct OCRVehicleLicenseResponse: ResponseProtocol {
+public struct OCRVehicleLicenseResponse: FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
-    public struct Card: Codable {
+    public struct Card: Codable, Hashable {
         /// 证件版本。
         public let type: OCRType
         /// 号牌号码

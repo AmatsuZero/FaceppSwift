@@ -65,7 +65,7 @@ let kImageppBetaURL: URL? = {
     return kImageppBaseURL?.appendingPathComponent("beta")
 }()
 
-protocol ResponseProtocol: Codable {
+public protocol FaceppResponseProtocol: Codable, Hashable {
     // 用于区分每一次请求的唯一的字符串。
     var requestId: String? { get }
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -271,7 +271,7 @@ extension URLRequest {
     }
 }
 
-public struct FacialThreshHolds: Codable {
+public struct FacialThreshHolds: Codable, Hashable {
     /// 误识率为千分之一的置信度阈值
     public let lowPrecision: Float
     /// 误识率为万分之一的置信度阈值
@@ -286,7 +286,7 @@ public struct FacialThreshHolds: Codable {
     }
 }
 
-public struct FacialHeadPose: Codable {
+public struct FacialHeadPose: Codable, Hashable {
     /// 抬头
     public let pitchAngle: Double
     /// 旋转（平面旋转）
@@ -305,7 +305,7 @@ public enum OCRType: Int, Codable {
 }
 
 protocol UseFaceppClientProtocol {
-    static func parse<R: ResponseProtocol>(option: RequestProtocol,
+    static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
                                            completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask?
     func request() -> URLSessionTask?
 }
@@ -315,7 +315,7 @@ extension UseFaceppClientProtocol {
         return nil
     }
 
-    static func parse<R: ResponseProtocol>(option: RequestProtocol,
+    static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
                                            completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         guard let client = FaceppClient.shared else {
             completionHandler(FaceppRequestError.notInit, nil)
@@ -331,5 +331,25 @@ extension URL {
             return false
         }
         return (Double(fileSize) / 1024 / 1024) <= mb
+    }
+}
+
+public struct FaceppBound: Codable, Hashable {
+    /// 右上角的像素点坐标
+    public let rightTop: FaceppPoint
+    /// 左上角的像素点坐标
+    public let leftTop: FaceppPoint
+    /// 右下角的像素点坐标
+    public let rightBottom: FaceppPoint
+    /// 左下角的像素点坐标
+    public let leftBottom: FaceppPoint
+}
+
+public extension FaceppBound {
+    func asFaceppRectangle() -> FaceppRectangle {
+        return FaceppRectangle(top: Int(leftTop.y),
+                               left: Int(leftTop.x),
+                               width: Int(abs(rightTop.x - leftTop.x)) ,
+                               height: Int(abs(rightBottom.y - rightTop.y)))
     }
 }

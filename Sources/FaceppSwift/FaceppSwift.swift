@@ -68,7 +68,7 @@ public enum Facepp: UseFaceppClientProtocol {
 
 extension FaceppClient {
     @discardableResult
-    func parse<R: ResponseProtocol>(option: RequestProtocol,
+    func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
                                     completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         var request: URLRequest?
         var data: Data?

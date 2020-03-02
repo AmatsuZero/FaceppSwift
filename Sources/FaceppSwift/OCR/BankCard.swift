@@ -13,7 +13,7 @@ public class OCRBankCardV1Option: CardppV1Requst {
     }
 }
 
-public struct OCRBankCardResponse: ResponseProtocol {
+public struct OCRBankCardResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -23,25 +23,14 @@ public struct OCRBankCardResponse: ResponseProtocol {
     /// 被检测的图片在系统中的标识
     public let imageId: String?
 
-    public struct Bound: Codable {
-        /// 银行卡右上角的像素点坐标
-        public let rightTop: FaceppPoint
-        /// 银行卡左上角的像素点坐标
-        public let leftTop: FaceppPoint
-        /// 银行卡右下角的像素点坐标
-        public let rightBottom: FaceppPoint
-        /// 银行卡左下角的像素点坐标
-        public let leftBottom: FaceppPoint
-    }
-
     public enum Organization: String, Codable {
         case union, master, visa, jcb
     }
 
-    public struct Card: Codable {
+    public struct Card: Codable, Hashable {
 
         /// 银行卡卡片四个角的像素点坐标
-        public let bound: Bound
+        public let bound: FaceppBound
         /**
          银行卡号。返回值为纯数字，无空格。
          

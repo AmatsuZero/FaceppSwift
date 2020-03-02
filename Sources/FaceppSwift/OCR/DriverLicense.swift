@@ -57,16 +57,16 @@ public class OCRDriverLicenseV2Option: CardppV1Requst {
     }
 }
 
-public struct DriverLicenseStringModel: Codable {
+public struct DriverLicenseStringModel: Codable, Hashable {
     public let content: String
     public let confidence: Float?
 }
 
-public struct OCRDriverLicenseMain: Codable {
+public struct OCRDriverLicenseMain: Codable, Hashable {
     /// 返回驾驶证正本置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
     public let confidence: Float?
 
-    public struct Version: Codable {
+    public struct Version: Codable, Hashable {
         /// 表示驾驶证正本版本，int型，返回 2，表示是2013版本驾驶证；返回 1，表示是2008或更早版本驾驶证
         public let content: OCRDriverLicenseV1Response.Version
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
@@ -83,7 +83,7 @@ public struct OCRDriverLicenseMain: Codable {
      */
     public let address: DriverLicenseStringModel
 
-    public struct DateModel: Codable {
+    public struct DateModel: Codable, Hashable {
         public let content: Date?
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回
         public let confidence: Float?
@@ -102,7 +102,7 @@ public struct OCRDriverLicenseMain: Codable {
     /// 生日及其置信度
     public let birthday: DateModel
 
-    public struct Gender: Codable {
+    public struct Gender: Codable, Hashable {
         /// 表示性别
         public let content: OCRDriverLicenseV1Response.Gender
         public let confidence: Float?
@@ -124,7 +124,7 @@ public struct OCRDriverLicenseMain: Codable {
      */
     public let name: DriverLicenseStringModel
 
-    public struct DriverLicenseClass: Codable {
+    public struct DriverLicenseClass: Codable, Hashable {
         public let content: OCRDriverLicenseV1Response.Class
         public let confidence: Float?
     }
@@ -171,7 +171,7 @@ public struct OCRDriverLicenseMain: Codable {
      */
     public let validFor: DateModel?
 
-    public struct ValidDate: Codable {
+    public struct ValidDate: Codable, Hashable {
         public let content: [Date?]
         public let confidence: Float?
 
@@ -197,7 +197,7 @@ public struct OCRDriverLicenseMain: Codable {
     public let validDate: ValidDate?
 }
 
-public struct OCRDriverLicenseSecond: Codable {
+public struct OCRDriverLicenseSecond: Codable, Hashable {
     /// 返回驾驶证正本置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
     public let confidence: Float?
     /**
@@ -216,7 +216,7 @@ public struct OCRDriverLicenseSecond: Codable {
     public let fileNumber: DriverLicenseStringModel
 }
 
-public struct OCRDriverLicenseV2Response: ResponseProtocol {
+public struct OCRDriverLicenseV2Response: FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
@@ -241,7 +241,7 @@ public struct OCRDriverLicenseV2Response: ResponseProtocol {
  
  Wiki: https://console.faceplusplus.com.cn/documents/5671704
  */
-public struct OCRDriverLicenseV1Response: ResponseProtocol {
+public struct OCRDriverLicenseV1Response: FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
@@ -266,7 +266,7 @@ public struct OCRDriverLicenseV1Response: ResponseProtocol {
         case front, back
     }
 
-    public struct Card: Codable {
+    public struct Card: Codable, Hashable {
         /// 证件类型。
         public let type: OCRType
 

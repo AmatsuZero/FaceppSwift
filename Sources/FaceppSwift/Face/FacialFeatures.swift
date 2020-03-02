@@ -23,7 +23,7 @@ public class FacialFeaturesOption: FaceppBaseRequest {
     }
 }
 
-public struct FacialFeaturesResponse: ResponseProtocol {
+public struct FacialFeaturesResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -45,7 +45,7 @@ public struct FacialFeaturesResponse: ResponseProtocol {
 }
 
 /// 三庭
-public struct Threeparts: Codable {
+public struct Threeparts: Codable, Hashable {
     /// 返回三庭比例，保留至小数点后两位，若为0，则返回null
     public let partsRation: String?
 
@@ -58,7 +58,7 @@ public struct Threeparts: Codable {
         case faceupShort = "faceup_short"
     }
 
-    public struct OnePart: Codable {
+    public struct OnePart: Codable, Hashable {
         /// 上庭长度（若为0或无法判断，则返回null）
         public let faceupLength: Float?
         /// 上庭占比（若为0或无法判断，则返回null）
@@ -78,7 +78,7 @@ public struct Threeparts: Codable {
         case facemidShort = "facemid_short"
     }
 
-    public struct TwoPart: Codable {
+    public struct TwoPart: Codable, Hashable {
         /// 中庭长度（若为0或无法判断，则返回null）
         public let facemidLength: Float?
         /// 中庭占比（若为0或无法判断，则返回null）
@@ -99,7 +99,7 @@ public struct Threeparts: Codable {
         case facedownShort = "facedown_short"
     }
 
-    public struct ThreePart: Codable {
+    public struct ThreePart: Codable, Hashable {
         /// 下庭长度（若为0或无法判断，则返回null）
         public let facedownLength: Float?
         /// 下庭占比（若为0或无法判断，则返回null）
@@ -110,7 +110,7 @@ public struct Threeparts: Codable {
     }
 }
 
-public struct FiveEyes: Codable {
+public struct FiveEyes: Codable, Hashable {
     /// 返回五眼比例，保留至小数点后两位，若出现0，则返回null
     public let eyesRatio: String?
 
@@ -123,7 +123,7 @@ public struct FiveEyes: Codable {
         case righteyeEmptyLong = "righteye_empty_long"
     }
 
-    public struct OneEye: Codable {
+    public struct OneEye: Codable, Hashable {
         /// 右外眼角颧弓留白距离（若为0或无法判断，则返回null）
         public let righteyeEmptyLength: Float?
         /// 右外眼角颧弓留白占比（若为0或无法判断，则返回null）
@@ -143,7 +143,7 @@ public struct FiveEyes: Codable {
         case eyeinLong = "eyein_long"
     }
 
-    public struct ThreeEye: Codable {
+    public struct ThreeEye: Codable, Hashable {
         /// 内眼角间距（若为0或无法判断，则返回null）
         public let eyeinLength: Float?
         /// 内眼角间距占比（若为0或无法判断，则返回null）
@@ -163,7 +163,7 @@ public struct FiveEyes: Codable {
         case lefteyeEmptyLong = "lefteye_empty_long"
     }
 
-    public struct FiveEye: Codable {
+    public struct FiveEye: Codable, Hashable {
         /// 左外眼角颧弓留白 （若为0或无法判断，则返回null）
         public let lefteyeEmptyLength: Float?
         /// 左外眼角颧弓留白占比（若为0或无法判断，则返回null）
@@ -173,7 +173,7 @@ public struct FiveEyes: Codable {
     }
 }
 
-public struct FacialFeaturesFace: Codable {
+public struct FacialFeaturesFace: Codable, Hashable {
     /// 颞部宽度（若为0则返回null）
     public let tempusLength: Float?
     /// 颧骨宽度（若为0则返回null）
@@ -207,7 +207,7 @@ public struct FacialFeaturesFace: Codable {
     public let faceType: FaceType?
 }
 
-public struct FacialFeaturesJaw: Codable {
+public struct FacialFeaturesJaw: Codable, Hashable {
     /// 下巴宽度（若为0或者无法判断，则返回null）
     public let jawWidth: Float?
     /// 下巴长度（若为0或者无法判断，则返回null）
@@ -227,7 +227,7 @@ public struct FacialFeaturesJaw: Codable {
     public let jawType: JawType?
 }
 
-public struct FacialFeaturesEyebrow: Codable {
+public struct FacialFeaturesEyebrow: Codable, Hashable {
     /// 眉毛宽度（若为0则返回null）
     public let browWidth: Float?
     /// 眉毛高度（若为0则返回null）
@@ -259,7 +259,7 @@ public struct FacialFeaturesEyebrow: Codable {
     public let eyebrowType: EyebrowType?
 }
 
-public struct FacialFeaturesEyes: Codable {
+public struct FacialFeaturesEyes: Codable, Hashable {
     /// 眼睛宽度（若为0或无法判断，则返回null）
     public let eyeWidth: Float?
     /// 眼睛高度（若为0或无法判断，则返回null）
@@ -283,7 +283,7 @@ public struct FacialFeaturesEyes: Codable {
     public let eyesType: EyesType?
 }
 
-public struct FacialFeaturesNose: Codable {
+public struct FacialFeaturesNose: Codable, Hashable {
     /// 鼻翼宽度（若为0或无法判断，则返回null）
     public let noseWidth: Float?
 
@@ -299,7 +299,7 @@ public struct FacialFeaturesNose: Codable {
     public let noseType: NoseType?
 }
 
-public struct FacialFeaturesMouth: Codable {
+public struct FacialFeaturesMouth: Codable, Hashable {
     /// 嘴巴高度（若为0或无法判断，则返回null）
     public let mouthHeight: Float?
     /// 嘴巴宽度（若为0或无法判断，则返回null）
@@ -325,7 +325,7 @@ public struct FacialFeaturesMouth: Codable {
     public let mouthType: MouthType?
 }
 
-public struct FacialFeaturesResults: Codable {
+public struct FacialFeaturesResults: Codable, Hashable {
     /// 三庭
     public let threeParts: Threeparts
     /// 五眼

@@ -37,19 +37,19 @@ extension Set where Element == HumanBodyDetectOption.ReturnAttributes {
     }
 }
 
-public struct HumanBodyDetectResponse: ResponseProtocol {
+public struct HumanBodyDetectResponse: FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
-    public struct Gender: Codable {
+    public struct Gender: Codable, Hashable {
         /// 性别为男性的置信度
         public let male: Float?
         /// 性别为女性的置信度
         public let female: Float?
     }
 
-    public struct RGBColor: Codable {
+    public struct RGBColor: Codable, Hashable {
         public let r: Float
         public let g: Float
         public let b: Float
@@ -60,21 +60,21 @@ public struct HumanBodyDetectResponse: ResponseProtocol {
         case magenta, cyan, gray, purple, orange
     }
 
-    public struct UpperBodyCloth: Codable {
+    public struct UpperBodyCloth: Codable, Hashable {
         /// 上身衣物颜色，值为下方颜色列表中与上身衣物颜色最接近的颜色值
         public let upperBodyClothColor: Color
         /// 上身衣物颜色 RGB 值
         public let upperBodyClothColorRgb: RGBColor
     }
 
-    public struct LowerBodyCloth: Codable {
+    public struct LowerBodyCloth: Codable, Hashable {
         /// 下身衣物颜色，值为下方颜色列表中与下身衣物颜色最接近的颜色值
         public let lowerBodyClothColor: Color
         /// 下身衣物颜色 RGB 值
         public let lowerBodyClothColorRgb: RGBColor
     }
 
-    public struct Attributes: Codable {
+    public struct Attributes: Codable, Hashable {
         /// 性别分析结果，返回值包含以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字。字段值的总和等于 100。
         public let gender: Gender?
         /// 上身分析结果
@@ -83,7 +83,7 @@ public struct HumanBodyDetectResponse: ResponseProtocol {
         public let lowerBodyCloth: LowerBodyCloth?
     }
 
-    public struct HumanBody: Codable {
+    public struct HumanBody: Codable, Hashable {
         /// 人体检测的置信度，范围 [0,100]，小数点后3位有效数字，数字越大表示检测到的对象为人体的置信度越大
         public let confidence: Float
         /// 人体矩形框的位置

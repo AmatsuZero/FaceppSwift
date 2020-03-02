@@ -10,7 +10,7 @@ import Foundation
 let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
 
 // MARK: - 人脸集合
-public struct FaceSet: Codable, UseFaceppClientProtocol {
+public struct FaceSet: Codable, UseFaceppClientProtocol, Hashable {
     /// FaceSet 的标识
     public let facesetToken: String?
     /// 用户提供的FaceSet标识，如果未提供为""
@@ -95,7 +95,7 @@ public struct FaceSetGetOption: RequestProtocol {
     }
 }
 
-public struct FaceSetsGetResponse: ResponseProtocol {
+public struct FaceSetsGetResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public let requestId: String?
     /**
@@ -203,7 +203,7 @@ public class FaceSetsDeleteOption: FaceSetBaseRequest {
     }
 }
 
-public struct FacesetDeleteResponse: ResponseProtocol {
+public struct FacesetDeleteResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// FaceSet的标识
@@ -263,7 +263,7 @@ public class FacesetGetDetailOption: FaceSetBaseRequest {
     }
 }
 
-public struct FacesetGetDetailResponse: ResponseProtocol {
+public struct FacesetGetDetailResponse: FaceppResponseProtocol {
     // 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// FaceSet的标识
@@ -369,7 +369,7 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
     }
 }
 
-public struct FaceSetUpdateResponse: ResponseProtocol {
+public struct FaceSetUpdateResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -440,14 +440,14 @@ public class FaceSetRemoveOption: FaceSetBaseRequest {
     }
 }
 
-public struct FaceSetOpFailureDetail: Codable {
+public struct FaceSetOpFailureDetail: Codable, Hashable {
     /// 人脸标识
     public let faceToken: String
     /// 操作失败的原因
     public let reason: String
 }
 
-public struct FaceSetRemoveResponse: ResponseProtocol {
+public struct FaceSetRemoveResponse: FaceppResponseProtocol, Hashable {
     /// 用于区分每一次请求的唯一的字符串。除非发生404（API_NOT_FOUND ) 或403 （AUTHORIZATION_ERROR）错误，此字段必定返回。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -532,7 +532,7 @@ public class FaceSetAddFaceOption: FaceSetBaseRequest {
     }
 }
 
-public struct FaceSetAddFaceResponse: ResponseProtocol {
+public struct FaceSetAddFaceResponse: FaceppResponseProtocol, Hashable {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -638,7 +638,7 @@ public struct FaceSetCreateOption: RequestProtocol {
     }
 }
 
-public struct FaceSetCreateResponse: ResponseProtocol {
+public struct FaceSetCreateResponse: FaceppResponseProtocol, Hashable {
     /// 用于区分每一次请求的唯一的字符串。除非发生404（API_NOT_FOUND ) 或403 （AUTHORIZATION_ERROR）错误，此字段必定返回。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -715,7 +715,7 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
     }
 }
 
-public struct FaceSetTaskQueryResponse: ResponseProtocol {
+public struct FaceSetTaskQueryResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -770,7 +770,7 @@ public class FaceSetAsyncAddFaceOption: FaceSetAddFaceOption {
     }
 }
 
-public struct FaceSetAsyncOperationResponse: ResponseProtocol {
+public struct FaceSetAsyncOperationResponse: FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
