@@ -398,6 +398,33 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    func testSerialization() {
+        let exp = XCTestExpectation(description: "序列化测试")
+        let opt = BeautifyV1Option()
+        opt.imageURL = URL(string: "http://qimg.hxnews.com/2019/1021/1571650243816.jpg")
+        Facepp.beautifyV1(option: opt) { err, resp in
+            guard err == nil else {
+                XCTFail(err!.localizedDescription)
+                return;
+            }
+            let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test")
+            defer {
+                if FileManager.default.fileExists(atPath: url.path) {
+                   try? FileManager.default.removeItem(at: url)
+                }
+                exp.fulfill()
+            }
+            do {
+                try resp?.archive(at: url)
+                let newResp = try BeautifyResponse.unarchinve(at: url)
+                XCTAssert(resp == newResp)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
     static var allTests = [
         ("testDetect", testDetect),
         ("testCompare", testCompare),
@@ -421,7 +448,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testSegmentV2", testSegmentV2),
         ("testLicensePlate", testLicensePlate),
         ("testRecognizeRText", testRecognizeRText),
-        ("testSkinAnalyzeAdvance", testSkinAnalyzeAdvance)
+        ("testSkinAnalyzeAdvance", testSkinAnalyzeAdvance),
+        ("testSerialization", testSerialization)
     ]
 }
 

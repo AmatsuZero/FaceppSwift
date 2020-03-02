@@ -72,6 +72,47 @@ public protocol FaceppResponseProtocol: Codable, Hashable {
     var errorMessage: String? { get }
     /// 整个请求所花费的时间，单位为毫秒。
     var timeUsed: Int? { get }
+    /// Decoder
+    static func getDecoder() -> JSONDecoder
+    /// Encoder
+    static func getEncoder() -> JSONEncoder
+}
+
+public extension FaceppResponseProtocol {
+
+    static func getEncoder() -> JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        return encoder
+    }
+
+    static func getDecoder() -> JSONDecoder {
+        return FaceppClient.getDecoder()
+    }
+
+    /// 归档
+    /// - Parameters:
+    ///   - resp: 要保存的对象
+    ///   - url: 保存路径
+    static func archive(_ resp: Self, at url: URL) throws {
+        let encoder = getEncoder()
+        let data = try encoder.encode(resp)
+        try data.write(to: url)
+    }
+
+    /// 归档
+    /// - Parameter url: 保存路径
+    func archive(at url: URL) throws {
+        try Self.archive(self, at: url)
+    }
+
+    /// 解档
+    /// - Parameter url: 归档文件路径
+    static func unarchinve(at url: URL) throws -> Self {
+        let data = try Data(contentsOf: url)
+        let decoder = getDecoder()
+        return try decoder.decode(Self.self, from: data)
+    }
 }
 
 typealias Params = [String: Any]
@@ -306,7 +347,7 @@ public enum OCRType: Int, Codable {
 
 protocol UseFaceppClientProtocol {
     static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
-                                           completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask?
+                                                 completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask?
     func request() -> URLSessionTask?
 }
 
@@ -316,7 +357,7 @@ extension UseFaceppClientProtocol {
     }
 
     static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
-                                           completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
+                                                 completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         guard let client = FaceppClient.shared else {
             completionHandler(FaceppRequestError.notInit, nil)
             return nil

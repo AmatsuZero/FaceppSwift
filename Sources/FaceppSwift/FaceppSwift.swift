@@ -29,7 +29,7 @@ public enum Facepp: UseFaceppClientProtocol {
     case beautifyV1(option: BeautifyV1Option,
         completionHandler: (Error?, BeautifyResponse?) -> Void)
     case beautifyV2(option: BeautifyV2Option,
-         completionHandler: (Error?, BeautifyResponse?) -> Void)
+        completionHandler: (Error?, BeautifyResponse?) -> Void)
     case thousandLandmark(option: ThousandLandMarkOption,
         completionHandler: (Error?, ThousandLandmarkResponse?) -> Void)
     case facialFeatures(option: FacialFeaturesOption,
@@ -67,9 +67,16 @@ public enum Facepp: UseFaceppClientProtocol {
 }
 
 extension FaceppClient {
+
+    static func getDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }
+
     @discardableResult
     func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
-                                    completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
+                                          completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         var request: URLRequest?
         var data: Data?
         do {
@@ -89,8 +96,7 @@ extension FaceppClient {
                 return completionHandler(error, nil)
             }
             do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let decoder = Self.getDecoder()
                 let resp = try decoder.decode(R.self, from: data)
                 if let msg = resp.errorMessage {
                     let text = """
