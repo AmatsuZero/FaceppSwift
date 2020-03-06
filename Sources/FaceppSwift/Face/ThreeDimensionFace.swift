@@ -89,8 +89,6 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "imageBase643大小不应超过\(uploadFileMBSize): \(count / 1024 / 1024)MB"))
         }
         return (imageURL1 != nil || imageFile1 != nil || imageBase641 != nil)
-            && (imageURL2 != nil || imageFile2 != nil || imageBase642 != nil)
-            && (imageURL3 != nil || imageFile3 != nil || imageBase643 != nil)
     }
 
     var requsetURL: URL? {
