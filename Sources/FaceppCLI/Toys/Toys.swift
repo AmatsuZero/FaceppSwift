@@ -12,7 +12,8 @@ struct FppToysCommand: ParsableCommand {
         commandName: "toys",
         abstract: "内置的小玩具",
         subcommands: [
-            FppNokiaImage.self
+            FppNokiaImage.self,
+            FppConfesssionGuysCommand.self
         ]
     )
 

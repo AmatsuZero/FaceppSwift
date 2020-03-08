@@ -27,13 +27,13 @@ struct FppNokiaImage: ParsableCommand {
     var text: String
 
     @Option(name: .shortAndLong, help: "图片输出路径")
-    var output: String?
+    var output: String
 
     @Flag(name: .shortAndLong, default: false, inversion: .prefixedNo, help: "绿色包浆")
     var tint: Bool
 
     func run() throws {
-        guard #available(macOS 10.13, *) else {
+        guard #available(macOS 10.10, *) else {
             writeError(RuntimeError("仅限于 macOS 使用"))
             return
         }
@@ -69,7 +69,7 @@ struct FppNokiaImage: ParsableCommand {
     }
 }
 
-@available(macOS 10.13, *)
+@available(macOS 10.10, *)
 extension FppNokiaImage {
     func loadResources(completionHandler: @escaping (Error?, NSFont?, NSImage?) -> Void) {
         guard let folderURL = dirURL,
@@ -125,8 +125,7 @@ extension FppNokiaImage {
 
     func draw(image: NSImage?, font: NSFont?) throws {
         guard let image = image,
-            let font = font,
-            let path = output else {
+            let font = font else {
                 return
         }
         guard let bodyImg = drawBackgroundImage(size: image.size, font: font),
@@ -140,7 +139,7 @@ extension FppNokiaImage {
 
         try tintColor(image: finalImage)
             .tiffRepresentation?
-            .write(to: .init(fileURLWithPath: path))
+            .write(to: .init(fileURLWithPath: output))
     }
 
     // 创建旋转后的文字的图片

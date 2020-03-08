@@ -69,8 +69,7 @@ extension ThousandLandMarkOption {
             self.init(returnLandMark: Set<ReturnLandMark>.all)
         } else {
             self.init(returnLandMark: Set(command.landmarks
-                .map { ReturnLandMark(rawValue: $0) }
-                .compactMap { $0}))
+                .compactMap { ReturnLandMark(rawValue: $0) }))
         }
         try command.setup()
         timeoutInterval = command.timeout
