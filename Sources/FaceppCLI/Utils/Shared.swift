@@ -9,6 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 import SwiftGD
+import ZIPFoundation
 
 let kVersion = "0.0.1"
 
@@ -121,4 +122,38 @@ func writeMessage<R: FaceppResponseProtocol>(_ message: R?, error: Swift.Error? 
 
 func writeError(_ error: Swift.Error) {
     fputs("\u{001B}[0;31m\(error.localizedDescription)\n", stderr)
+}
+
+extension URL {
+    func fetchZip(destination: URL, completionHandler: @escaping (Bool, Swift.Error?) -> Void) {
+        FppConfig.session.dataTask(with: self) { data, _, err in
+            guard let data = data else {
+                completionHandler(false, err)
+                return
+            }
+            do {
+                try data.write(to: destination)
+                completionHandler(true, nil)
+            } catch {
+                completionHandler(false, error)
+            }
+        }.resume()
+    }
+
+    func fetchZipAndExtract(at folderURL: URL, completionHandler: @escaping (Bool, Swift.Error?) -> Void) {
+        let tmpZip = folderURL.appendingPathComponent("\(UUID().uuidString).zip")
+        fetchZip(destination: tmpZip) { isSuccess, err in
+            guard isSuccess else {
+                completionHandler(isSuccess, err)
+                return
+            }
+            do {
+                try FileManager.default.unzipItem(at: tmpZip, to: folderURL)
+                try FileManager.default.removeItem(at: tmpZip)
+                completionHandler(true, nil)
+            } catch {
+                completionHandler(false, error)
+            }
+        }
+    }
 }

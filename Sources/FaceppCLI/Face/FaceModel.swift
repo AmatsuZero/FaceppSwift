@@ -105,23 +105,25 @@ struct FppFaceModelCommand: FaceCLIBaseCommand {
             option.imageFile3 = URL(fileURLWithPath: url)
         }
 
-        semaRun { sema in
-            FaceppSwift.Facepp.threeDimensionFace(option: option) { error, resp in
-                if let url = self.output {
-                    do {
-                        try resp?.saveFaceModel(in: .init(fileURLWithPath: url))
-                    } catch let e {
-                        writeError(e)
-                    }
+        FaceppSwift.Facepp.threeDimensionFace(option: option) { error, resp in
+            defer {
+                Self.exit(withError: error)
+            }
+            if let url = self.output {
+                do {
+                    try resp?.saveFaceModel(in: .init(fileURLWithPath: url))
+                } catch let e {
+                    writeError(e)
                 }
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
-        }
+                writeMessage(resp, error: error)
+            }
+        }.request()
+        RunLoop.current.run()
     }
 }
 
 extension ThreeDimensionFaceResponse {
-    public enum FileError: Error {
+    enum FileError: Error {
         case folderNotExist
         case invalidResponse
     }
@@ -130,7 +132,7 @@ extension ThreeDimensionFaceResponse {
     /// - Parameters:
     ///   - folderURL: 目标文件夹
     ///   - createFolder: 是否自动创建目标文件夹
-    public func saveFaceModel(in folderURL: URL, createFolder: Bool = true) throws {
+    func saveFaceModel(in folderURL: URL, createFolder: Bool = true) throws {
         if !FileManager.default.fileExists(atPath: folderURL.path) {
             if createFolder {
                 try FileManager.default.createDirectory(at: folderURL,
@@ -140,10 +142,13 @@ extension ThreeDimensionFaceResponse {
                 throw FileError.folderNotExist
             }
         }
+        guard let tmpURL = folderURL.appendingPathComponent("output").createDirIfNotExist() else {
+            throw FileError.folderNotExist
+        }
         // 保存材质文件
         if let texture = textureImg,
             let data = Data(base64Encoded: texture) {
-            let dest = folderURL
+            let dest = tmpURL
                 .appendingPathComponent("tex")
                 .appendingPathExtension("jpg")
             try data.write(to: dest, options: .atomic)
@@ -152,7 +157,7 @@ extension ThreeDimensionFaceResponse {
         // 保存.obj文件
         if let objFile = objFile,
             let data = Data(base64Encoded: objFile) {
-            let dest = folderURL
+            let dest = tmpURL
                 .appendingPathComponent("face")
                 .appendingPathExtension("obj")
             try data.write(to: dest, options: .atomic)
@@ -161,10 +166,13 @@ extension ThreeDimensionFaceResponse {
         // 保存.mtl文件
         if let mtlFile = mtlFile,
             let data = Data(base64Encoded: mtlFile) {
-            let dest = folderURL
+            let dest = tmpURL
                 .appendingPathComponent("face")
                 .appendingPathExtension("mtl")
             try data.write(to: dest, options: .atomic)
         }
+
+        try FileManager.default.zipItem(at: tmpURL, to: folderURL.appendingPathComponent("archive.zip"))
+        try FileManager.default.removeItem(at: tmpURL)
     }
 }

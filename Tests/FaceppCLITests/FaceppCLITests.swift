@@ -94,17 +94,17 @@ final class FaceppCLITests: XCTestCase {
     }
     
     func testModel() throws {
+        let url = try FileManager.default.url(for: .desktopDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let output = try getProcess([
             "face", "model",
             "--url1",
             "https://bellard.org/bpg/lena5.jpg",
             "--output",
-            "~/Desktop/output",
+            "\(url.path)/output",
             "--mtl",
-            " ",
+            "--texture",
         ])
         XCTAssertNotNil(output)
-//        print(output!)
         XCTAssertTrue(!output!.contains("errorMessage"))
     }
     

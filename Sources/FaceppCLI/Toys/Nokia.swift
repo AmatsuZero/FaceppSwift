@@ -18,11 +18,9 @@ struct FppNokiaImage: ParsableCommand {
         abstract: "生成老式诺基亚手机信息图片",
         discussion: "仅限于 macOS 平台"
     )
-
-    let imageURL = URL(string: "https://raw.githubusercontent.com/AmatsuZero/FaceppCLI/master/Resources/Nokia/NokiaMessage.jpg")
-    let fontURL = URL(string: "https://raw.githubusercontent.com/AmatsuZero/FaceppCLI/master/Resources/Nokia/nokia.ttf")
+    let zipURL = URL(string: "https://github.com/AmatsuZero/FaceppSwift/raw/master/Resources/Nokia.zip")
     let dirURL: URL? = {
-        return  FppToysCommand.dirURL?.appendingPathComponent("Nokia").createDirIfNotExist()
+        return  FppToysCommand.dirURL?.appendingPathComponent("Nokia")
     }()
 
     @Argument(help: "显示的消息文本")
@@ -43,29 +41,19 @@ struct FppNokiaImage: ParsableCommand {
         let group = DispatchGroup()
         var sourceImage: NSImage?
         var sourceFont: NSFont?
+        var err: Error?
 
         group.enter()
-        loadFont { error, font in
+        loadResources { error, font, image in
             defer {
                 group.leave()
             }
             guard error == nil else {
-                writeError(error!)
-                return
-            }
-            sourceFont = font
-        }
-
-        group.enter()
-        loadImage { error, image in
-            defer {
-                group.leave()
-            }
-            guard error == nil else {
-                writeError(error!)
+                err = error
                 return
             }
             sourceImage = image
+            sourceFont = font
         }
 
         group.notify(queue: .main) {
@@ -74,7 +62,7 @@ struct FppNokiaImage: ParsableCommand {
             } catch {
                 Self.exit(withError: error)
             }
-            Self.exit(withError: nil)
+            Self.exit(withError: err)
         }
 
         RunLoop.current.run()
@@ -83,54 +71,56 @@ struct FppNokiaImage: ParsableCommand {
 
 @available(macOS 10.13, *)
 extension FppNokiaImage {
-    func loadFont(completionHandler: @escaping (Error?, NSFont?) -> Void) {
-        guard let fileURL = dirURL?.appendingPathComponent("font.ttf"),
-            let fontURL = fontURL else {
+    func loadResources(completionHandler: @escaping (Error?, NSFont?, NSImage?) -> Void) {
+        guard let folderURL = dirURL,
+            let url = zipURL else {
+            return
+        }
+        let mgr = FileManager.default
+        guard mgr.fileExists(atPath: folderURL.path) else {
+            guard let dest = folderURL.createDirIfNotExist() else {
+                completionHandler(RuntimeError("创建文件夹失败"), nil, nil)
                 return
-        }
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            FppConfig.session.dataTask(with: fontURL) { data, _, err in
-                guard let data = data else {
-                    completionHandler(err, nil)
+            }
+            url.fetchZipAndExtract(at: dest) { isSuccess, err in
+                guard isSuccess else {
+                    try? mgr.removeItem(at: dest)
+                    completionHandler(err, nil, nil)
                     return
                 }
-                do {
-                    try data.write(to: fileURL)
-                    self.loadFont(completionHandler: completionHandler)
-                } catch {
-                    completionHandler(error, nil)
-                }
-            }.resume()
-            return
-        }
-        var err: Unmanaged<CFError>?
-        guard CTFontManagerRegisterFontsForURL(fileURL as CFURL, .process, &err) else {
-            completionHandler(err!.takeUnretainedValue() as Error, nil)
-            return
-        }
-        completionHandler(nil, NSFont(name: "方正像素14", size: 70))
-    }
-
-    func loadImage(completionHandler: @escaping (Error?, NSImage?) -> Void) {
-        guard let fileURL = dirURL?.appendingPathComponent("image.jpg") else {
-            return
-        }
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            imageURL?.fetchImageData { err, data in
-                guard let data = data else {
-                    completionHandler(err, nil)
-                    return
-                }
-                do {
-                    try data.write(to: fileURL)
-                    self.loadImage(completionHandler: completionHandler)
-                } catch {
-                    completionHandler(error, nil)
-                }
+                self.loadResources(completionHandler: completionHandler)
             }
             return
         }
-        completionHandler(nil, NSImage(contentsOf: fileURL))
+        let (imgErr, img) = loadImage()
+        guard imgErr == nil else {
+            completionHandler(imgErr, nil, nil)
+            return
+        }
+        let (fontErr, font) = loadFont()
+        guard fontErr == nil else {
+            completionHandler(fontErr, nil, nil)
+            return
+        }
+        completionHandler(nil, font, img)
+    }
+
+    func loadFont() -> (Error?, NSFont?) {
+        guard let fileURL = dirURL?.appendingPathComponent("nokia.ttf") else {
+            return (RuntimeError("字体文件不存在"), nil)
+        }
+        var err: Unmanaged<CFError>?
+        guard CTFontManagerRegisterFontsForURL(fileURL as CFURL, .process, &err) else {
+            return (err!.takeUnretainedValue() as Error, nil)
+        }
+        return (nil, NSFont(name: "方正像素14", size: 70))
+    }
+
+    func loadImage() -> (Error?, NSImage?) {
+        guard let fileURL = dirURL?.appendingPathComponent("NokiaMessage.jpg") else {
+            return (RuntimeError("图片文件不存在"), nil)
+        }
+        return (nil, NSImage(contentsOf: fileURL))
     }
 
     func draw(image: NSImage?, font: NSFont?) throws {
