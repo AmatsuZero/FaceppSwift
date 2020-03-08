@@ -5,16 +5,15 @@ final class FaceppCLITests: XCTestCase {
     
     let key = ProcessInfo.processInfo.environment["key"]
     let secret = ProcessInfo.processInfo.environment["secret"]
-    
-    override func setUp() {
-        XCTAssertNotNil(key)
-        XCTAssertNotNil(secret)
-    }
+    let facesetToken = ProcessInfo.processInfo.environment["facesetToken"]
     
     func testSetup() throws {
         guard #available(macOS 10.13, *) else {
             fatalError()
         }
+        XCTAssertNotNil(key)
+        XCTAssertNotNil(secret)
+        
         _ = try getProcess([
             "setup",
             "--key", key!,
@@ -108,6 +107,42 @@ final class FaceppCLITests: XCTestCase {
         XCTAssertTrue(!output!.contains("errorMessage"))
     }
     
+    func testGetAllFacesets() throws {
+        let output = try getProcess([
+            "faceset", "sets",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testCreateFaceset() throws {
+        let output = try getProcess([
+            "faceset", "create",
+            "--tags",
+            "cli,daubert",
+            "--data",
+            "测试",
+            "--name",
+            "测试集合"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGetFacesetDetail() throws {
+        XCTAssertNotNil(facesetToken)
+        let output = try getProcess([
+            "faceset", "detail",
+            "--token",
+            facesetToken!,
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
     /// Returns path to the built products directory.
     var productsDirectory: URL {
         #if os(macOS)
@@ -147,6 +182,7 @@ final class FaceppCLITests: XCTestCase {
         ("testFeatures", testFeatures),
         ("testDenseLandmark", testDenseLandmark),
         ("testSkinAnalyze", testSkinAnalyze),
-        ("testModel", testModel)
+        ("testModel", testModel),
+        ("testCreateFaceset", testCreateFaceset)
     ]
 }

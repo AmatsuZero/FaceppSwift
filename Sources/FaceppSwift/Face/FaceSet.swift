@@ -596,7 +596,7 @@ public struct FaceSetCreateOption: RequestProtocol {
      
      默认值为0
      */
-    public var forceMerge = 1
+    public var forceMerge = 0
 
     public weak var metricsReporter: FaceppMetricsReporter?
 

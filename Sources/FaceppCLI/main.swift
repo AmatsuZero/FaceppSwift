@@ -25,6 +25,7 @@ struct Facepp: ParsableCommand {
         subcommands: [
             FppSetupCommand.self,
             FppFacialRecognition.self,
+            FppFacesetCommand.self,
             FppImageUitlCommand.self,
             FppToysCommand.self
         ])

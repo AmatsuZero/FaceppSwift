@@ -13,7 +13,9 @@ struct FppFacesetCommand: ParsableCommand {
         commandName: "faceset",
         abstract: "人脸集合",
         subcommands: [
-
+            FppCreateFacesetCommand.self,
+            FppFacesetGetAllCommand.self,
+            FppFacesetDetailCommand.self
         ])
 }
 
@@ -25,7 +27,6 @@ struct FppFacialRecognition: ParsableCommand {
             FppDetectCommand.self,
             FppFaceCompareCommand.self,
             FppFaceSearchCommand.self,
-            FppFacesetCommand.self,
             FppFaceBeautifyCommand.self,
             FppDenseLandmarkCommand.self,
             FppFeaturesCommand.self,
