@@ -6,6 +6,7 @@ final class FaceppCLITests: XCTestCase {
     let key = ProcessInfo.processInfo.environment["key"]
     let secret = ProcessInfo.processInfo.environment["secret"]
     let facesetToken = ProcessInfo.processInfo.environment["facesetToken"]
+    let faceToken = ProcessInfo.processInfo.environment["faceToken"]
     
     func testSetup() throws {
         guard #available(macOS 10.13, *) else {
@@ -109,7 +110,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testGetAllFacesets() throws {
         let output = try getProcess([
-            "faceset", "sets",
+            "faceset", "all",
         ])
         XCTAssertNotNil(output)
         print(output!)
@@ -137,6 +138,92 @@ final class FaceppCLITests: XCTestCase {
             "faceset", "detail",
             "--token",
             facesetToken!,
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testUpdateFaceset() throws {
+        XCTAssertNotNil(facesetToken)
+        let output = try getProcess([
+            "faceset", "update",
+            "--token",
+            facesetToken!,
+            "--name",
+            "CLI测试"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testAddFace() throws {
+        XCTAssertNotNil(facesetToken)
+        XCTAssertNotNil(faceToken)
+        let output = try getProcess([
+            "faceset", "add",
+            "--token",
+            facesetToken!,
+            "\(faceToken!)"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testRemoveFace() throws {
+        XCTAssertNotNil(facesetToken)
+        let output = try getProcess([
+            "faceset", "remove",
+            "--token",
+            facesetToken!,
+            "RemoveAllFaceTokens",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testBodyDetect() throws {
+        let output = try getProcess([
+            "body", "detect",
+            "--url",
+            "https://n.sinaimg.cn/ent/transform/250/w630h420/20191209/3df3-iknhexh9270759.jpg",
+            "gender",
+            "upper_body_cloth",
+            "upper_body_cloth",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testSkeleton() throws {
+        let output = try getProcess([
+            "body", "skeleton",
+            "--url", "https://media1.popsugar-assets.com/files/thumbor/HzBtiO1fUBvUZeSBAp0NgA4DbEA/fit-in/1024x1024/filters:format_auto-!!-:strip_icc-!!-/2018/10/23/118/n/4981322/60cff8a45bce7e60adda52.01948560_/i/Australian-Models-Victoria-Secret-Fashion-Show-2018.jpg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testSegment() throws {
+        let output = try getProcess([
+            "body", "segment",
+            "--apiVersion", "1",
+            "--url", "http://www.dabanzixun.com/wp-content/uploads/2017/11/600-x-500-3.jpg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGesture() throws {
+        let output = try getProcess([
+            "body", "gesture",
+            "--url", "https://p1.pstatp.com/large/pgc-image/1538558842994169f7673b6",
         ])
         XCTAssertNotNil(output)
         print(output!)
@@ -183,6 +270,15 @@ final class FaceppCLITests: XCTestCase {
         ("testDenseLandmark", testDenseLandmark),
         ("testSkinAnalyze", testSkinAnalyze),
         ("testModel", testModel),
-        ("testCreateFaceset", testCreateFaceset)
+        ("testCreateFaceset", testCreateFaceset),
+        ("testGetAllFacesets", testGetAllFacesets),
+        ("testGetFacesetDetail", testGetFacesetDetail),
+        ("testUpdateFaceset", testUpdateFaceset),
+        ("testAddFace", testAddFace),
+        ("testRemoveFace", testRemoveFace),
+        ("testBodyDetect", testBodyDetect),
+        ("testSkeleton", testSkeleton),
+        ("testSegment", testSegment),
+        ("testGesture", testGesture)
     ]
 }

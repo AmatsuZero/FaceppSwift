@@ -1,27 +1,28 @@
 //
-//  FacialFeatures.swift
+//  Skeleton.swift
 //  FaceppCLI
 //
-//  Created by 姜振华 on 2020/3/5.
+//  Created by 姜振华 on 2020/3/9.
 //
 
 import Foundation
-import ArgumentParser
 import FaceppSwift
+import ArgumentParser
 
-struct FppFeaturesCommand: FaceCLIBasicCommand {
+struct FppHumanBodySkeleton: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
-        commandName: "features",
-        abstract: "根据单张正面人脸图片，分析人脸面部特征。",
+        commandName: "skeleton",
+        abstract: "传入图片进行人体检测和骨骼关键点检测，返回人体14个关键点",
         discussion: """
-        图片要求:
+              支持对图片中的所有人体进行骨骼检测。
 
-        -- 图片格式：JPG(JPEG)
-        -- 图片像素尺寸：最小200*200像素，最大4096*4096像素
-        -- 图片文件大小：最大 2 MB
-        -- 最小人脸像素尺寸： 为了保证效果，推荐图片中人脸框（正方形）边长的最小值不低于200像素。
-        -- 人脸质量：人脸质量越高，则面部特征分析越准确。影响人脸质量的因素包括：对人脸五官的遮挡、图片模糊、不当的光照（强光、暗光、逆光）、过大的人脸角度（要求 roll≤ ±45°, yaw ≤ ±20°, pitch ≤ ±20°）等。
-        """
+              图片要求:
+
+              -- 图片格式：JPG(JPEG)
+              -- 图片像素尺寸：最小 100*100 像素，最大 4096*4096 像素
+              -- 图片文件大小：2 MB
+              -- 为了保证较好的识别结果，人体矩形框大小建议在200*200像素及以上
+              """
     )
 
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
@@ -49,14 +50,10 @@ struct FppFeaturesCommand: FaceCLIBasicCommand {
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
 
-    @Flag(name: .customLong("reset"), default: false, inversion: .prefixedNo, help: "是否返回人脸矫正后图片")
-    var returnImageReset: Bool
-
     func run() throws {
-        let option = try FacialFeaturesOption(self)
-        option.returnImageReset = returnImageReset
+        let option = try SkeletonDetectOption(self)
         semaRun { sema in
-            FaceppSwift.Facepp.facialFeatures(option: option) { error, resp in
+            FaceppHumanBody.skeleton(option: option) { error, resp in
                 commonResponseHandler(sema, error: error, resp: resp)
             }.request()
         }

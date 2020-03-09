@@ -26,6 +26,7 @@ struct FppDenseLandmarkCommand: FaceCLIBasicCommand {
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
 
+    @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
 
@@ -74,9 +75,6 @@ extension ThousandLandMarkOption {
         try command.setup()
         timeoutInterval = command.timeout
         needCheckParams = command.checkParams
-        if #available(OSX 10.12, *), command.metrics {
-            metricsReporter = FppConfig.currentUser
-        }
         if #available(OSX 10.12, *), command.metrics {
             metricsReporter = FppConfig.currentUser
         }

@@ -11,6 +11,10 @@ import ArgumentParser
 
 extension BeautifyV2Option.FilterType: ExpressibleByArgument, Decodable {}
 
+enum FppBeautifyAPIVersion: Int, ExpressibleByArgument, Decodable {
+    case v1 = 1, v2
+}
+
 struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "beautify",
@@ -26,12 +30,13 @@ struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
         -- 图片文件大小：<=2MB
         """)
 
-    @Option(name: .shortAndLong, default: 2, help: "使用的API版本")
-    var version: Int
+    @Option(name: .shortAndLong, default: .v2, help: "使用的API版本")
+    var apiVersion: FppBeautifyAPIVersion
 
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
 
+    @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
 
@@ -76,9 +81,10 @@ struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
 
     func run() throws {
         let sema = DispatchSemaphore(value: 0)
-        if version == 2 {
+        switch apiVersion {
+        case .v1:
             try runV1(sema)
-        } else {
+        case .v2:
             try runV2(sema)
         }
     }

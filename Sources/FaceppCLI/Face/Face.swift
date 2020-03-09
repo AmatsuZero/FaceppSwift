@@ -15,8 +15,13 @@ struct FppFacesetCommand: ParsableCommand {
         subcommands: [
             FppCreateFacesetCommand.self,
             FppFacesetGetAllCommand.self,
-            FppFacesetDetailCommand.self
-        ])
+            FppFacesetDetailCommand.self,
+            FppFacesetUpdateCommand.self,
+            FppFacesetRemoveCommand.self,
+            FppFacesetAddFaceCommand.self,
+            FppFacesetTaskStatusCommand.self
+        ],
+        defaultSubcommand: FppFacesetGetAllCommand.self)
 }
 
 struct FppFacialRecognition: ParsableCommand {

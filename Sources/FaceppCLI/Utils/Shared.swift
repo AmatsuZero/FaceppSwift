@@ -11,7 +11,7 @@ import FaceppSwift
 import SwiftGD
 import ZIPFoundation
 
-let kVersion = "0.0.1"
+let kVersion = "0.1.0"
 
 struct RuntimeError: Swift.Error, CustomStringConvertible {
     var description: String
@@ -36,6 +36,7 @@ protocol FaceCLIBaseCommand: ParsableCommand {
     var apiSecret: String? { get set }
     var checkParams: Bool { get set }
     var timeout: TimeInterval { get set }
+    @available(OSX 10.12, *)
     var metrics: Bool { get set }
 }
 
@@ -74,9 +75,6 @@ extension FaceppBaseRequest {
         if #available(OSX 10.12, *), command.metrics {
             metricsReporter = FppConfig.currentUser
         }
-        if #available(OSX 10.12, *), command.metrics {
-            metricsReporter = FppConfig.currentUser
-        }
         if let url = command.imageURL {
             imageURL = URL(string: url)
         }
@@ -109,6 +107,7 @@ func writeMessage<R: FaceppResponseProtocol>(_ message: R?, error: Swift.Error? 
     } else if let resp = message {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
+        encoder.keyEncodingStrategy = .convertToSnakeCase
         do {
             let data = try encoder.encode(resp)
             let output = try JSONSerialization.jsonObject(with: data, options: .allowFragments)

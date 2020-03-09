@@ -41,8 +41,8 @@ class FppConfig: Codable {
     }
 }
 
+@available(OSX 10.12, *)
 extension FppConfig: FaceppMetricsReporter {
-    @available(OSX 10.12, *)
     func option(_ option: FaceppRequestConfigProtocol,
                 task: URLSessionTask,
                 didFinishCollecting metrics: URLSessionTaskMetrics) {
