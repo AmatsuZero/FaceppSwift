@@ -28,35 +28,35 @@ struct FppHumanBodyGesture: FaceCLIBasicCommand {
         例如图片为 4096*3200 像素，则建议的最小手部框最短边尺寸为 320 像素。如果不满足此要求，则可能会影响识别精度。
         """
     )
-    
+
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-    
+
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-    
+
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-    
+
     @Option(name: [.customShort("U"), .customLong("url")], help: "图片的 URL")
     var imageURL: String?
-    
+
     @Option(name: [.customShort("F"), .customLong("file")], help: "图片路径")
     var imageFile: String?
-    
+
     @Option(name: .customLong("base64"), help: "base64 编码的二进制图片数据")
     var imageBase64: String?
-    
+
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-    
+
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-    
+
     @Flag(default: true, inversion: .prefixedNo, help: "是否计算并返回每个手的手势信息")
     var detail: Bool
-    
+
     func run() throws {
         let option = try HumanBodyGestureOption(self)
         option.returnGesture = detail
