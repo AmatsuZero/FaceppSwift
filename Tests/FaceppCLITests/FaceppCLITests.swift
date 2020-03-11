@@ -7,6 +7,7 @@ final class FaceppCLITests: XCTestCase {
     let secret = ProcessInfo.processInfo.environment["secret"]
     let facesetToken = ProcessInfo.processInfo.environment["facesetToken"]
     let faceToken = ProcessInfo.processInfo.environment["faceToken"]
+    let albumToken = ProcessInfo.processInfo.environment["albumToken"]
     
     func testSetup() throws {
         guard #available(macOS 10.13, *) else {
@@ -212,7 +213,7 @@ final class FaceppCLITests: XCTestCase {
     func testSegment() throws {
         let output = try getProcess([
             "body", "segment",
-            "--apiVersion", "1",
+            "--apiVersion", "v1",
             "--url", "http://www.dabanzixun.com/wp-content/uploads/2017/11/600-x-500-3.jpg",
         ])
         XCTAssertNotNil(output)
@@ -224,6 +225,199 @@ final class FaceppCLITests: XCTestCase {
         let output = try getProcess([
             "body", "gesture",
             "--url", "https://p1.pstatp.com/large/pgc-image/1538558842994169f7673b6",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testIDCard() throws {
+        let output = try getProcess([
+            "card", "idcard",
+            "--legality",
+            "--url", "http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testDriverLicense() throws {
+        let output = try getProcess([
+            "card", "driverlicense",
+            "--url", "http://pic.wodingche.com/carimg/kqfmpmny.jpeg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testVehicleLicense() throws {
+        let output = try getProcess([
+            "card", "vehiclelicense",
+            "--url", "https://imgs.icauto.com.cn/allimg/180912/18-1P9121K31Y01.png",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testBandcard() throws {
+        let output = try getProcess([
+            "imagepp", "",
+            "--url", "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testLicensePlate() throws {
+        let output = try getProcess([
+            "imagepp", "plate",
+            "--url", "https://www.threetong.com/uploads/allimg/160514/9-160514164SDY.jpg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testMergeFace() throws {
+        let output = try getProcess([
+            "imagepp", "merge",
+            "--mURL", "https://image.ijq.tv/201609/24/09-52-06-83-29.jpg",
+            "--tURL", "https://chufang1.cdn.3gsou.com/Upload/image/0213/hao123yl0213/n00ti0tjc0ejpg.jpg"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testRecognizeText() throws {
+        let output = try getProcess([
+            "imagepp", "text",
+            "--url", "http://img.yao51.com/jiankangtuku/obhfpfpejz.jpeg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testDetectObjectAndScene() throws {
+        let output = try getProcess([
+            "imagepp", "detect",
+            "--url", "https://pic.pingguolv.com/uploads/allimg/160715/124-160G5141339.jpg",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testCreateFaceAlbum() throws {
+        let output = try getProcess([
+            "album", "create",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testFaceAlbumAddFace() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "add",
+            "--token", albumToken!,
+            "--url", "http://m.imeitou.com/uploads/allimg/2018082507/0cfadezbrw5.jpg"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testUpdateFace() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "update",
+            "--id", "CreateNewGroup",
+            "--token", albumToken!,
+            "24ed7c35ddd48e37f6546179abf0eb53",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGetFaceDetail() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "facedetail",
+            "--token", albumToken!,
+            "--face", "24ed7c35ddd48e37f6546179abf0eb53",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGetImageDetail() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "imagedetail",
+            "--token", albumToken!,
+            "--id", "00ec51d63b4c3ab1d3c955c6e056ee59",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGetAllFaceAlbum() throws {
+        let output = try getProcess([
+            "album", "all",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGetFaceAlbumDetail() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "detail",
+            "--token", albumToken!,
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testFaceAlbumRemoveFace() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "rmf",
+            "--token", albumToken!,
+            "--faceTokens", "dff1c9719e5c90379f88107e53f0fad5"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testFaceAlbumGroup() throws {
+        XCTAssertNotNil(albumToken)
+        let output = try getProcess([
+            "album", "group",
+             "--token", albumToken!,
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testGroupTaskQuery() throws {
+        let output = try getProcess([
+            "album", "query", "group",
+             "--id", "48ff403f-d3a4-4f15-ae54-27f25dc60bcc"
         ])
         XCTAssertNotNil(output)
         print(output!)
@@ -279,6 +473,23 @@ final class FaceppCLITests: XCTestCase {
         ("testBodyDetect", testBodyDetect),
         ("testSkeleton", testSkeleton),
         ("testSegment", testSegment),
-        ("testGesture", testGesture)
+        ("testGesture", testGesture),
+        ("testIDCard", testIDCard),
+        ("testDriverLicense", testDriverLicense),
+        ("testVehicleLicense", testVehicleLicense),
+        ("testBandcard", testBandcard),
+        ("testMergeFace", testMergeFace),
+        ("testRecognizeText", testRecognizeText),
+        ("testDetectObjectAndScene", testDetectObjectAndScene),
+        ("testCreateFaceAlbum", testCreateFaceAlbum),
+        ("testFaceAlbumAddFace", testFaceAlbumAddFace),
+        ("testUpdateFace", testUpdateFace),
+        ("testGetFaceDetail", testGetFaceDetail),
+        ("testGetImageDetail", testGetImageDetail),
+        ("testGetAllFaceAlbum", testGetAllFaceAlbum),
+        ("testGetFaceAlbumDetail", testGetFaceAlbumDetail),
+        ("testFaceAlbumRemoveFace", testFaceAlbumRemoveFace),
+        ("testFaceAlbumGroup", testFaceAlbumGroup),
+        ("testGroupTaskQuery", testGroupTaskQuery),
     ]
 }

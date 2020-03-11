@@ -83,12 +83,14 @@ public struct FaceAlbumBaseReeponse: FaceppResponseProtocol {
 
 public extension FaceAlbum {
     @discardableResult
-    static func create(completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
-        return parse(option: CreateFaceAlbumOption(), completionHandler: completionHandler)
+    static func create(option: CreateFaceAlbumOption = CreateFaceAlbumOption(),
+                       completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
+        return parse(option: option, completionHandler: completionHandler)
     }
 
     @discardableResult
-    static func createAlbum(completionHandler: @escaping (Error?, FaceAlbum?) -> Void) -> URLSessionTask? {
+    static func
+        createAlbum(completionHandler: @escaping (Error?, FaceAlbum?) -> Void) -> URLSessionTask? {
         return create { error, resp in
             if let token = resp?.facealbumToken {
                 completionHandler(error, FaceAlbum(facealbumToken: token))
@@ -219,7 +221,7 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumFindSearchImageOption: FaceppBaseRequest {
+public class FaceAlbumSearchImageOption: FaceppBaseRequest {
     /// FaceAlbum标识
     public var facealbumToken: String
     /**
@@ -268,7 +270,7 @@ public struct FaceAlbumSearchImageResponse: FaceppResponseProtocol {
 
 public extension FaceAlbum {
     @discardableResult
-    static func searchImage(option: FaceAlbumFindSearchImageOption,
+    static func searchImage(option: FaceAlbumSearchImageOption,
                             completionHandler:@escaping (Error?, FaceAlbumSearchImageResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
@@ -278,7 +280,7 @@ public extension FaceAlbum {
                      imageFile: URL?,
                      imageBase64: String?,
                      completionHandler: @escaping (Error?, FaceAlbumSearchImageResponse?) -> Void) -> URLSessionTask? {
-        let option = FaceAlbumFindSearchImageOption(album: self)
+        let option = FaceAlbumSearchImageOption(album: self)
         option.imageURL = imageURL
         option.imageFile = imageFile
         option.imageBase64 = imageBase64
@@ -419,6 +421,10 @@ public class FaceAlbumUpdateFaceOption: FaceAlbumBaseRequest {
      如果传入 -1，则人脸会被置为“未分组”状态。
      */
     public var newGroupId: String
+
+    override var requsetURL: URL? {
+        return super.requsetURL?.appendingPathComponent("updateface")
+    }
 
     public init(faceTokens: [String], newGroupId: String, faceAlbumToken: String) {
         self.faceTokens = faceTokens
@@ -659,7 +665,7 @@ public extension FaceAlbum {
     static func getImageDetail(option: FaceAlbumGetImageDetailOption,
                                completionHandler: @escaping (Error?, FaceAlbumGetImageDetailResponse?) -> Void)
         -> URLSessionTask? {
-        return parse(option: option, completionHandler: completionHandler)
+            return parse(option: option, completionHandler: completionHandler)
     }
 
     @discardableResult
@@ -721,6 +727,7 @@ public struct FaceAblumGetAllResponse: FaceppResponseProtocol {
 }
 
 public extension FaceAlbum {
+    @discardableResult
     static func getAll(option: FaceAblumGetAllOption,
                        completionHandler: @escaping (Error?, FaceAblumGetAllResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
@@ -744,9 +751,11 @@ public class FaceAlbumGetAlbumDetailOption: FaceAlbumBaseRequest {
 
 public struct FaceAlbumFace: Codable, Hashable {
     public let faceToken: String
-    public let groupId: String
-    public let imageId: String
+    public let groupId: String?
+    public let imageId: String?
     public let faceRectangle: FaceppRectangle
+    public let facealbumToken: String?
+    public let timeUsed: Int?
 }
 
 public struct FaceAlbumGetAlbumDetailResponse: FaceppResponseProtocol {
@@ -773,7 +782,7 @@ public extension FaceAlbum {
     static func getAlbumDetail(option: FaceAlbumGetAlbumDetailOption,
                                completionHandler: @escaping (Error?, FaceAlbumGetAlbumDetailResponse?) -> Void)
         -> URLSessionTask? {
-        return parse(option: option, completionHandler: completionHandler)
+            return parse(option: option, completionHandler: completionHandler)
     }
 
     func getAlbumDetail(startToken: String? = nil,
@@ -987,10 +996,10 @@ public struct FaceAlbumAddImageTaskQueryResponse: FaceppResponseProtocol {
 
 public extension FaceAlbum {
     @discardableResult
-    static func adrdImageTaskQuery(option: FaceAlbumAddImageTaskQueryOption,
-                                   completionHandler:@escaping (Error?, FaceAlbumAddImageTaskQueryResponse?) -> Void)
+    static func addImageTaskQuery(option: FaceAlbumAddImageTaskQueryOption,
+                                  completionHandler:@escaping (Error?, FaceAlbumAddImageTaskQueryResponse?) -> Void)
         -> URLSessionTask? {
-        return parse(option: option, completionHandler: completionHandler)
+            return parse(option: option, completionHandler: completionHandler)
     }
 }
 
@@ -1020,6 +1029,13 @@ public class FaceAlbumDeleteFaceOption: FaceAlbumBaseRequest {
             return true
         }
         return imageId != nil
+    }
+
+    override func params() throws -> (Params, [Params]?) {
+        var (params, _) = try super.params()
+        params["face_tokens"] = faceTokens?.joined(separator: ",")
+        params["Image_id"] = imageId
+        return (params, nil)
     }
 }
 
@@ -1112,13 +1128,13 @@ public struct FaceAlbumGroupFaceResponse: FaceppResponseProtocol {
 public extension FaceAlbum {
     @discardableResult
     static func groupFace(option: FaceAlbumGroupFaceOption,
-                          completionHandler:@escaping (Error?, FaceAlbumDeleteFaceResponse?) -> Void) -> URLSessionTask? {
+                          completionHandler:@escaping (Error?, FaceAlbumGroupFaceResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
 
     func groupFace(operationType: FaceAlbumGroupFaceOption.OperationType = .incremental,
                    callbackURL: URL? = nil,
-                   completionHandler:@escaping (Error?, FaceAlbumDeleteFaceResponse?) -> Void) -> URLSessionTask? {
+                   completionHandler:@escaping (Error?, FaceAlbumGroupFaceResponse?) -> Void) -> URLSessionTask? {
         let option = FaceAlbumGroupFaceOption(album: self)
         option.operationType = operationType
         option.callbackURL = callbackURL
@@ -1213,9 +1229,9 @@ public struct FaceAlbumGroupFaceTaskQueryResponse: FaceppResponseProtocol, Hasha
 
 public extension FaceAlbum {
     @discardableResult
-    static func groupFaceTaskQuery(option: FaceAlbumGroupFaceOption,
+    static func groupFaceTaskQuery(option: FaceAlbumGroupFaceTaskQueryOption,
                                    completionHandler:@escaping (Error?, FaceAlbumGroupFaceTaskQueryResponse?) -> Void)
         -> URLSessionTask? {
-        return parse(option: option, completionHandler: completionHandler)
+            return parse(option: option, completionHandler: completionHandler)
     }
 }

@@ -11,10 +11,6 @@ import ArgumentParser
 
 extension BeautifyV2Option.FilterType: ExpressibleByArgument, Decodable {}
 
-enum FppBeautifyAPIVersion: Int, ExpressibleByArgument, Decodable {
-    case v1 = 1, v2
-}
-
 struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "beautify",
@@ -31,7 +27,7 @@ struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
         """)
 
     @Option(name: .shortAndLong, default: .v2, help: "使用的API版本")
-    var apiVersion: FppBeautifyAPIVersion
+    var apiVersion: FppAPIVersion
 
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
@@ -86,6 +82,8 @@ struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
             try runV1(sema)
         case .v2:
             try runV2(sema)
+        default:
+            break
         }
     }
 }

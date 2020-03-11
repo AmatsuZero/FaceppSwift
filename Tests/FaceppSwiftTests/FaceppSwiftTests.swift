@@ -5,6 +5,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     let key = ProcessInfo.processInfo.environment["key"]
     let secret = ProcessInfo.processInfo.environment["secret"]
+    let albumToken = ProcessInfo.processInfo.environment["albumToken"]
     
     let threeDImageFile1 = ProcessInfo.processInfo.environment["3dImageFile1"]
     let threeDImageFile2 = ProcessInfo.processInfo.environment["3dImageFile2"]
@@ -398,6 +399,140 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    func testFaceAlbumAddFace() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "人脸相册添加Face")
+        let opt = FaceAlbumAddImageOption(facealbumToken: albumToken!)
+        opt.imageURL = URL(string: "http://a4.att.hudong.com/53/02/20300001024098146312020975738.jpg")
+        FaceAlbum.addImage(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFaceAlbumAddFaceQuery() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "人脸相册添加Face任务查询")
+        let opt = FaceAlbumAddImageTaskQueryOption(taskId: "79dfb2a0-c020-4984-b767-69ea1a4501b0")
+        FaceAlbum.addImageTaskQuery(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFaceAlbumUpdate() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "人脸相册更新Face")
+        let opt = FaceAlbumUpdateFaceOption(faceTokens: ["24ed7c35ddd48e37f6546179abf0eb53"],
+                                            newGroupId: "-1",
+                                            faceAlbumToken: albumToken!)
+        FaceAlbum.updateFace(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testGetFaceDetail() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "获取人脸详情")
+        let opt = FaceAblbumGetFaceDetailOption.init(faceAlbumToken: albumToken!,
+                                                     faceToken: "24ed7c35ddd48e37f6546179abf0eb53")
+        FaceAlbum.getFaceDetail(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testGetImageDetail() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "获取图片详情")
+        let option = FaceAlbumGetImageDetailOption(faceAlbumToken: albumToken!,
+                                                   imageId: "00ec51d63b4c3ab1d3c955c6e056ee59")
+        FaceAlbum.getImageDetail(option: option) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testGetAllAlbum() {
+        let exp = XCTestExpectation(description: "获取全部相册")
+        let option = FaceAblumGetAllOption()
+        FaceAlbum.getAll(option: option) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testGetAlbumDetail() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "获取全部相册")
+        let option = FaceAlbumGetAlbumDetailOption(facealbumToken: albumToken!)
+        FaceAlbum.getAlbumDetail(option: option) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFaceAlbumRemoveFace() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "删除人脸")
+        let option = FaceAlbumDeleteFaceOption(facealbumToken: albumToken!)
+        option.faceTokens = ["dff1c9719e5c90379f88107e53f0fad5"]
+        FaceAlbum.deleteFace(option: option) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFaceAlbumGroupFace() {
+        XCTAssertNotNil(albumToken)
+        let exp = XCTestExpectation(description: "聚类人脸")
+        let option = FaceAlbumGroupFaceOption(facealbumToken: albumToken!)
+        FaceAlbum.groupFace(option: option) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testGroupfaceTaskQuery() {
+        let exp = XCTestExpectation(description: "聚类人脸任务查询")
+        let option = FaceAlbumGroupFaceTaskQueryOption(taskId: "48ff403f-d3a4-4f15-ae54-27f25dc60bcc")
+        FaceAlbum.groupFaceTaskQuery(option: option) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 60)
+    }
+    
     func testSerialization() {
         let exp = XCTestExpectation(description: "序列化测试")
         let opt = BeautifyV1Option()
@@ -410,7 +545,7 @@ final class FaceppSwiftTests: XCTestCase {
             let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test")
             defer {
                 if FileManager.default.fileExists(atPath: url.path) {
-                   try? FileManager.default.removeItem(at: url)
+                    try? FileManager.default.removeItem(at: url)
                 }
                 exp.fulfill()
             }
@@ -449,7 +584,16 @@ final class FaceppSwiftTests: XCTestCase {
         ("testLicensePlate", testLicensePlate),
         ("testRecognizeText", testRecognizeText),
         ("testSkinAnalyzeAdvance", testSkinAnalyzeAdvance),
-        ("testSerialization", testSerialization)
+        ("testSerialization", testSerialization),
+        ("testFaceAlbumAddFace", testFaceAlbumAddFace),
+        ("testFaceAlbumAddFaceQuery", testFaceAlbumAddFaceQuery),
+        ("testFaceAlbumUpdate", testFaceAlbumUpdate),
+        ("testGetFaceDetail", testGetFaceDetail),
+        ("testGetImageDetail", testGetImageDetail),
+        ("testGetAllAlbum", testGetAllAlbum),
+        ("testGetAlbumDetail", testGetAlbumDetail),
+        ("testFaceAlbumRemoveFace", testFaceAlbumRemoveFace),
+        ("testFaceAlbumGroupFace", testFaceAlbumGroupFace)
     ]
 }
 

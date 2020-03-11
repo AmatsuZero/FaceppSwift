@@ -155,3 +155,7 @@ extension URL {
         }
     }
 }
+
+enum FppAPIVersion: String, ExpressibleByArgument, Decodable {
+    case v1, v2, beta
+}

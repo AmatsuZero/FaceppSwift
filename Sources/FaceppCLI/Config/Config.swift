@@ -26,7 +26,7 @@ class FppConfig: Codable {
     static var currentUser: FppConfig? = {
         var rawData: Data?
         if #available(OSX 10.10, *) {
-            var config = FppConfig(key: "", secret: "")
+            let config = FppConfig(key: "", secret: "")
             let secureStore = SecureStore(secureStoreQueryable: config)
             let raw = try? secureStore.getValue()
             rawData = raw?.data(using: .utf8, allowLossyConversion: false)
