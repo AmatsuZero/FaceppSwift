@@ -12,4 +12,14 @@ Pod::Spec.new do |s|
     s.tvos.deployment_target = '10.0'
     s.watchos.deployment_target = '3.0'
     s.source_files = 'Sources/FaceppSwift/**/*'
+    s.frameworks = 'CFNetwork'
+    s.default_subspec = :none
+    
+    s.subspec 'UIKit' do |ss|
+      ss.ios.deployment_target = '8.0'
+      ss.tvos.deployment_target = '9.0'
+      ss.source_files = 'UIKit+Facepp'
+      ss.ios.framework = 'UIKit'
+    end
+
   end
