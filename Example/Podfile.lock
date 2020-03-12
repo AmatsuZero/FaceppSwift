@@ -1,10 +1,16 @@
 PODS:
   - FaceppSwift (0.1.6)
   - FaceppSwift/UIKit (0.1.6)
+  - SwiftLint (0.39.1)
 
 DEPENDENCIES:
   - FaceppSwift (from `../`)
   - FaceppSwift/UIKit (from `../`)
+  - SwiftLint
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - SwiftLint
 
 EXTERNAL SOURCES:
   FaceppSwift:
@@ -12,7 +18,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FaceppSwift: b2fc09d4af81a0020a2c5c3b9ed171efc6f60b41
+  SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
-PODFILE CHECKSUM: 585f457683c338c67b6c798f8a384aaa27c55115
+PODFILE CHECKSUM: c5b9841defb268e38604cc3ad2730959a91722a8
 
 COCOAPODS: 1.9.1

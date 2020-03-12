@@ -68,7 +68,23 @@ public extension UIImage {
                 completionHandler(error, UIImage(base64String: result))
             }.request()
     }
-
+    
+    @discardableResult
+    func beautifyV1(whitening: UInt = 50,
+                    smoothing: UInt = 50,
+                    completionHandler:@escaping (Error?, UIImage?) -> Void)  -> URLSessionTask? {
+        let option = BeautifyV1Option(image: self)
+        option.whitening = whitening
+        option.smoothing = smoothing
+        return Facepp.beautifyV1(option: option) { error, resp in
+            guard let result = resp?.result else {
+                completionHandler(error, nil)
+                return
+            }
+            completionHandler(error, UIImage(base64String: result))
+        }.request()
+    }
+    
     static func faceModel(faces: ThreeDimensionFaces,
                           needTexture: Bool = false,
                           needMTL: Bool = false,
