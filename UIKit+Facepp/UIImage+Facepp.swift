@@ -82,7 +82,7 @@ public extension UIImage {
     @discardableResult
     func beautifyV1(whitening: UInt = 50,
                     smoothing: UInt = 50,
-                    completionHandler: ((Error?, BeautifyResponse??) -> Void)? = nil)  -> URLSessionTask? {
+                    completionHandler: ((Error?, BeautifyResponse?) -> Void)? = nil)  -> URLSessionTask? {
         let option = BeautifyV1Option(image: self)
         option.whitening = whitening
         option.smoothing = smoothing
@@ -222,8 +222,6 @@ public extension UIImage {
         option.needCheckParams = needCheckParams
         return Facepp.threeDimensionFace(option: option, completionHandler: completionHandler).request()
     }
-    
-    
 }
 
 public extension FaceppBaseRequest {
@@ -292,5 +290,23 @@ extension UIImage {
             return nil
         }
         self.init(data: data)
+    }
+}
+
+public extension BeautifyResponse {
+    var resultImg: UIImage? {
+        guard let str = result else {
+            return nil
+        }
+        return UIImage(base64String: str)
+    }
+}
+
+extension FacialFeaturesResponse {
+    var resetImage: UIImage? {
+        guard let str = imageReset else {
+            return nil
+        }
+        return UIImage(base64String: str)
     }
 }

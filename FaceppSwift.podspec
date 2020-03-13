@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = 'FaceppSwift'
-    s.version = '0.1.6'
+    s.version = '0.1.7'
     s.license = 'MIT'
     s.summary = 'Facepp API Wrapper in Swift'
     s.homepage = 'https://github.com/AmatsuZero/FaceppSwift'
@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
     s.default_subspec = :none
     
     s.subspec 'UIKit' do |ss|
-      ss.ios.deployment_target = '8.0'
-      ss.tvos.deployment_target = '9.0'
+      ss.ios.deployment_target = '10.0'
+      ss.tvos.deployment_target = '10.0'
       ss.source_files = 'UIKit+Facepp'
       ss.ios.framework = 'UIKit'
     end
