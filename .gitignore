@@ -48,3 +48,5 @@ Carthage/Build
 Pods/
 !Example/Example.xcodeproj
 Example/Example.xcworkspace
+
+node_modules/

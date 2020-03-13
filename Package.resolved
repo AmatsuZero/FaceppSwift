@@ -11,15 +11,6 @@
         }
       },
       {
-        "package": "SwiftGD",
-        "repositoryURL": "https://github.com/twostraws/SwiftGD.git",
-        "state": {
-          "branch": null,
-          "revision": "1960998971b453101e740f25bc6d9fb01e0ba225",
-          "version": "2.5.0"
-        }
-      },
-      {
         "package": "ZIPFoundation",
         "repositoryURL": "https://github.com/weichsel/ZIPFoundation/",
         "state": {

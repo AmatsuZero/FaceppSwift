@@ -30,7 +30,6 @@ struct Facepp: ParsableCommand {
             FppCardppCommand.self,
             FppImageppCommand.self,
             FppFaceAlbumCommand.self,
-            FppImageUitlCommand.self,
             FppToysCommand.self
         ])
 

@@ -17,14 +17,13 @@ let package = Package(
             targets: ["FaceppSwift"])
     ],
     dependencies: [
-        .package(url: "https://github.com/twostraws/SwiftGD.git", from: "2.0.0"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "0.0.1"),
         .package(url: "https://github.com/weichsel/ZIPFoundation/", .upToNextMajor(from: "0.9.0"))
     ],
     targets: [
         .target(
             name: "FaceppCLI",
-            dependencies: ["FaceppSwift", "SwiftGD", "ArgumentParser", "ZIPFoundation"]),
+            dependencies: ["FaceppSwift", "ArgumentParser", "ZIPFoundation"]),
         .target(
             name: "FaceppSwift",
             dependencies: []),

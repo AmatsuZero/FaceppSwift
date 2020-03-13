@@ -8,7 +8,6 @@
 import Foundation
 import ArgumentParser
 import FaceppSwift
-import SwiftGD
 import ZIPFoundation
 
 let kVersion = "0.1.0"
