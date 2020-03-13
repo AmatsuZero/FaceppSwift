@@ -11,15 +11,24 @@ Pod::Spec.new do |s|
     s.osx.deployment_target = '10.12'
     s.tvos.deployment_target = '10.0'
     s.watchos.deployment_target = '3.0'
-    s.source_files = 'Sources/FaceppSwift/**/*'
+    s.source_files = 'Sources/FaceppSwift/FaceppSwift.swift'
     s.frameworks = 'CFNetwork'
-    s.default_subspec = :none
+    s.default_subspec = 'Core'
+
+    s.subspec 'Core' do |ss| 
+      ss.ios.deployment_target = '10.0'
+      ss.osx.deployment_target = '10.12'
+      ss.tvos.deployment_target = '10.0'
+      ss.watchos.deployment_target = '3.0'
+      ss.source_files = 'Sources/FaceppSwift/**/*'
+    end
     
     s.subspec 'UIKit' do |ss|
       ss.ios.deployment_target = '10.0'
       ss.tvos.deployment_target = '10.0'
       ss.source_files = 'UIKit+Facepp'
       ss.ios.framework = 'UIKit'
+      ss.dependency 'FaceppSwift/Core'
     end
 
   end

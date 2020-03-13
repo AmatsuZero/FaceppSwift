@@ -5,8 +5,8 @@
 //  Created by 姜振华 on 2020/3/13.
 //
 
-import Foundation
 import UIKit
+import FaceppSwift
 
 public protocol FppImageDelegate:class {
     func image(_ image: UIImage, option: FaceppRequestConfigProtocol, taskDidBeigin: URLSessionTask?)

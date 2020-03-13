@@ -1,6 +1,9 @@
 PODS:
-  - FaceppSwift (0.1.6)
-  - FaceppSwift/UIKit (0.1.6)
+  - FaceppSwift (0.1.7):
+    - FaceppSwift/Core (= 0.1.7)
+  - FaceppSwift/Core (0.1.7)
+  - FaceppSwift/UIKit (0.1.7):
+    - FaceppSwift/Core
   - SwiftLint (0.39.1)
 
 DEPENDENCIES:
@@ -17,7 +20,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  FaceppSwift: b2fc09d4af81a0020a2c5c3b9ed171efc6f60b41
+  FaceppSwift: d6bc1b7d8f8febc3a2a6d5864abcab16ca202eb6
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
 PODFILE CHECKSUM: c5b9841defb268e38604cc3ad2730959a91722a8
