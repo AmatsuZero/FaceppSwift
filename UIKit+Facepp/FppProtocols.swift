@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import FaceppSwift
 
 public protocol FppImageDelegate:class {
     func image(_ image: UIImage, option: FaceppRequestConfigProtocol, taskDidBeigin: URLSessionTask?)
