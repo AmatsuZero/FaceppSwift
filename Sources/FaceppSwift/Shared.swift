@@ -65,13 +65,16 @@ let kImageppBetaURL: URL? = {
     return kImageppBaseURL?.appendingPathComponent("beta")
 }()
 
-public protocol FaceppResponseProtocol: Codable, Hashable {
+public protocol FaceppResponseBaseProtocol {
     // 用于区分每一次请求的唯一的字符串。
     var requestId: String? { get }
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
     var errorMessage: String? { get }
     /// 整个请求所花费的时间，单位为毫秒。
     var timeUsed: Int? { get }
+}
+
+public protocol FaceppResponseProtocol:FaceppResponseBaseProtocol, Codable, Hashable {
     /// Decoder
     static func getDecoder() -> JSONDecoder
     /// Encoder
@@ -79,17 +82,17 @@ public protocol FaceppResponseProtocol: Codable, Hashable {
 }
 
 public extension FaceppResponseProtocol {
-
+    
     static func getEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         return encoder
     }
-
+    
     static func getDecoder() -> JSONDecoder {
         return FaceppClient.getDecoder()
     }
-
+    
     /// 归档
     /// - Parameters:
     ///   - resp: 要保存的对象
@@ -99,13 +102,13 @@ public extension FaceppResponseProtocol {
         let data = try encoder.encode(resp)
         try data.write(to: url)
     }
-
+    
     /// 归档
     /// - Parameter url: 保存路径
     func archive(at url: URL) throws {
         try Self.archive(self, at: url)
     }
-
+    
     /// 解档
     /// - Parameter url: 归档文件路径
     static func unarchinve(at url: URL) throws -> Self {
@@ -119,19 +122,19 @@ typealias Params = [String: Any]
 
 func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
     var bodyData = Data()
-
+    
     params.forEach { (key: String, obj: Any) in
         bodyData += Data.boundaryData
-
+        
         if let data = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8) {
             bodyData += data
         }
-
+        
         if let data = "\(obj)\r\n".data(using: .utf8) {
             bodyData += data
         }
     }
-
+    
     fileData.forEach { dic in
         if let fieldName = dic["fieldName"] as? String,
             let fileData = dic["data"] as? Data,
@@ -150,11 +153,11 @@ func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
             }
         }
     }
-
+    
     if let data = "--boundary--\r\n".data(using: .utf8) {
         bodyData += data
     }
-
+    
     return bodyData
 }
 
@@ -183,11 +186,11 @@ extension DispatchQueue {
      */
     class func once(token: String = UUID().uuidString, block: () -> Void) {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
-
+        
         if _onceTracker.contains(token) {
             return
         }
-
+        
         _onceTracker.append(token)
         block()
     }
@@ -211,16 +214,16 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
         case missingArguments
         case invalidArguments(desc: String)
     }
-
+    
     case notInit
     case argumentsError(ArgumentsError)
     case faceppError(reason: String)
     case parseError(error: Error, originalData: Data?)
-
+    
     public static var errorDomain: String {
         return "com.daubert.faceapp"
     }
-
+    
     public var errorDescription: String? {
         switch self {
         case .notInit:
@@ -240,7 +243,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
             return "数据解析失败: \(error)"
         }
     }
-
+    
     public var failureReason: String? {
         switch self {
         case .notInit:
@@ -253,7 +256,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
             return "数据解析失败: \(error.localizedDescription)"
         }
     }
-
+    
     public var helpAnchor: String? {
         switch self {
         case .notInit: return "请重新调用初始化方法"
@@ -263,7 +266,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
             return "数据解析失败，可能是数据结构发生了变化，请尝试用originalData进行解析"
         }
     }
-
+    
     public var errorCode: Int {
         switch self {
         case .notInit: return -100001
@@ -272,7 +275,7 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
         case .parseError: return -100004
         }
     }
-
+    
     public var errorUserInfo: [String: Any] {
         return [
             NSLocalizedDescriptionKey: errorDescription ?? "Unknown"
@@ -296,7 +299,7 @@ extension CharacterSet {
     static let urlQueryValueAllowed: CharacterSet = {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
-
+        
         var allowed = CharacterSet.urlQueryAllowed
         allowed.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
         return allowed
@@ -319,7 +322,7 @@ public struct FacialThreshHolds: Codable, Hashable {
     public let middlePrecision: Float
     /// 误识率为十万分之一的置信度阈值
     public let hightPrecision: Float
-
+    
     private enum CodingKeys: String, CodingKey {
         case lowPrecision = "1e-3"
         case middlePrecision = "1e-4"
@@ -355,7 +358,7 @@ extension UseFaceppClientProtocol {
     func request() -> URLSessionTask? {
         return nil
     }
-
+    
     static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
                                                  completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
         guard let client = FaceppClient.shared else {

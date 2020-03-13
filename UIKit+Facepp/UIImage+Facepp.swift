@@ -31,7 +31,7 @@ public extension UIImage {
                     beautyScoreMin: Int = 0,
                     beautyScoreMax: Int = 100,
                     calculateAll: Bool? = nil,
-                    completioHandler:@escaping (Error?, FaceDetectResponse?) -> Void)
+                    completioHandler: ((Error?, FaceDetectResponse?) -> Void)? = nil)
         -> URLSessionTask? {
             let option = FaceDetectOption(image: self)
             option.beautyScoreMin = beautyScoreMin
@@ -39,7 +39,15 @@ public extension UIImage {
             option.calculateAll = calculateAll
             option.returnLandmark = returnLandmark
             option.returnAttributes = returnAttributes
-            return Facepp.detect(option: option, completionHandler: completioHandler).request()
+            let task = Facepp.detect(option: option) { error, resp in
+                guard let block = completioHandler else {
+                    self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
+                    return
+                }
+                block(error, resp)
+            }.request()
+            fppDelegate?.image(self, option: option, taskDidBeigin: task)
+            return task
     }
     
     @discardableResult
@@ -50,7 +58,7 @@ public extension UIImage {
                     enlargeEye: UInt = 50,
                     removeEyebrow: UInt = 50,
                     filterType: BeautifyV2Option.FilterType? = nil,
-                    completionHandler:@escaping (Error?, UIImage?) -> Void)
+                    completionHandler: ( (Error?, BeautifyResponse?) -> Void)? = nil)
         -> URLSessionTask? {
             let option = BeautifyV2Option(image: self)
             option.whitening = whitening
@@ -60,61 +68,146 @@ public extension UIImage {
             option.enlargeEye = enlargeEye
             option.removeEyebrow = removeEyebrow
             option.filterType = filterType
-            return Facepp.beautifyV2(option: option) { error, resp in
-                guard let result = resp?.result else {
-                    completionHandler(error, nil)
+            let task = Facepp.beautifyV2(option: option) { error, resp in
+                guard let block = completionHandler else {
+                    self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
                     return
                 }
-                completionHandler(error, UIImage(base64String: result))
+                block(error, resp)
             }.request()
+            fppDelegate?.image(self, option: option, taskDidBeigin: task)
+            return task
     }
     
     @discardableResult
     func beautifyV1(whitening: UInt = 50,
                     smoothing: UInt = 50,
-                    completionHandler:@escaping (Error?, UIImage?) -> Void)  -> URLSessionTask? {
+                    completionHandler: ((Error?, BeautifyResponse??) -> Void)? = nil)  -> URLSessionTask? {
         let option = BeautifyV1Option(image: self)
         option.whitening = whitening
         option.smoothing = smoothing
-        return Facepp.beautifyV1(option: option) { error, resp in
-            guard let result = resp?.result else {
-                completionHandler(error, nil)
+        let task = Facepp.beautifyV1(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
                 return
             }
-            completionHandler(error, UIImage(base64String: result))
+            block(error, resp)
         }.request()
+        fppDelegate?.image(self, option: option, taskDidBeigin: task)
+        return task
     }
     
     @discardableResult
     func facialFeatures(returnImageReset: Bool = false,
-                        completionHandler:@escaping (Error?, FacialFeaturesResponse?) -> Void) -> URLSessionTask? {
+                        completionHandler: ((Error?, FacialFeaturesResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = FacialFeaturesOption(image: self)
         option.returnImageReset = returnImageReset
-        return Facepp.facialFeatures(option: option) { error, resp in
-            guard let result = resp else {
-                completionHandler(error, nil)
+        let task = Facepp.facialFeatures(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
                 return
             }
-            completionHandler(error, result)
+            block(error, resp)
         }.request()
+        fppDelegate?.image(self, option: option, taskDidBeigin: task)
+        return task
     }
     
     @discardableResult
     func search(returnResultCount count: UInt = 1,
                 faceRectangle frame: CGRect? = nil,
-                completionHandler:@escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask? {
+                completionHandler: ((Error?, SearchResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = SearchOption(image: self)
         option.returnResultCount = count
         option.faceRectangle = frame?.asFaceppRectangle()
-        return FaceSet.search(option: option) { error, resp in
-            guard let result = resp else {
-                completionHandler(error, nil)
+        let task = FaceSet.search(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
                 return
             }
-            completionHandler(error, result)
+            block(error, resp)
         }
+        fppDelegate?.image(self, option: option, taskDidBeigin: task)
+        return task
     }
     
+    @discardableResult
+    func skinAnalyze(completionHandler: ((Error?, SkinAnalyzeResponse?) -> Void)? = nil) -> URLSessionTask?  {
+        let option = SkinAnalyzeOption(image: self)
+        let task = Facepp.skinAnalyze(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
+                return
+            }
+            block(error, resp)
+        }.request()
+        fppDelegate?.image(self, option: option, taskDidBeigin: task)
+        return task
+    }
+    
+    @discardableResult
+    func skinAnalyzeAdvanced(completionHandler: ((Error?, SkinAnalyzeAdvancedResponse?) -> Void)? = nil) -> URLSessionTask? {
+        let option = SkinAnalyzeAdvancedOption(image: self)
+        let task = Facepp.skinAnalyzeAdvanced(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
+                return
+            }
+            block(error, resp)
+        }.request()
+        return task
+    }
+    
+    @discardableResult
+    func denseLandmark(returnLandMark: Set<ThousandLandMarkOption.ReturnLandMark> = .all,
+                       completionHandler: ((Error?, ThousandLandmarkResponse?) -> Void)? = nil) -> URLSessionTask? {
+        let option = ThousandLandMarkOption(returnLandMark: returnLandMark)
+        option.imageBase64 = base64String()
+        option.metricsReporter = fppMetricsReport
+        let task = Facepp.thousandLandmark(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
+                return
+            }
+            block(error, resp)
+        }.request()
+        fppDelegate?.image(self, option: option, taskDidBeigin: task)
+        return task
+    }
+    
+    @discardableResult
+    func compare(faceRect rect1: CGRect? = nil,
+                 with image2: UIImage,
+                 faceRect2 rect2: CGRect? = nil,
+                 completionHandler: ((Error?, CompareResponse?) -> Void)? = nil) -> URLSessionTask? {
+        var option = CompareOption()
+        option.metricsReporter = fppMetricsReport
+        option.imageBase641 = base64String()
+        option.faceRectangle1 = rect1?.asFaceppRectangle()
+        option.imageBase642 = image2.base64String()
+        option.faceRectangle2 = rect2?.asFaceppRectangle()
+        let task = Facepp.compare(option: option) { error, resp in
+            guard let block = completionHandler else {
+                self.fppDelegate?.image(self, taskDidEndWithEror: error, response: resp)
+                return
+            }
+            block(error, resp)
+        }.request()
+        fppDelegate?.image(self, option: option, taskDidBeigin: task)
+        return task
+    }
+    
+    @discardableResult
+    static func compare(image1: UIImage,
+                        faceRect1: CGRect? = nil,
+                        image2: UIImage,
+                        faceRect2: CGRect? = nil,
+                        completionHandler: @escaping (Error?, CompareResponse?) -> Void) -> URLSessionTask? {
+        return image1.compare(faceRect: faceRect1, with: image2,
+                              faceRect2: faceRect2, completionHandler: completionHandler)
+    }
+    
+    @discardableResult
     static func faceModel(faces: ThreeDimensionFaces,
                           needTexture: Bool = false,
                           needMTL: Bool = false,
@@ -129,12 +222,15 @@ public extension UIImage {
         option.needCheckParams = needCheckParams
         return Facepp.threeDimensionFace(option: option, completionHandler: completionHandler).request()
     }
+    
+    
 }
 
 public extension FaceppBaseRequest {
     convenience init(image: UIImage) {
         self.init()
         imageBase64 = image.base64String()
+        metricsReporter = metricsReporter
     }
 }
 
