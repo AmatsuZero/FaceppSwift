@@ -11,7 +11,7 @@ import FaceppSwift
 
 extension OCRDriverLicenseV2Option.Mode: ExpressibleByArgument, Decodable {}
 
-struct FppDriverLicenseCommand: FaceCLIBasicCommand {
+final class FppDriverLicenseCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "driverlicense",
         abstract: "检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息",

@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppHumanBodySkeleton: FaceCLIBasicCommand {
+final class FppHumanBodySkeleton: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "skeleton",
         abstract: "传入图片进行人体检测和骨骼关键点检测，返回人体14个关键点",

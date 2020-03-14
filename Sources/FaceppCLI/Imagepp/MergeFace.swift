@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppMergeFaceCommand: FaceCLIBaseCommand {
+final class FppMergeFaceCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "merge",
         abstract: "使用本 API，可以对模板图和融合图中的人脸进行融合操作。融合后的图片中将包含融合图中的人脸特征，以及模板图中的其他外貌特征与内容。返回值是一段 JSON，包含融合完成后图片的 Base64 编码。",
@@ -80,7 +80,7 @@ struct FppMergeFaceCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         if let url = templateURL {
-           option.templateURL = URL(string: url)
+            option.templateURL = URL(string: url)
         }
         if let url = templateFile {
             option.templateFile = URL(fileURLWithPath: url)

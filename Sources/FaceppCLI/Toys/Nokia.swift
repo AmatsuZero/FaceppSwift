@@ -12,7 +12,7 @@ import Foundation
 #endif
 import ArgumentParser
 
-struct FppNokiaImage: ParsableCommand {
+final class FppNokiaImage: ParsableCommand {
     static var configuration = CommandConfiguration(
         commandName: "nokia",
         abstract: "生成老式诺基亚手机信息图片",
@@ -74,7 +74,7 @@ extension FppNokiaImage {
     func loadResources(completionHandler: @escaping (Error?, NSFont?, NSImage?) -> Void) {
         guard let folderURL = dirURL,
             let url = zipURL else {
-            return
+                return
         }
         let mgr = FileManager.default
         guard mgr.fileExists(atPath: folderURL.path) else {

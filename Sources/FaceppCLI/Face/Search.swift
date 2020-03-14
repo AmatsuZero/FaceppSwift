@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppFaceSearchCommand: FaceCLIBasicCommand {
+final class FppFaceSearchCommand: FaceCLIBasicCommand {
     static var configuration =  CommandConfiguration(
         commandName: "search",
         abstract: """

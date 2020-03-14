@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppTemplateOCRCommand: FaceCLIBasicCommand {
+final class FppTemplateOCRCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "template",
         abstract: "用户通过控制台生成自定义模板并发布后，调用此API传入待识别图片及模板ID，返回模板定义的识别域内容",

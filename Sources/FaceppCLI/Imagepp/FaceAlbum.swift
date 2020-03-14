@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppAFaceAlbumCreateCommand: FaceCLIBaseCommand {
+final class FppAFaceAlbumCreateCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "create",
         abstract: "创建一个人脸相册 FaceAlbum，用于存储相片的image_id、相片中人脸标识face_token、以及人脸标识对应的聚类分组group_id。一个FaceAlbum能够存储10000个face_token。",
@@ -47,7 +47,7 @@ struct FppAFaceAlbumCreateCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumDeleteCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumDeleteCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "delete",
         abstract: "删除 FaceAlbum，该相册对应的image_id, face_token，face_token对应的group_id也都会被删除"
@@ -90,7 +90,7 @@ struct FppFaceAlbumDeleteCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumFindCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumFindCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "find",
         abstract: "查找与某一分组相似的分组，用于在同一个人的人脸被分为多个组的情况下，提示用户确认两个分组的人脸是否属于同一个人"
@@ -130,7 +130,7 @@ struct FppFaceAlbumFindCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumSearchCommand: FaceCLIBasicCommand {
+final class FppFaceAlbumSearchCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "search",
         abstract: "调用者提供图片（可通过图片URL，File，base64三种方式），对图片中人脸进行检测和分析，然后根据图片中face_token搜索FaceAlbum里拥有该face的相片的image_id的集合",
@@ -207,7 +207,7 @@ struct FppFaceAlbumSearchCommand: FaceCLIBasicCommand {
     }
 }
 
-struct FppFaceAlbumUpdateCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumUpdateCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "update",
         abstract: "更新指定 FaceAlbum 中某个或某些face_token 的分组信息"
@@ -256,7 +256,7 @@ struct FppFaceAlbumUpdateCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
+final class FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "add",
         abstract: """
@@ -369,7 +369,7 @@ struct FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
     }
 }
 
-struct FppFaceAlbumGetDetailCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumGetDetailCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "facedetail",
         abstract: "查看某个人脸的信息"
@@ -410,7 +410,7 @@ struct FppFaceAlbumGetDetailCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppGetImageDetailCommand: FaceCLIBaseCommand {
+final class FppGetImageDetailCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "imagedetail",
         abstract: "查看某个图片的信息"
@@ -451,7 +451,7 @@ struct FppGetImageDetailCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppGetAllFaceAlbumFCommand: FaceCLIBaseCommand {
+final class FppGetAllFaceAlbumFCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "all",
         abstract: """
@@ -496,7 +496,7 @@ struct FppGetAllFaceAlbumFCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumGetdetailCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumGetdetailCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "detail",
         abstract: "查看获取 FaceAlbum 详情"
@@ -537,7 +537,7 @@ struct FppFaceAlbumGetdetailCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumRemoveFaceCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumRemoveFaceCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "rmf",
         abstract: "移除FaceAlbum的某些或全部人脸",
@@ -588,7 +588,7 @@ struct FppFaceAlbumRemoveFaceCommand: FaceCLIBaseCommand {
 
 extension FaceAlbumGroupFaceOption.OperationType: ExpressibleByArgument, Decodable {}
 
-struct FppFaceAlbumGroupFaceCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumGroupFaceCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "group",
         abstract: "对FaceAlbum中的人脸进行全量或者增量的分组操作。分组之后每一个face_token会带有一个group_id",

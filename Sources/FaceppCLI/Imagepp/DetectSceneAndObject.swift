@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppDetectSceneAndObjectCommand: FaceCLIBasicCommand {
+final class FppDetectSceneAndObjectCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "detect",
         abstract: "调用者提供图片文件或者图片URL，进行图片分析，识别图片场景和图片主体",

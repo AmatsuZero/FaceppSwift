@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppVehicleLicenseCommand: FaceCLIBasicCommand {
+final class FppVehicleLicenseCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "vehiclelicense",
         abstract: "检测和识别中华人民共和国机动车行驶证（以下称“行驶证”）图像为结构化的文字信息。目前只支持行驶证主页正面，不支持副页正面反面。",

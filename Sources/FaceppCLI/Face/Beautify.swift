@@ -11,7 +11,7 @@ import ArgumentParser
 
 extension BeautifyV2Option.FilterType: ExpressibleByArgument, Decodable {}
 
-struct FppFaceBeautifyCommand: FaceCLIBasicCommand {
+final class FppFaceBeautifyCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "beautify",
         abstract: """

@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppFaceModelCommand: FaceCLIBaseCommand {
+final class FppFaceModelCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "model",
         abstract: "该API可根据单张或多张单人人脸图片，重建3D人脸效果。",

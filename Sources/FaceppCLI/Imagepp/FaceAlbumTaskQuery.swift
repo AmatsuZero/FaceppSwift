@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppFaceAlbumSearchTaskQueryCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumSearchTaskQueryCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "search",
         abstract: "通过该接口查询searchimage后的结果"
@@ -45,7 +45,7 @@ struct FppFaceAlbumSearchTaskQueryCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumAddTaskQueryCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumAddTaskQueryCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "add",
         abstract: "通过该接口查询addimage后的结果"
@@ -82,7 +82,7 @@ struct FppFaceAlbumAddTaskQueryCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFaceAlbumGroupTaskQueryCommand: FaceCLIBaseCommand {
+final class FppFaceAlbumGroupTaskQueryCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "group",
         abstract: "通过该接口查询groupface后的结果"

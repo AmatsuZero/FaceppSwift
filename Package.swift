@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         .executable(
-            name: "FaceppCLI",
+            name: "facepp-cli",
             targets: ["FaceppCLI"]),
         .library(
             name: "FaceppSwift",

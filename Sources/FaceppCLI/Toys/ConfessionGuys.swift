@@ -13,7 +13,7 @@ import Foundation
 #endif
 import ArgumentParser
 
-struct FppConfesssionGuysCommand: ParsableCommand {
+final class FppConfesssionGuysCommand: ParsableCommand {
     static var configuration = CommandConfiguration(
         commandName: "confess",
         abstract: "生成告白小人图片",

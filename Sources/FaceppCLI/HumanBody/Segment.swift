@@ -11,7 +11,7 @@ import FaceppSwift
 
 extension HumanBodySegmentV2Option.ReturnGrayScale: ExpressibleByArgument, Decodable {}
 
-struct FppHumanBodySegment: FaceCLIBasicCommand {
+final class FppHumanBodySegment: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "segment",
         abstract: "识别传入图片中人体的完整轮廓，进行人形抠像。",

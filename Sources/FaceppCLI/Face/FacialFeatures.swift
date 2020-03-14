@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppFeaturesCommand: FaceCLIBasicCommand {
+final class FppFeaturesCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "features",
         abstract: "根据单张正面人脸图片，分析人脸面部特征。",

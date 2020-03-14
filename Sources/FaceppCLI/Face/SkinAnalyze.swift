@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppSkinAnalyzeCommand: FaceCLIBasicCommand {
+final class FppSkinAnalyzeCommand: FaceCLIBasicCommand {
     static var configuration =  CommandConfiguration(
         commandName: "analyze",
         abstract: "该API可对人脸图片，进行面部皮肤状态检测分析。",

@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppIDCardCommand: FaceCLIBasicCommand {
+final class FppIDCardCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "idcard",
         abstract: "检测和识别中华人民共和国第二代身份证的关键字段内容，并支持返回身份证正反面信息、身份证照片分类判断",

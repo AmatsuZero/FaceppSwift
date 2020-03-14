@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppLicensePlateCommand: FaceCLIBasicCommand {
+final class FppLicensePlateCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "plate",
         abstract: "调用者传入一张图片文件或图片URL，检测并返回图片中车牌框并识别车牌颜色和车牌号。当传入图片中有多个车牌时，按照车牌框大小排序依次输出",

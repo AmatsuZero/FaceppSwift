@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppDenseLandmarkCommand: FaceCLIBasicCommand {
+final class FppDenseLandmarkCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "thousandlandmark",
         abstract: "该API可根据单张正面人脸图片，分析人脸面部特征。",

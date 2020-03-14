@@ -9,7 +9,7 @@ import Foundation
 import FaceppSwift
 import ArgumentParser
 
-struct FppCreateFacesetCommand: FaceCLIBaseCommand {
+final class FppCreateFacesetCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "create",
         abstract: "创建一个人脸的集合 FaceSet，用于存储人脸标识 face_token。一个 FaceSet 能够存储10000个 face_token。",
@@ -69,7 +69,7 @@ struct FppCreateFacesetCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFacesetGetAllCommand: FaceCLIBaseCommand {
+final class FppFacesetGetAllCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "all",
         abstract: "获取某一 API Key 下的 FaceSet 列表及其 faceset_token、outer_id、display_name 和 tags 等信息",
@@ -111,7 +111,7 @@ struct FppFacesetGetAllCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFacesetDetailCommand: FaceCLIBaseCommand {
+final class FppFacesetDetailCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "detail",
         abstract: """
@@ -162,7 +162,7 @@ struct FppFacesetDetailCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFacesetUpdateCommand: FaceCLIBaseCommand {
+final class FppFacesetUpdateCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "update",
         abstract: "更新一个人脸集合的属性"
@@ -220,7 +220,7 @@ struct FppFacesetUpdateCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFacesetRemoveCommand: FaceCLIBaseCommand {
+final class FppFacesetRemoveCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "remove",
         abstract: "移除一个FaceSet中的某些或者全部face_token"
@@ -286,7 +286,7 @@ struct FppFacesetRemoveCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFacesetAddFaceCommand: FaceCLIBaseCommand {
+final class FppFacesetAddFaceCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "add",
         abstract: "为一个已经创建的 FaceSet 添加人脸标识 face_token。一个 FaceSet 最多存储1,000个 face_token",
@@ -352,7 +352,7 @@ struct FppFacesetAddFaceCommand: FaceCLIBaseCommand {
     }
 }
 
-struct FppFacesetTaskStatusCommand: FaceCLIBaseCommand {
+final class FppFacesetTaskStatusCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
         commandName: "status",
         abstract: "查询之前调用的异步添加/删除人脸请求，异步任务当前的状态"

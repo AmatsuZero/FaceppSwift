@@ -9,7 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 
-struct FppHumanBodyGesture: FaceCLIBasicCommand {
+final class FppHumanBodyGesture: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "gesture",
         abstract: "调用者提供图片文件或者图片URL，检测图片中出现的所有的手部，并返回其在图片中的矩形框位置与相应的手势含义",

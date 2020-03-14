@@ -13,7 +13,7 @@ extension FaceDetectOption.ReturnAttributes: ExpressibleByArgument, Decodable {}
 
 extension FaceDetectOption.ReturnLandmark: ExpressibleByArgument, Decodable {}
 
-struct FppDetectCommand: FaceCLIBasicCommand {
+final class FppDetectCommand: FaceCLIBasicCommand {
     static var configuration =  CommandConfiguration(
         commandName: "detect",
         abstract: """
@@ -91,7 +91,7 @@ struct FppDetectCommand: FaceCLIBasicCommand {
         }
         option.returnLandmark = returnLandmark
         if let flag = calculateAll {
-           option.calculateAll = flag == 1
+            option.calculateAll = flag == 1
         }
         option.beautyScoreMax = beautyScoreMax
         option.beautyScoreMin = beautyScoreMin

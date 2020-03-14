@@ -44,7 +44,7 @@ Carthage/Build
 
 .idea
 
-# Cocoapod
+# Cocoapods
 Pods/
 !Example/Example.xcodeproj
 Example/Example.xcworkspace

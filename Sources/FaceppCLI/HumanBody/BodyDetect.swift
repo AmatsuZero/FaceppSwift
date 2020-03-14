@@ -11,7 +11,7 @@ import FaceppSwift
 
 extension HumanBodyDetectOption.ReturnAttributes: ExpressibleByArgument, Decodable {}
 
-struct FppHumanBodyDetect: FaceCLIBasicCommand {
+final class FppHumanBodyDetect: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
         commandName: "detect",
         abstract: "传入图片进行人体检测和人体属性分析",
