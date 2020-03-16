@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		704269A7F416A98A771725E6 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66F1EE6768AB9A1FB97D2AF /* Pods_Example.framework */; };
+		80CF9D7B241F91730075CE97 /* BeautifyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CF9D7A241F91730075CE97 /* BeautifyViewController.swift */; };
 		80DD10812419CF220063ABFB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD10802419CF220063ABFB /* AppDelegate.swift */; };
 		80DD10832419CF220063ABFB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD10822419CF220063ABFB /* SceneDelegate.swift */; };
 		80DD10852419CF220063ABFB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD10842419CF220063ABFB /* ViewController.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		80CF9D7A241F91730075CE97 /* BeautifyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautifyViewController.swift; sourceTree = "<group>"; };
 		80DD107D2419CF220063ABFB /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80DD10802419CF220063ABFB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		80DD10822419CF220063ABFB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -50,6 +52,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		80CF9D7C241F91770075CE97 /* Face */ = {
+			isa = PBXGroup;
+			children = (
+				80CF9D7A241F91730075CE97 /* BeautifyViewController.swift */,
+			);
+			path = Face;
+			sourceTree = "<group>";
+		};
 		80DD10742419CF220063ABFB = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +81,7 @@
 		80DD107F2419CF220063ABFB /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				80CF9D7C241F91770075CE97 /* Face */,
 				80DD10802419CF220063ABFB /* AppDelegate.swift */,
 				80DD10822419CF220063ABFB /* SceneDelegate.swift */,
 				80DD10842419CF220063ABFB /* ViewController.swift */,
@@ -227,6 +238,7 @@
 				80DD10852419CF220063ABFB /* ViewController.swift in Sources */,
 				80DD10812419CF220063ABFB /* AppDelegate.swift in Sources */,
 				80DD10832419CF220063ABFB /* SceneDelegate.swift in Sources */,
+				80CF9D7B241F91730075CE97 /* BeautifyViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
