@@ -36,7 +36,10 @@ struct FppFacialRecognition: ParsableCommand {
             FppDenseLandmarkCommand.self,
             FppFeaturesCommand.self,
             FppSkinAnalyzeCommand.self,
-            FppFaceModelCommand.self
+            FppFaceModelCommand.self,
+            FaceSetUserIdCommand.self,
+            FaceGetDetailCommand.self,
+            FaceAnalyzeCommand.self
         ]
     )
 }

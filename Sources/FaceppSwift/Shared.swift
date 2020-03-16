@@ -397,3 +397,5 @@ public extension FaceppBound {
                                height: Int(abs(rightBottom.y - rightTop.y)))
     }
 }
+
+let kInvalidUserDataCharacters = Set("^@,&=*'\"")

@@ -11,7 +11,7 @@ import FaceppSwift
 
 final class FppSkinAnalyzeCommand: FaceCLIBasicCommand {
     static var configuration =  CommandConfiguration(
-        commandName: "analyze",
+        commandName: "skin",
         abstract: "该API可对人脸图片，进行面部皮肤状态检测分析。",
         discussion: """
         图片要求:

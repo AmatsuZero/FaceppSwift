@@ -37,7 +37,7 @@ public class FaceDetectOption: FaceppBaseRequest {
     public var faceRectangle: FaceppRectangle?
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
-    /// beauty_score_max
+    /// 颜值评分分数区间的最大值。默认为100
     public var beautyScoreMax = 100
 
     override var requsetURL: URL? {

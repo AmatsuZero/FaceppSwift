@@ -26,6 +26,15 @@ public class FaceppClient: NSObject {
 }
 
 public enum Facepp: UseFaceppClientProtocol {
+    public enum Face {
+        case setUserId(option: FaceSetUserIdOption,
+            completionHandler:(Error?, FaceSetUserIdResponse?) -> Void)
+        case getDetail(option: FaceGetDetailOption,
+            completionHandler:(Error?, FaceGetDetailResponse?) -> Void)
+        case analyze(option: FaceAnalyzeOption,
+            completionHandler:(Error?, FaceAnalyzeResponse?) -> Void)
+    }
+
     case detect(option: FaceDetectOption,
         completionHandler: (Error?, FaceDetectResponse?) -> Void)
     case compare(option: CompareOption,
@@ -65,6 +74,20 @@ public enum Facepp: UseFaceppClientProtocol {
         case .skinAnalyze(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
         case .skinAnalyzeAdvanced(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        }
+    }
+}
+
+extension Facepp.Face: UseFaceppClientProtocol {
+    @discardableResult
+    public func request() -> URLSessionTask? {
+        switch self {
+        case .setUserId(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .getDetail(let option, let handler):
+            return Self.parse(option: option, completionHandler: handler)
+        case .analyze(let option, let handler):
             return Self.parse(option: option, completionHandler: handler)
         }
     }

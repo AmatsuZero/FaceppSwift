@@ -10,7 +10,7 @@ import ArgumentParser
 import FaceppSwift
 import ZIPFoundation
 
-let kVersion = "0.1.8"
+let kVersion = "0.1.9"
 
 struct RuntimeError: Swift.Error, CustomStringConvertible {
     var description: String

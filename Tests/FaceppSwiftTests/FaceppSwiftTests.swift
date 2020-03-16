@@ -533,6 +533,44 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    // MARK: - face
+    func testSetUserId() {
+        let exp = XCTestExpectation(description: "添加人脸标记信息")
+        let opt = FaceSetUserIdOption(token: "bfe72b1a722adfb3cc2ba3faa9bc61f2", id: #function)
+        Facepp.Face.setUserId(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFaceGetDetail() {
+        let exp = XCTestExpectation(description: "获取人脸的关联信息")
+        let opt = FaceGetDetailOption(token: "bfe72b1a722adfb3cc2ba3faa9bc61f2")
+        Facepp.Face.getDetail(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
+    func testFaceAnalyze() {
+        let exp = XCTestExpectation(description: "获取人脸的关联信息")
+        var opt = FaceAnalyzeOption(tokens: ["bfe72b1a722adfb3cc2ba3faa9bc61f2"])
+        opt.returnLandmark = .all
+        Facepp.Face.analyze(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
     func testSerialization() {
         let exp = XCTestExpectation(description: "序列化测试")
         let opt = BeautifyV1Option()
@@ -593,7 +631,8 @@ final class FaceppSwiftTests: XCTestCase {
         ("testGetAllAlbum", testGetAllAlbum),
         ("testGetAlbumDetail", testGetAlbumDetail),
         ("testFaceAlbumRemoveFace", testFaceAlbumRemoveFace),
-        ("testFaceAlbumGroupFace", testFaceAlbumGroupFace)
+        ("testFaceAlbumGroupFace", testFaceAlbumGroupFace),
+        ("testSetUserId", testSetUserId)
     ]
 }
 

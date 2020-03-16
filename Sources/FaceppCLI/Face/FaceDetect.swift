@@ -102,3 +102,97 @@ final class FppDetectCommand: FaceCLIBasicCommand {
         }
     }
 }
+
+final class FaceGetDetailCommand: FaceCLIBaseCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "detail",
+        abstract: "通过传入在Detect API检测出的人脸标识face_token，获取一个人脸的关联信息，包括源图片ID、归属的FaceSet"
+    )
+
+    @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
+    var checkParams: Bool
+
+    @available(OSX 10.12, *)
+    @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
+    var metrics: Bool
+
+    @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
+    var timeout: TimeInterval
+
+    @Option(name: .customLong("key"), help: "调用此API的API Key")
+    var apiKey: String?
+
+    @Option(name: .customLong("secret"), help: "调用此API的API Secret")
+    var apiSecret: String?
+
+    @Option(name: .customLong("token"), help: "人脸标识face_token")
+    var faceToken: String
+
+    func run() throws {
+        try setup()
+        var option = FaceGetDetailOption(token: faceToken)
+        option.setup(self)
+        semaRun { sema in
+            FaceppSwift.Facepp.Face.getDetail(option: option) { error, resp in
+                commonResponseHandler(sema, error: error, resp: resp)
+            }.request()
+        }
+    }
+}
+
+final class FaceAnalyzeCommand: FaceCLIBaseCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "analyze",
+        abstract: "传入在 Detect API 检测出的人脸标识 face_token，分析得出人脸关键点，人脸属性信息。一次调用最多支持分析 5 个人脸"
+    )
+
+    @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
+    var checkParams: Bool
+
+    @available(OSX 10.12, *)
+    @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
+    var metrics: Bool
+
+    @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
+    var timeout: TimeInterval
+
+    @Option(name: .customLong("key"), help: "调用此API的API Key")
+    var apiKey: String?
+
+    @Option(name: .customLong("secret"), help: "调用此API的API Secret")
+    var apiSecret: String?
+
+    @Option(name:.customLong("min"), default: 0, help: "颜值评分分数区间的最小值。默认为0")
+    var beautyScoreMin: Int
+
+    @Option(name: .customLong("max"), default: 100, help: "颜值评分分数区间的最小值。默认为0")
+    var beautyScoreMax: Int
+
+    @Option(name: .customLong("landmark"), default: .no, help: "是否检测并返回人脸关键点")
+    var returnLandmark: FaceDetectOption.ReturnLandmark
+
+    @Option(help: "是否检测并返回人脸关键点")
+    var attributes: [FaceDetectOption.ReturnAttributes]
+
+    @Argument(help: "最多支持 5 个 face_token")
+    var faceTokens: [String]
+
+    func run() throws {
+        try setup()
+        var option = FaceAnalyzeOption(tokens: faceTokens)
+        option.setup(self)
+        if attributes.contains(.none) {
+            option.returnAttributes = [.none]
+        } else {
+            option.returnAttributes = Set(attributes)
+        }
+        option.returnLandmark = returnLandmark
+        option.beautyScoreMax = beautyScoreMax
+        option.beautyScoreMin = beautyScoreMin
+        semaRun { sema in
+            FaceppSwift.Facepp.Face.analyze(option: option) { error, resp in
+                commonResponseHandler(sema, error: error, resp: resp)
+            }.request()
+        }
+    }
+}

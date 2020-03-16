@@ -82,7 +82,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testSkinAnalyze() throws {
         let output = try getProcess([
-            "face", "analyze",
+            "face", "skin",
             "--enable-metrics",
             "-T", "30.0",
             "--url",
@@ -407,7 +407,7 @@ final class FaceppCLITests: XCTestCase {
         XCTAssertNotNil(albumToken)
         let output = try getProcess([
             "album", "group",
-             "--token", albumToken!,
+            "--token", albumToken!,
         ])
         XCTAssertNotNil(output)
         print(output!)
@@ -417,7 +417,39 @@ final class FaceppCLITests: XCTestCase {
     func testGroupTaskQuery() throws {
         let output = try getProcess([
             "album", "query", "group",
-             "--id", "48ff403f-d3a4-4f15-ae54-27f25dc60bcc"
+            "--id", "48ff403f-d3a4-4f15-ae54-27f25dc60bcc"
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testFaceSetUserId() throws {
+        let output = try getProcess([
+            "face", "setid",
+            "--token", "bfe72b1a722adfb3cc2ba3faa9bc61f2",
+            "--id", #function
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testFaceGetDetail() throws {
+        let output = try getProcess([
+            "face", "detail",
+            "--token", "bfe72b1a722adfb3cc2ba3faa9bc61f2",
+        ])
+        XCTAssertNotNil(output)
+        print(output!)
+        XCTAssertTrue(!output!.contains("errorMessage"))
+    }
+    
+    func testFaceAnalyze() throws {
+        let output = try getProcess([
+            "face", "analyze",
+            "--landmark", "2",
+            "bfe72b1a722adfb3cc2ba3faa9bc61f2",
         ])
         XCTAssertNotNil(output)
         print(output!)
@@ -491,5 +523,7 @@ final class FaceppCLITests: XCTestCase {
         ("testFaceAlbumRemoveFace", testFaceAlbumRemoveFace),
         ("testFaceAlbumGroup", testFaceAlbumGroup),
         ("testGroupTaskQuery", testGroupTaskQuery),
+        ("testFaceSetUserId", testFaceSetUserId),
+        ("testFaceGetDetail", testFaceGetDetail)
     ]
 }

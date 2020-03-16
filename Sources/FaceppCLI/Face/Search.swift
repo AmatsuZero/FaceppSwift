@@ -24,8 +24,7 @@ final class FppFaceSearchCommand: FaceCLIBasicCommand {
         -- 图片像素尺寸：最小 48*48 像素，最大 4096*4096 像素
         -- 图片文件大小：2MB
         -- 最小人脸像素尺寸： 系统能够检测到的人脸框为一个正方形，正方形边长的最小值为 150 像素。
-        """
-    )
+        """)
 
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
@@ -79,6 +78,46 @@ final class FppFaceSearchCommand: FaceCLIBasicCommand {
             FaceppSwift.FaceSet.search(option: option) { error, resp in
                 commonResponseHandler(sema, error: error, resp: resp)
             }
+        }
+    }
+}
+
+final class FaceSetUserIdCommand: FaceCLIBaseCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "setid",
+        abstract: "为检测出的某一个人脸添加标识信息，该信息会在Search接口结果中返回，用来确定用户身份"
+    )
+
+    @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
+    var checkParams: Bool
+
+    @available(OSX 10.12, *)
+    @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
+    var metrics: Bool
+
+    @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
+    var timeout: TimeInterval
+
+    @Option(name: .customLong("key"), help: "调用此API的API Key")
+    var apiKey: String?
+
+    @Option(name: .customLong("secret"), help: "调用此API的API Secret")
+    var apiSecret: String?
+
+    @Option(name: .customLong("token"), help: "人脸标识face_token")
+    var faceToken: String
+
+    @Option(name: .customLong("id"), help: "用户自定义的user_id，不超过255个字符，不能包括^@,&=*'\"建议将同一个人的多个face_token设置同样的user_id")
+    var userId: String
+
+    func run() throws {
+        try setup()
+        var option = FaceSetUserIdOption(token: faceToken, id: userId)
+        option.setup(self)
+        semaRun { sema in
+            FaceppSwift.Facepp.Face.setUserId(option: option) { error, resp in
+                commonResponseHandler(sema, error: error, resp: resp)
+            }.request()
         }
     }
 }

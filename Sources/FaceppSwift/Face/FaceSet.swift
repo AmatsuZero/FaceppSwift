@@ -327,8 +327,6 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
     /// FaceSet自定义标签组成的字符串，用来对FaceSet分组。最长255个字符，多个tag用逗号分隔，每个tag不能包括字符^@,&=*'"
     public var tags: [String]?
 
-    static let invalidUserDataCharacters = Set("^@,&=*'\"")
-
     override func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -338,7 +336,7 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
                 return false
         }
         if let userData = userData {
-            guard userData.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
+            guard userData.allSatisfy({ !kInvalidUserDataCharacters.contains($0) }) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc :"userData不能包括字符^@,&=*'"))
             }
 
@@ -348,7 +346,7 @@ public class FacesetUpdateOption: FaceSetBaseRequest {
         }
 
         if let tags = tags, !tags.isEmpty {
-            guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)})}) else {
+            guard tags.allSatisfy({ $0.allSatisfy({ !kInvalidUserDataCharacters.contains($0)})}) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc :"tag不能包括字符^@,&=*'"))
             }
             if tags.joined(separator: ",").unicodeScalars.count > 255 {
@@ -608,7 +606,7 @@ public struct FaceSetCreateOption: RequestProtocol {
         }
 
         if let data = userData {
-            guard data.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0) }) else {
+            guard data.allSatisfy({ !kInvalidUserDataCharacters.contains($0) }) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc: "userData不能包括字符^@,&=*'"))
             }
 
@@ -618,7 +616,7 @@ public struct FaceSetCreateOption: RequestProtocol {
         }
 
         if let tags = tags, !tags.isEmpty {
-            guard tags.allSatisfy({ $0.allSatisfy({ !FacesetUpdateOption.invalidUserDataCharacters.contains($0)})}) else {
+            guard tags.allSatisfy({ $0.allSatisfy({ !kInvalidUserDataCharacters.contains($0)})}) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc: "tags不能包括字符^@,&=*'"))
             }
             if tags.joined(separator: ",").unicodeScalars.count > 255 {
