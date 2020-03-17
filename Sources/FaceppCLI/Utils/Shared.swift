@@ -21,12 +21,7 @@ struct RuntimeError: Swift.Error, CustomStringConvertible {
 
 extension FaceppRectangle: ExpressibleByArgument {
     public init?(argument: String) {
-        let values = argument.components(separatedBy: ",").compactMap { Int($0) }
-        guard !values.isEmpty && values.count < 5 else {
-            return nil
-        }
-        self = Self(top: values[0], left: values[1],
-                    width: values[2], height: values[3])
+        self.init(string: argument)
     }
 }
 

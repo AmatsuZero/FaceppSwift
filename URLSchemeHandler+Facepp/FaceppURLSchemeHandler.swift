@@ -7,20 +7,20 @@ struct FppHandlerRuntimeError: Error, CustomStringConvertible {
     }
 }
 
-public class FaceppBeautifySchemeHandler: NSObject {
-    /**
-     拦截的scheme，如果需要处理的资源是全路径，host部分以“[本来的scheme]^[host]”标记
-     例：
-        fppbeautify://file^folder/picture.jpg
-        fppbeautify://http^dummy/pic.jpg
-     如果不设置host，则以当前 WebView 的地址作为 baseURL 进行拼接处理
-     */
-    public static let scheme = "fppbeautify"
-    
+public class FaceppBaseSchemeHandler: NSObject, WKURLSchemeHandler {
     /// 资源如果是本地的话，传入要访问的资源文件夹路径，入股不传入，以当前WebView的上一级路径当作相对路径
     public var resourceDirURL: URL?
     
-    public private(set) var tasks = [URLRequest: URLSessionTask]()
+    var tasks = [URLRequest: URLSessionTask]()
+    
+    public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+        
+    }
+    
+    public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+        tasks[urlSchemeTask.request]?.cancel()
+        tasks.removeValue(forKey: urlSchemeTask.request)
+    }
     
     deinit {
         tasks.values.forEach { $0.cancel() }
@@ -28,8 +28,17 @@ public class FaceppBeautifySchemeHandler: NSObject {
     }
 }
 
-extension FaceppBeautifySchemeHandler: WKURLSchemeHandler {
-    public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+public class FaceppBeautifySchemeHandler: FaceppBaseSchemeHandler {
+    /**
+     拦截的scheme，如果需要处理的资源是全路径，host部分以“[本来的scheme]^[host]”标记
+     例：
+     fppbeautify://file^folder/picture.jpg
+     fppbeautify://http^dummy/pic.jpg
+     如果不设置host，则以当前 WebView 的地址作为 baseURL 进行拼接处理
+     */
+    public static let scheme = "fppbeautify"
+    
+    public override func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let components = urlSchemeTask.request.url?
             .customURL(webviewURL: webView.url, resourceDir: resourceDirURL)  else {
                 urlSchemeTask.didFailWithError(FppHandlerRuntimeError("Not Support"))
@@ -38,12 +47,7 @@ extension FaceppBeautifySchemeHandler: WKURLSchemeHandler {
         // 取出参数
         let params = components.params
         // 创建Option
-        let option = BeautifyV2Option()
-        if components.picURL?.scheme == "file" {
-            option.imageFile = components.picURL
-        } else {
-            option.imageURL = components.picURL
-        }
+        let option = BeautifyV2Option(picURL: components.picURL)
         if let filter = params["filter_type"] {
             option.filterType = BeautifyV2Option.FilterType(rawValue: filter)
         }
@@ -70,12 +74,9 @@ extension FaceppBeautifySchemeHandler: WKURLSchemeHandler {
         }.request()
         tasks[urlSchemeTask.request] = task
     }
-    
-    public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        tasks[urlSchemeTask.request]?.cancel()
-        tasks.removeValue(forKey: urlSchemeTask.request)
-    }
-    
+}
+
+extension FaceppBeautifySchemeHandler {
     func handleResponse(task: WKURLSchemeTask, error: Error?, response: BeautifyResponse?) {
         defer {
             tasks.removeValue(forKey: task.request)
@@ -98,6 +99,10 @@ extension FaceppBeautifySchemeHandler: WKURLSchemeHandler {
 extension String {
     var uintValue: UInt? {
         return UInt(self)
+    }
+    
+    var integerValue: Int? {
+        return Int(self)
     }
 }
 
@@ -142,3 +147,13 @@ extension URL {
     }
 }
 
+extension FaceppBaseRequest {
+    convenience init(picURL: URL?) {
+        self.init()
+        if picURL?.scheme == "file" {
+            imageFile = picURL
+        } else {
+            imageURL = picURL
+        }
+    }
+}

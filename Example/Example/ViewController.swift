@@ -13,9 +13,11 @@ import FaceppSwift
 
 class ViewController: UIViewController {
     let handler = FaceppBeautifySchemeHandler()
+    let markHandler = FaceppMarkFacesSchemeHandler()
     lazy var webView: WKWebView = {
         let configureation = WKWebViewConfiguration()
         configureation.setURLSchemeHandler(handler, forURLScheme: FaceppBeautifySchemeHandler.scheme)
+        configureation.setURLSchemeHandler(markHandler, forURLScheme: FaceppMarkFacesSchemeHandler.scheme)
         return WKWebView(frame: .zero, configuration: configureation)
     }()
     override func loadView() {

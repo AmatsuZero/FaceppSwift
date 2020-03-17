@@ -192,6 +192,19 @@ public struct FaceppRectangle: Codable, Hashable {
         self.width = width
         self.height = height
     }
+    
+    public init?(string: String) {
+        let pts = string
+            .components(separatedBy: ",")
+            .compactMap { Int($0) }
+        guard pts.count == 4 else {
+            return nil
+        }
+        top = pts[0]
+        left = pts[1]
+        width = pts[2]
+        height = pts[3]
+    }
 }
 
 public struct FaceppPoint: Codable, Hashable {
