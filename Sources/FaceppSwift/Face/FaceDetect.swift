@@ -347,3 +347,25 @@ extension Set where Element == FaceDetectOption.ReturnAttributes {
         return Set(Element.allCases.filter { $0 != .none })
     }
 }
+
+public extension LandMark {
+    func basicPoints() -> [FaceppPoint] {
+        return [
+            contourChin,
+            contourLeft1, contourLeft2, contourLeft3, contourLeft4,
+            contourLeft5, contourLeft6, contourLeft7, contourLeft8, contourLeft9,
+            contourRight1, contourRight2, contourRight3, contourRight4,
+            contourRight5, contourRight6, contourRight7, contourRight8, contourRight9,
+            leftEyeBottom, leftEyeCenter, leftEyeLeftCorner, leftEyeLowerLeftQuarter,
+            leftEyeLowerRightQuarter, leftEyePupil, leftEyeRightCorner, leftEyeTop,
+            leftEyeUpperLeftQuarter, leftEyeUpperRightQuarter, leftEyebrowUpperLeftQuarter, leftEyebrowUpperRightQuarter,
+            mouthLeftCorner, mouthLowerLipBottom, mouthLowerLipLeftContour1, mouthLowerLipLeftContour2, mouthLowerLipLeftContour3,
+            mouthLowerLipRightContour1, mouthLowerLipRightContour2, mouthLowerLipRightContour3, mouthLowerLipTop,
+            noseContourLeft1, noseContourLeft2, noseContourLeft3, noseLeft, noseRight, noseTip,
+            rightEyeBottom, rightEyeCenter, rightEyeLowerLeftQuarter, rightEyeLowerRightQuarter, rightEyePupil,
+            rightEyeRightCorner, rightEyeTop, rightEyeUpperLeftQuarter, rightEyeUpperRightQuarter, rightEyebrowLeftCorner,
+            rightEyebrowLowerLeftQuarter, rightEyebrowLowerMiddle, rightEyeLowerRightQuarter, rightEyebrowRightCorner,
+            rightEyebrowUpperLeftQuarter, rightEyebrowUpperMiddle, rightEyebrowUpperMiddle, rightEyebrowUpperRightQuarter
+            ].compactMap { $0 }
+    }
+}

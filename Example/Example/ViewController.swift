@@ -7,11 +7,28 @@
 //
 
 import UIKit
+import WebKit
+import SnapKit
 import FaceppSwift
 
 class ViewController: UIViewController {
+    let handler = FaceppBeautifySchemeHandler()
+    lazy var webView: WKWebView = {
+        let configureation = WKWebViewConfiguration()
+        configureation.setURLSchemeHandler(handler, forURLScheme: FaceppBeautifySchemeHandler.scheme)
+        return WKWebView(frame: .zero, configuration: configureation)
+    }()
+    override func loadView() {
+        super.loadView()
+        view.addSubview(webView)
+        webView.snp.makeConstraints { $0.edges.equalTo(0) }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let url = Bundle.main.url(forResource: "Beautify", withExtension: "html", subdirectory: "WebPages") {
+            handler.resourceDirURL = url.deletingLastPathComponent()
+            webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        }
     }
 }

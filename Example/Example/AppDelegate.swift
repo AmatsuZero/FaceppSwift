@@ -7,12 +7,19 @@
 //
 
 import UIKit
+import FaceppSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        if let path = Bundle.main.path(forResource: "Info", ofType: "plist"),
+            let dict = NSDictionary(contentsOfFile: path),
+            let key = dict.object(forKey: "api_key") as? String,
+            let secret = dict.object(forKey: "api_secret") as? String {
+            FaceppClient.initialization(key: key, secret: secret)
+        }
         return true
     }
 

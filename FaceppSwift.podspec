@@ -26,9 +26,16 @@ Pod::Spec.new do |s|
     s.subspec 'UIKit' do |ss|
       ss.ios.deployment_target = '10.0'
       ss.tvos.deployment_target = '10.0'
+      ss.watchos.deployment_target = '3.0'
       ss.source_files = 'UIKit+Facepp'
       ss.ios.framework = 'UIKit'
       ss.dependency 'FaceppSwift/Core'
     end
 
+    s.subspec 'SchemeHandler' do |ss|
+      ss.ios.deployment_target = '11.0'
+      ss.source_files = 'URLSchemeHandler+Facepp'
+      ss.ios.framework = 'UIKit', 'WebKit'
+      ss.dependency 'FaceppSwift/Core'
+    end
   end
