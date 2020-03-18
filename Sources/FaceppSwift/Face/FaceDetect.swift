@@ -192,7 +192,7 @@ public struct FaceppRectangle: Codable, Hashable {
         self.width = width
         self.height = height
     }
-    
+
     public init?(string: String) {
         let pts = string
             .components(separatedBy: ",")

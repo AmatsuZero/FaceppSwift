@@ -32,9 +32,9 @@ Pod::Spec.new do |s|
       ss.dependency 'FaceppSwift/Core'
     end
 
-    s.subspec 'SchemeHandler' do |ss|
-      ss.ios.deployment_target = '11.0'
-      ss.source_files = 'URLSchemeHandler+Facepp'
+    s.subspec 'WebKit' do |ss|
+      ss.ios.deployment_target = '10.0'
+      ss.source_files = 'WebKit+Facepp'
       ss.ios.framework = 'UIKit', 'WebKit'
       ss.dependency 'FaceppSwift/Core'
     end

@@ -5,7 +5,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 target 'Example' do
   pod 'FaceppSwift', :path => '../'
   pod 'FaceppSwift/UIKit', :path => '../'
-  pod 'FaceppSwift/SchemeHandler', :path => '../'
+  pod 'FaceppSwift/WebKit', :path => '../'
   pod 'SwiftLint'
   pod 'SnapKit', '~> 5.0.0'
 
