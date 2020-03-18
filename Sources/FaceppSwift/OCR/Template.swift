@@ -39,7 +39,7 @@ public struct OCRTemplateResponse: FaceppResponseProtocol {
 
     public struct Value: Codable, Hashable {
         /// 创建模板时定义的识别域名
-        public let text: String
+        public let text: [String]
         /**
          识别结果。包括一个text字段，说明如下：
 

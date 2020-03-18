@@ -571,6 +571,19 @@ final class FaceppSwiftTests: XCTestCase {
         wait(for: [exp], timeout: 60)
     }
     
+    func testTemplateOCR() {
+        let exp = XCTestExpectation(description: "模板识别")
+        let opt = OCRTemplateOption(templateId: "1584547795")
+        opt.imageURL = URL(string: "http://img003.hc360.cn/g6/M08/25/56/wKhQsFNe4k2ELuI4AAAAAKKpB0k655.jpg")
+        Cardpp.templateOCR(option: opt) { error, resp in
+            if let err = error {
+                XCTFail(err.localizedDescription)
+            }
+            exp.fulfill()
+        }.request()
+        wait(for: [exp], timeout: 60)
+    }
+    
     func testSerialization() {
         let exp = XCTestExpectation(description: "序列化测试")
         let opt = BeautifyV1Option()
