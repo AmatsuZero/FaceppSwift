@@ -7,14 +7,14 @@
 
 import UIKit
 
-public protocol FppImageDelegate:class {
+public protocol FppImageDelegate: class {
     func image(_ image: UIImage, option: FaceppRequestConfigProtocol, taskDidBeigin: URLSessionTask?)
     func image(_ image: UIImage, taskDidEndWithEror: Error?, response: FaceppResponseBaseProtocol?)
 }
 
 public extension FppImageDelegate {
     func image(_ image: UIImage, option: FaceppRequestConfigProtocol, taskWillBeigin: URLSessionTask?) {}
-    func image<R: FaceppResponseProtocol>(_ image: UIImage, taskDidEnd:(Error?, R?) -> Void) {}
+    func image<R: FaceppResponseProtocol>(_ image: UIImage, taskDidEnd: (Error?, R?) -> Void) {}
 }
 
 private var fppImageassociateKey: Void?
@@ -29,7 +29,7 @@ public extension UIImage {
             objc_getAssociatedObject(self, &fppImageassociateKey) as? FppImageDelegate
         }
     }
-    
+
     weak var fppMetricsReport: FaceppMetricsReporter? {
         set {
             objc_setAssociatedObject(self, &fppMetricsReporterKey, newValue, .OBJC_ASSOCIATION_ASSIGN)

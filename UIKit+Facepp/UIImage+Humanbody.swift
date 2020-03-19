@@ -23,7 +23,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func skeleton(completionHandler: ((Error?, SkeletonDetectResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = SkeletonDetectOption(image: self)
@@ -37,7 +37,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func gesture(returnGesture: Bool = true,
                  completionHandler: ((Error?, HumanBodyGestureResponse?) -> Void)? = nil) -> URLSessionTask? {
@@ -53,7 +53,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func segmentV1(completionHandler: ((Error?, HumanBodySegmentResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = HumanBodySegmentV1Option(image: self)
@@ -67,7 +67,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func segmentV2(returnGrayScale: HumanBodySegmentV2Option.ReturnGrayScale = .grayScaleAndFigure,
                    completionHandler: ((Error?, HumanBodySegmentResponse?) -> Void)? = nil) -> URLSessionTask? {

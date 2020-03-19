@@ -27,20 +27,20 @@ struct FppHandlerRuntimeError: Error, CustomStringConvertible {
 public class FaceppBaseSchemeHandler: NSObject, WKURLSchemeHandler {
     /// 资源如果是本地的话，传入要访问的资源文件夹路径，入股不传入，以当前WebView的上一级路径当作相对路径
     public var resourceDirURL: URL?
-    
+
     var tasks = [URLRequest: URLSessionTask]()
-    
+
     public weak var delegate: FaceppSchemeHandlerDelegate?
-    
+
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        
+
     }
-    
+
     public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
         tasks[urlSchemeTask.request]?.cancel()
         tasks.removeValue(forKey: urlSchemeTask.request)
     }
-    
+
     func extraOriginalImage(url: URL, completionHandler:@escaping (Error?, UIImage?) -> Void) {
         var image: UIImage?
         if url.scheme == "file" {
@@ -48,12 +48,13 @@ public class FaceppBaseSchemeHandler: NSObject, WKURLSchemeHandler {
             completionHandler(nil, image)
         } else {
             if delegate?
-                .responds(to: #selector(FaceppSchemeHandlerDelegate.schemeHandler(_:loadRemoteImage:completionHandler:))) == true {
+                .responds(to:
+                    #selector(FaceppSchemeHandlerDelegate.schemeHandler(_:loadRemoteImage:completionHandler:))) == true {
                 delegate?.schemeHandler?(self, loadRemoteImage: url, completionHandler: completionHandler)
                 return
             }
             let req = URLRequest(url: url)
-            let task = URLSession.shared.dataTask(with: req) { [weak self] data, resp, error in
+            let task = URLSession.shared.dataTask(with: req) { [weak self] data, _, error in
                 guard let data = data else {
                     completionHandler(error, nil)
                     return
@@ -65,7 +66,7 @@ public class FaceppBaseSchemeHandler: NSObject, WKURLSchemeHandler {
             task.resume()
         }
     }
-    
+
     deinit {
         tasks.values.forEach { $0.cancel() }
         tasks.removeAll()
@@ -115,23 +116,23 @@ extension String {
     var uintValue: UInt? {
         return UInt(self)
     }
-    
+
     var integerValue: Int? {
         return Int(self)
     }
 }
 
 extension URL {
-    func customURL(webviewURL: URL?, resourceDir: URL?) -> (picURL:URL?, params: [String: String])? {
+    func customURL(webviewURL: URL?, resourceDir: URL?) -> (picURL: URL?, params: [String: String])? {
         guard var components = URLComponents(string: absoluteString) else {
             return nil
         }
-        
+
         // 取出参数
         var params = [String: String]()
         components.queryItems?.forEach { params[$0.name] = $0.value }
         components.query = nil
-        
+
         // 拼接图片URL
         let parts: [String]? = components.host?.contains("^") == true
             ? components.host?.components(separatedBy: "^")
@@ -151,14 +152,14 @@ extension URL {
                 let relativeURL = isDir.boolValue ? webviewURL : webviewURL?.deletingLastPathComponent()
                 url = URL(fileURLWithPath: path, relativeTo: resourceDir ?? relativeURL)
             } else {
-                let relativeURL = webviewURL?.pathExtension.count == 0
+                let relativeURL = webviewURL?.pathExtension.isEmpty == true
                     ? webviewURL
                     : webviewURL?.deletingLastPathComponent()
                 url = URL(string: path, relativeTo: relativeURL)
             }
             return (url?.absoluteURL, params)
         }
-        
+
         var path = components.host ?? "/"
         path += components.path
         if components.scheme == "file" {

@@ -10,25 +10,26 @@ import WebKit
 
 @available(iOS 11.0, *)
 public protocol FaceppTextDetectSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
-    func schemeHandler(_ handler:FaceppTextDetectSchemeHandler,
+    func schemeHandler(_ handler: FaceppTextDetectSchemeHandler,
                        rawImage: UIImage,
                        detect result: [ImagepprecognizeTextResponse.Result]) -> UIImage?
 }
 
 @available(iOS 11.0, *)
 public extension FaceppTextDetectSchemeHandlerDelegate {
-    func schemeHandler(_ handler:FaceppTextDetectSchemeHandler,
+    func schemeHandler(_ handler: FaceppTextDetectSchemeHandler,
                        rawImage: UIImage,
                        detect result: [ImagepprecognizeTextResponse.Result]) -> UIImage? {
         return rawImage
     }
 }
 
+/// 文字识别拦截器
 @available(iOS 11.0, *)
 public class FaceppTextDetectSchemeHandler: FaceppBaseSchemeHandler {
-    
+
     private weak var _delegate: FaceppTextDetectSchemeHandlerDelegate?
-    
+
     public override var delegate: FaceppSchemeHandlerDelegate? {
         set {
             if let proxy = newValue as? FaceppTextDetectSchemeHandlerDelegate {
@@ -39,7 +40,7 @@ public class FaceppTextDetectSchemeHandler: FaceppBaseSchemeHandler {
             return _delegate
         }
     }
-    
+
     public override func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let picURL = urlSchemeTask.request.url?
             .customURL(webviewURL: webView.url, resourceDir: resourceDirURL)?.picURL  else {
@@ -54,8 +55,8 @@ public class FaceppTextDetectSchemeHandler: FaceppBaseSchemeHandler {
             self?.handle(urlSchemeTask, image: img)
         }
     }
-    
-    func handle(_ schemeTask: WKURLSchemeTask, image: UIImage)  {
+
+    func handle(_ schemeTask: WKURLSchemeTask, image: UIImage) {
         let task = image.recognizeText { [weak self] error, resp in
             defer {
                 self?.tasks.removeValue(forKey: schemeTask.request)
@@ -75,24 +76,25 @@ public class FaceppTextDetectSchemeHandler: FaceppBaseSchemeHandler {
 
 @available(iOS 11.0, *)
 public protocol FaceppTemplateSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
-    func schemeHandler(_ handler:FaceppTemplateSchemeHandler,
+    func schemeHandler(_ handler: FaceppTemplateSchemeHandler,
                        rawImage: UIImage,
                        detect results: [OCRTemplateResponse.Result]) -> UIImage?
 }
 
 @available(iOS 11.0, *)
 public extension FaceppTemplateSchemeHandlerDelegate {
-    func schemeHandler(_ handler:FaceppTemplateSchemeHandler,
+    func schemeHandler(_ handler: FaceppTemplateSchemeHandler,
                        rawImage: UIImage,
                        detect results: [OCRTemplateResponse.Result]) -> UIImage? {
         return rawImage
     }
 }
 
+/// 模板识别拦截器
 @available(iOS 11.0, *)
 public class FaceppTemplateSchemeHandler: FaceppBaseSchemeHandler {
     private weak var _delegate: FaceppTemplateSchemeHandlerDelegate?
-    
+
     public override var delegate: FaceppSchemeHandlerDelegate? {
         set {
             if let proxy = newValue as? FaceppTemplateSchemeHandlerDelegate {
@@ -103,7 +105,7 @@ public class FaceppTemplateSchemeHandler: FaceppBaseSchemeHandler {
             return _delegate
         }
     }
-    
+
     public override func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let components = urlSchemeTask.request.url?
             .customURL(webviewURL: webView.url, resourceDir: resourceDirURL) else {
@@ -127,11 +129,11 @@ public class FaceppTemplateSchemeHandler: FaceppBaseSchemeHandler {
             self?.handle(urlSchemeTask, templateId: id, extraInfo: extraInfo, image: img)
         }
     }
-    
+
     func handle(_ schemeTask: WKURLSchemeTask,
                 templateId: String,
                 extraInfo: [String]?,
-                image: UIImage)  {
+                image: UIImage) {
         let task = image.template(templateId: templateId, extraInfo: extraInfo) { [weak self] error, resp in
             defer {
                 self?.tasks.removeValue(forKey: schemeTask.request)

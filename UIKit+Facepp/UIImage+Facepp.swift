@@ -49,7 +49,7 @@ public extension UIImage {
             fppDelegate?.image(self, option: option, taskDidBeigin: task)
             return task
     }
-    
+
     @discardableResult
     func beautifyV2(whitening: UInt = 50,
                     smoothing: UInt = 50,
@@ -78,11 +78,11 @@ public extension UIImage {
             fppDelegate?.image(self, option: option, taskDidBeigin: task)
             return task
     }
-    
+
     @discardableResult
     func beautifyV1(whitening: UInt = 50,
                     smoothing: UInt = 50,
-                    completionHandler: ((Error?, BeautifyResponse?) -> Void)? = nil)  -> URLSessionTask? {
+                    completionHandler: ((Error?, BeautifyResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = BeautifyV1Option(image: self)
         option.whitening = whitening
         option.smoothing = smoothing
@@ -96,7 +96,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func facialFeatures(returnImageReset: Bool = false,
                         completionHandler: ((Error?, FacialFeaturesResponse?) -> Void)? = nil) -> URLSessionTask? {
@@ -112,7 +112,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func search(returnResultCount count: UInt = 1,
                 faceRectangle frame: CGRect? = nil,
@@ -130,9 +130,9 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
-    func skinAnalyze(completionHandler: ((Error?, SkinAnalyzeResponse?) -> Void)? = nil) -> URLSessionTask?  {
+    func skinAnalyze(completionHandler: ((Error?, SkinAnalyzeResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = SkinAnalyzeOption(image: self)
         let task = Facepp.skinAnalyze(option: option) { error, resp in
             guard let block = completionHandler else {
@@ -144,7 +144,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func skinAnalyzeAdvanced(completionHandler: ((Error?, SkinAnalyzeAdvancedResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = SkinAnalyzeAdvancedOption(image: self)
@@ -157,7 +157,7 @@ public extension UIImage {
         }.request()
         return task
     }
-    
+
     @discardableResult
     func denseLandmark(returnLandMark: Set<ThousandLandMarkOption.ReturnLandMark> = .all,
                        completionHandler: ((Error?, ThousandLandmarkResponse?) -> Void)? = nil) -> URLSessionTask? {
@@ -174,7 +174,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func compare(faceRect rect1: CGRect? = nil,
                  with image2: UIImage,
@@ -196,7 +196,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     static func compare(image1: UIImage,
                         faceRect1: CGRect? = nil,
@@ -206,7 +206,7 @@ public extension UIImage {
         return image1.compare(faceRect: faceRect1, with: image2,
                               faceRect2: faceRect2, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func faceModel(faces: ThreeDimensionFaces,
                           needTexture: Bool = false,
@@ -238,7 +238,7 @@ fileprivate extension UInt32 {
     var G: UInt32 { (self >> 8).mask8 }
     var B: UInt32 { (self >> 16).mask8 }
     var A: UInt32 { (self >> 24).mask8 }
-    
+
     static func rgbAMake(r: UInt32, g: UInt32, b: UInt32, a: UInt32) -> UInt32 {
         return r.mask8 | g.mask8 << 8 | b.mask8 << 16 | a.mask8 << 24
     }
@@ -252,14 +252,14 @@ extension UIImage {
         //计算大小缩放比例
         let imageBytes = Float(size.width * size.height * 4)
         let byteScale = sqrtf(imageBytes / maxBytes)
-        
+
         //取最大缩放比
         let scale = max(sizeScale, CGFloat(byteScale))
         // 方向尺寸都OK
         guard imageOrientation != .up || scale > 1.0  else {
             return self
         }
-        
+
         let newSize = CGSize(width: size.width / scale, height: size.height / scale)
         UIGraphicsBeginImageContext(newSize)
         draw(in: .init(origin: .zero, size: newSize))
@@ -267,15 +267,15 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return fixImage
     }
-    
+
     func imageData() -> Data? {
         return self.jpegData(compressionQuality: 1.0)
     }
-    
+
     func base64String() -> String? {
         return imageData()?.base64EncodedString(options: .lineLength64Characters)
     }
-    
+
     func crop(rect: CGRect) -> UIImage? {
         guard let imageRef = cgImage?.cropping(to: rect)  else {
             return nil

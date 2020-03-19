@@ -23,7 +23,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func driverLicenseV2(needReturnScore: Bool = false,
                          mode: OCRDriverLicenseV2Option.Mode = .fast,
@@ -41,7 +41,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func driverLicenseV1(completionHandler: ((Error?, OCRDriverLicenseV1Response?) -> Void)? = nil) -> URLSessionTask? {
         let option = OCRDriverLicenseV1Option(image: self)
@@ -55,7 +55,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func bankcardV1(completionHandler: ((Error?, OCRBankCardResponse?) -> Void)?) -> URLSessionTask? {
         let option = OCRBankCardV1Option(image: self)
@@ -69,7 +69,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func bankcardBeta(completionHandler: ((Error?, OCRBankCardResponse?) -> Void)?) -> URLSessionTask? {
         let option = OCRBankCardBetaOption(image: self)
@@ -83,7 +83,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func template(templateId: String,
                   extraInfo: [String]? = nil,

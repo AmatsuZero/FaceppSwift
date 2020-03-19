@@ -10,14 +10,14 @@ import WebKit
 
 @available(iOS 11.0, *)
 public protocol FaceppDetectFacesSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
-    func schemeHandler(_ handler:FaceppDetectFacesSchemeHandler,
+    func schemeHandler(_ handler: FaceppDetectFacesSchemeHandler,
                        rawImage: UIImage,
                        detect skeletons: [Face]) -> UIImage?
 }
 
 @available(iOS 11.0, *)
 public extension FaceppDetectFacesSchemeHandlerDelegate {
-    func schemeHandler(_ handler:FaceppDetectFacesSchemeHandler,
+    func schemeHandler(_ handler: FaceppDetectFacesSchemeHandler,
                        rawImage: UIImage,
                        detect skeletons: [Face]) -> UIImage? {
         return rawImage
@@ -27,9 +27,9 @@ public extension FaceppDetectFacesSchemeHandlerDelegate {
 /// 人脸标记拦截器
 @available(iOS 11.0, *)
 public class FaceppDetectFacesSchemeHandler: FaceppBaseSchemeHandler {
-    
+
     private weak var _delegate: FaceppDetectFacesSchemeHandlerDelegate?
-    
+
     override weak public var delegate: FaceppSchemeHandlerDelegate? {
         set {
             if let proxy = newValue as? FaceppDetectFacesSchemeHandlerDelegate {
@@ -42,7 +42,7 @@ public class FaceppDetectFacesSchemeHandler: FaceppBaseSchemeHandler {
             return _delegate
         }
     }
-    
+
     public override func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let components = urlSchemeTask.request.url?
             .customURL(webviewURL: webView.url, resourceDir: resourceDirURL)  else {
@@ -102,8 +102,8 @@ extension FaceppDetectFacesSchemeHandler {
         }.request()
         self.tasks[urlSchemeTask.request] = task
     }
-    
-    func draw(task:WKURLSchemeTask, originalImage: UIImage?, faces: [Face]?) {
+
+    func draw(task: WKURLSchemeTask, originalImage: UIImage?, faces: [Face]?) {
         defer {
             tasks.removeValue(forKey: task.request)
         }

@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     let bodyHandler = FaceppSkeletonSchemeHandler()
     let textHandler = FaceppTextDetectSchemeHandler()
     let templateHandler = FaceppTemplateSchemeHandler()
+    let segmendHandler = FaceppSegmentSchemeHandler()
 
     lazy var webView: WKWebView = {
         let configureation = WKWebViewConfiguration()
@@ -25,6 +26,7 @@ class ViewController: UIViewController {
         configureation.setURLSchemeHandler(bodyHandler, forURLScheme: "test3")
         configureation.setURLSchemeHandler(textHandler, forURLScheme: "test4")
         configureation.setURLSchemeHandler(templateHandler, forURLScheme: "test5")
+        configureation.setURLSchemeHandler(segmendHandler, forURLScheme: "test6")
         return WKWebView(frame: .zero, configuration: configureation)
     }()
 

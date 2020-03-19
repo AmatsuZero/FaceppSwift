@@ -11,12 +11,12 @@ import WebKit
 public class FaceppBaseMsgHandler: NSObject, WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController,
                                       didReceive message: WKScriptMessage) {
-        message.webView?.evaluateJavaScript("", completionHandler: { ret, err in
-            
+        message.webView?.evaluateJavaScript("", completionHandler: { _, _ in
+
         })
     }
 }
 
 public class FaceppFaceDetectMsgHandler: FaceppBaseMsgHandler {
-    
+
 }
