@@ -207,3 +207,20 @@ extension BeautifyV2Option {
         }
     }
 }
+
+@available(iOS 11.0, *)
+extension WKURLSchemeTask {
+    func complete(with newImage: UIImage) {
+        guard let data = newImage.imageData() else {
+            didFailWithError(FppHandlerRuntimeError("转换图片失败"))
+            return
+        }
+        let response = URLResponse(url: request.url!,
+                                   mimeType: "image/jpeg",
+                                   expectedContentLength: data.count,
+                                   textEncodingName: nil)
+        didReceive(response)
+        didReceive(data)
+        didFinish()
+    }
+}

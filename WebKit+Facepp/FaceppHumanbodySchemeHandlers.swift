@@ -60,11 +60,9 @@ public class FaceppSkeletonSchemeHandler: FaceppBaseSchemeHandler {
 @available(iOS 11.0, *)
 extension FaceppSkeletonSchemeHandler {
     func fetchData(_ schemeTask: WKURLSchemeTask, rawImage image: UIImage) {
-        let option = SkeletonDetectOption()
-        option.imageBase64 = image.base64String()
-        let task = FaceppHumanBody.skeleton(option: option) { [weak self] error, resp in
+        let task = image.skeleton { [weak self] error, resp in
             self?.handle(task: schemeTask, error: error, rawImage: image, response: resp)
-        }.request()
+        }
         self.tasks[schemeTask.request] = task
     }
     
@@ -79,16 +77,6 @@ extension FaceppSkeletonSchemeHandler {
         }
         let newImage = _delegate?.schemeHandler(self, rawImage: rawImage,
                                                 detect: response?.skeletons) ?? rawImage
-        guard let data = newImage.imageData() else {
-            task.didFailWithError(FppHandlerRuntimeError("转换图片失败"))
-            return
-        }
-        let response = URLResponse(url: task.request.url!,
-                                   mimeType: "image/jpeg",
-                                   expectedContentLength: data.count,
-                                   textEncodingName: nil)
-        task.didReceive(response)
-        task.didReceive(data)
-        task.didFinish()
+        task.complete(with: newImage)
     }
 }

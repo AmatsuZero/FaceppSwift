@@ -113,16 +113,6 @@ extension FaceppDetectFacesSchemeHandler {
         }
         let newImage = _delegate?.schemeHandler(self, rawImage: originalImage,
                                                 detect: faces) ?? originalImage
-        guard let data = newImage.imageData() else {
-            task.didFailWithError(FppHandlerRuntimeError("转换图片失败"))
-            return
-        }
-        let response = URLResponse(url: task.request.url!,
-                                   mimeType: "image/jpeg",
-                                   expectedContentLength: data.count,
-                                   textEncodingName: nil)
-        task.didReceive(response)
-        task.didReceive(data)
-        task.didFinish()
+        task.complete(with: newImage)
     }
 }

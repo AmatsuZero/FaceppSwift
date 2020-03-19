@@ -5,7 +5,7 @@ PODS:
   - FaceppSwift/UIKit (0.1.8):
     - FaceppSwift/Core
   - FaceppSwift/WebKit (0.1.8):
-    - FaceppSwift/Core
+    - FaceppSwift/UIKit
   - SnapKit (5.0.1)
   - SwiftLint (0.39.1)
 
@@ -26,7 +26,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  FaceppSwift: 7348812a330b821719d2f57bf8eb758685dabc4a
+  FaceppSwift: 9e6afae312120ce6ce90d060f4015f8067a6ddc2
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
