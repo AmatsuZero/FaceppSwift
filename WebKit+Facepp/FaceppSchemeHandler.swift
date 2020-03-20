@@ -54,16 +54,24 @@ public class FaceppBaseSchemeHandler: NSObject, WKURLSchemeHandler {
                 return
             }
             let req = URLRequest(url: url)
-            let task = URLSession.shared.dataTask(with: req) { [weak self] data, _, error in
-                guard let data = data else {
-                    completionHandler(error, nil)
-                    return
+            // 先看看是否有缓存
+            if let image = FaceppSchemeHandlerCache.shared.extraImageFor(request: req) {
+                completionHandler(nil, image)
+            } else {
+                let task = URLSession.shared.dataTask(with: req) { [weak self] data, resp, error in
+                    guard let data = data,
+                        let resp = resp else {
+                            completionHandler(error, nil)
+                            return
+                    }
+                    self?.tasks.removeValue(forKey: req)
+                    // 缓存起来
+                    FaceppSchemeHandlerCache.shared.putImageFor(requst: req, response: resp, data: data)
+                    completionHandler(nil, UIImage(data: data))
                 }
-                self?.tasks.removeValue(forKey: req)
-                completionHandler(nil, UIImage(data: data))
+                tasks[req] = task
+                task.resume()
             }
-            tasks[req] = task
-            task.resume()
         }
     }
 
@@ -223,5 +231,46 @@ extension WKURLSchemeTask {
         didReceive(response)
         didReceive(data)
         didFinish()
+    }
+}
+
+class FaceppSchemeHandlerCache {
+
+    let cache: URLCache
+    var maxDays = 7
+
+    static let shared: FaceppSchemeHandlerCache = {
+        let mb = 1024 * 1024
+        let singleton = FaceppSchemeHandlerCache(memeoryCapcicity: 100 * mb,
+                                                 diskCapacity: 200 * mb)
+        return singleton
+    }()
+
+    init(memeoryCapcicity mSize: Int,
+         diskCapacity
+        dSzie: Int,
+         path: String? = nil) {
+        cache = URLCache(memoryCapacity: mSize, diskCapacity: dSzie, diskPath: path)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(Self.ejectData),
+                                               name: UIApplication.didReceiveMemoryWarningNotification,
+                                               object: nil)
+    }
+
+    func putImageFor(requst: URLRequest, response: URLResponse, data: Data) {
+        let resp = CachedURLResponse(response: response, data: data)
+        cache.storeCachedResponse(resp, for: requst)
+    }
+
+    func extraImageFor(request: URLRequest) -> UIImage? {
+        guard let data = cache.cachedResponse(for: request)?.data else {
+            return nil
+        }
+        return UIImage(data: data)
+    }
+
+    @objc func ejectData() {
+        let date = Date(timeIntervalSinceNow: TimeInterval(-60 * 60 * 24 * maxDays))
+        cache.removeCachedResponses(since: date)
     }
 }
