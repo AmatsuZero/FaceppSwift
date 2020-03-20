@@ -38,7 +38,7 @@ final class FppConfesssionGuysCommand: ParsableCommand {
             writeError(RuntimeError("仅限于 macOS 使用"))
             return
         }
-
+        #if os(macOS)
         let group = DispatchGroup()
         var images: [NSImage]?
         var error: Error?
@@ -65,9 +65,11 @@ final class FppConfesssionGuysCommand: ParsableCommand {
         }
 
         RunLoop.current.run()
+        #endif
     }
 }
 
+#if os(macOS)
 @available(macOS 10.10, *)
 extension FppConfesssionGuysCommand {
     func loadImages(completionHandler: @escaping (Error?, [NSImage]?) -> Void) {
@@ -216,3 +218,4 @@ extension FppConfesssionGuysCommand {
         }
     }
 }
+#endif

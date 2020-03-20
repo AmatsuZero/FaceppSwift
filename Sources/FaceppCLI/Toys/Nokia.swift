@@ -37,7 +37,7 @@ final class FppNokiaImage: ParsableCommand {
             writeError(RuntimeError("仅限于 macOS 使用"))
             return
         }
-
+        #if os(macOS)
         let group = DispatchGroup()
         var sourceImage: NSImage?
         var sourceFont: NSFont?
@@ -66,9 +66,11 @@ final class FppNokiaImage: ParsableCommand {
         }
 
         RunLoop.current.run()
+        #endif
     }
 }
 
+#if os(macOS)
 @available(macOS 10.10, *)
 extension FppNokiaImage {
     func loadResources(completionHandler: @escaping (Error?, NSFont?, NSImage?) -> Void) {
@@ -263,3 +265,4 @@ extension FppNokiaImage {
         return img
     }
 }
+#endif

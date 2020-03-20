@@ -39,6 +39,7 @@ extension URL {
     }
 }
 
+#if os(macOS)
 extension String {
     func conformsTo(pattern: String) -> Bool {
         let pattern = NSPredicate(format: "SELF MATCHES %@", pattern)
@@ -77,3 +78,4 @@ extension NSColor {
         self.init(hex: Int(theInt), alpha: alpha)
     }
 }
+#endif

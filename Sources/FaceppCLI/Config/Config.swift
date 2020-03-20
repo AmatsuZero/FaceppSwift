@@ -10,6 +10,8 @@ import Foundation
 import FaceppSwift
 #if os(macOS)
 import Security
+#else
+import FoundationNetworking
 #endif
 
 let configFileURL = configDir?.appendingPathComponent("config")
@@ -25,18 +27,17 @@ class FppConfig: Codable {
 
     static var currentUser: FppConfig? = {
         var rawData: Data?
-        if #available(OSX 10.10, *) {
-            let config = FppConfig(key: "", secret: "")
-            let secureStore = SecureStore(secureStoreQueryable: config)
-            let raw = try? secureStore.getValue()
-            rawData = raw?.data(using: .utf8, allowLossyConversion: false)
-        } else {
-            guard let url = configFileURL,
-                let data = try? Data(contentsOf: url) else {
-                    return nil
-            }
-            rawData =  try? Data(contentsOf: url)
+        #if os(macOS)
+        let config = FppConfig(key: "", secret: "")
+        let secureStore = SecureStore(secureStoreQueryable: config)
+        let raw = try? secureStore.getValue()
+        rawData = raw?.data(using: .utf8, allowLossyConversion: false)
+        #else
+        guard let url = configFileURL else {
+            return nil
         }
+        rawData =  try? Data(contentsOf: url)
+        #endif
         guard let data = rawData else {
             return nil
         }
@@ -50,21 +51,21 @@ class FppConfig: Codable {
 
     func save() throws {
         let data = try JSONEncoder().encode(self)
-        if #available(OSX 10.10, *) {
-            let secureStore = SecureStore(secureStoreQueryable: self)
-            guard let str = String(data: data, encoding: .utf8) else {
-                return
-            }
-            try secureStore.setValue(str)
-        } else {
-            guard let url = configFileURL else {
-                return
-            }
-            try data.write(to: url)
+        #if os(macOS)
+        let secureStore = SecureStore(secureStoreQueryable: self)
+        guard let str = String(data: data, encoding: .utf8) else {
+            return
         }
+        try secureStore.setValue(str)
+        #else
+        guard let url = configFileURL else {
+            return
+        }
+        try data.write(to: url)
+        #endif
     }
 }
-
+#if os(macOS)
 // MARK: - Key chain存储
 @available(OSX 10.10, *)
 protocol SecureStoreQueryable {
@@ -197,14 +198,17 @@ extension FppConfig: SecureStoreQueryable {
         return query
     }
 }
+#endif
 
 @available(OSX 10.12, *)
 extension FppConfig: FaceppMetricsReporter {
+    #if os(macOS)
     func option(_ option: FaceppRequestConfigProtocol,
                 task: URLSessionTask,
                 didFinishCollecting metrics: URLSessionTaskMetrics) {
         print(metrics)
     }
+    #endif
 }
 
 struct FppSetupCommand: ParsableCommand {

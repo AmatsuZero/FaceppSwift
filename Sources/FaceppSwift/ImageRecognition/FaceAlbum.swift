@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 let kFaceAlbumBaseURL: URL? = {
     return kImageppV1URL?.appendingPathComponent("facealbum")

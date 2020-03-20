@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 let kBaseURL = URL(string: "https://api-cn.faceplusplus.com")
 
@@ -175,6 +178,7 @@ extension Data {
     }
 }
 
+#if !os(Linux)
 extension DispatchQueue {
     private static var _onceTracker = [String]()
     /**
@@ -195,6 +199,7 @@ extension DispatchQueue {
         block()
     }
 }
+#endif
 
 extension Set where Element: Option {
     var rawValue: Int {

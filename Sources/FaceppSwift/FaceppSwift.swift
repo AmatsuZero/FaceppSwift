@@ -1,4 +1,7 @@
 import Foundation
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 public class FaceppClient: NSObject {
     private let apiKey: String
@@ -10,9 +13,15 @@ public class FaceppClient: NSObject {
     private var tasksMap = [URLSessionTask: RequestProtocol]()
 
     public class func initialization(key: String, secret: String) {
-        DispatchQueue.once(token: "com.daubert.faceapp.init") {
+        #if os(Linux)
+        if shared == nil { // 原来的 Dispatch once 写法在Linux上无法通过编译，退化
             shared = FaceppClient(apikey: key, apiSecret: secret)
         }
+        #else
+        DispatchQueue.once(token: "com.daubert.facepp.init") {
+            shared = FaceppClient(apikey: key, apiSecret: secret)
+        }
+        #endif
     }
     private override init() {
         fatalError("不要调用原来的初始化")
@@ -207,17 +216,21 @@ public class FaceppBaseRequest: RequestProtocol {
     }
 }
 
+@available(OSX 10.12, iOS 10.0, *)
 public protocol FaceppMetricsReporter: class {
-    @available(OSX 10.12, iOS 10.0, *)
+    #if !os(Linux)
     func option(_ option: FaceppRequestConfigProtocol, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics)
+    #endif
 }
 
+#if !os(Linux)
+@available(OSX 10.12, iOS 10.0, *)
 public extension FaceppMetricsReporter {
-    @available(OSX 10.12, iOS 10.0, *)
     func option(_ option: FaceppRequestConfigProtocol,
                 task: URLSessionTask,
-                didFinishCollecting metrics: URLSessionTaskMetrics) {}
+                didFinishCollecting metrics: URLSessionTaskMetrics) {}           
 }
+#endif
 
 public protocol FaceppRequestConfigProtocol {
     var timeoutInterval: TimeInterval { get set }
@@ -263,7 +276,9 @@ public class CardppV1Requst: FaceppBaseRequest {
     }
 }
 
+
 extension FaceppClient: URLSessionTaskDelegate {
+    #if !os(Linux)
     @available(OSX 10.12, iOS 10.0, *)
     public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         guard let option = tasksMap.removeValue(forKey: task) else {
@@ -271,4 +286,5 @@ extension FaceppClient: URLSessionTaskDelegate {
         }
         option.metricsReporter?.option(option, task: task, didFinishCollecting: metrics)
     }
+    #endif
 }
