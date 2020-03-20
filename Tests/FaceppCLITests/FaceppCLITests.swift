@@ -264,7 +264,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testBandcard() throws {
         let output = try getProcess([
-            "imagepp", "",
+            "card", "bankcard",
             "--url", "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg",
         ])
         XCTAssertNotNil(output)

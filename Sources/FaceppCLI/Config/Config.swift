@@ -67,7 +67,6 @@ class FppConfig: Codable {
 }
 #if os(macOS)
 // MARK: - Key chain存储
-@available(OSX 10.10, *)
 protocol SecureStoreQueryable {
     var query: [String: Any] { get }
 }
@@ -75,7 +74,6 @@ protocol SecureStoreQueryable {
  钥匙串存储
  - note: 参考：https://www.raywenderlich.com/9240-keychain-services-api-tutorial-for-passwords-in-swift
  */
-@available(OSX 10.10, *)
 struct SecureStore {
     let secureStoreQueryable: SecureStoreQueryable
 
@@ -168,14 +166,12 @@ struct SecureStore {
     }
 }
 
-@available(OSX 10.10, *)
 enum SecureStoreError: Error {
     case string2DataConversionError
     case data2StringConversionError
     case unhandledError(message: String)
 }
 
-@available(OSX 10.10, *)
 extension SecureStoreError: LocalizedError {
     public var errorDescription: String? {
         switch self {
@@ -189,7 +185,6 @@ extension SecureStoreError: LocalizedError {
     }
 }
 
-@available(OSX 10.10, *)
 extension FppConfig: SecureStoreQueryable {
     var query: [String: Any] {
         var query: [String: Any] = [:]
@@ -200,7 +195,6 @@ extension FppConfig: SecureStoreQueryable {
 }
 #endif
 
-@available(OSX 10.12, *)
 extension FppConfig: FaceppMetricsReporter {
     #if os(macOS)
     func option(_ option: FaceppRequestConfigProtocol,

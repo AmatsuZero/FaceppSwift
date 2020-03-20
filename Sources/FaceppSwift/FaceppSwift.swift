@@ -228,7 +228,7 @@ public protocol FaceppMetricsReporter: class {
 public extension FaceppMetricsReporter {
     func option(_ option: FaceppRequestConfigProtocol,
                 task: URLSessionTask,
-                didFinishCollecting metrics: URLSessionTaskMetrics) {}           
+                didFinishCollecting metrics: URLSessionTaskMetrics) {}
 }
 #endif
 
@@ -275,7 +275,6 @@ public class CardppV1Requst: FaceppBaseRequest {
         return kCardppV1URL
     }
 }
-
 
 extension FaceppClient: URLSessionTaskDelegate {
     #if !os(Linux)

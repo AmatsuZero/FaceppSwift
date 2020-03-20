@@ -70,7 +70,6 @@ final class FppConfesssionGuysCommand: ParsableCommand {
 }
 
 #if os(macOS)
-@available(macOS 10.10, *)
 extension FppConfesssionGuysCommand {
     func loadImages(completionHandler: @escaping (Error?, [NSImage]?) -> Void) {
         guard let folderURL = dirURL else {

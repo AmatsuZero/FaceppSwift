@@ -71,7 +71,6 @@ final class FppNokiaImage: ParsableCommand {
 }
 
 #if os(macOS)
-@available(macOS 10.10, *)
 extension FppNokiaImage {
     func loadResources(completionHandler: @escaping (Error?, NSFont?, NSImage?) -> Void) {
         guard let folderURL = dirURL,
