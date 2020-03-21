@@ -94,3 +94,56 @@ public struct HumanBodyGestureResponse: FaceppResponseProtocol, Hashable {
      */
     public let hands: [Hands]?
 }
+
+extension HumanBodyGestureResponse.Gesture: PropertyLoopable {
+    public enum GestureType: String {
+        /// 未知
+        case unknown
+        /// 比心 A
+        case heartA
+        /// 比心 B
+        case heartB
+        /// 比心 C
+        case heartC
+        /// 比心 D
+        case heartD
+        /// OK
+        case ok
+        /// 手张开
+        case handOpen
+        /// 大拇指向上
+        case thumbUp
+        /// 大拇指向下
+        case thumbDown
+        /// ROCK
+        case rock
+        /// 合十
+        case namaste
+        /// 手心向上
+        case palmUp
+        /// 握拳
+        case fist
+        /// 食指朝上
+        case indexFingerUp
+        /// 双指朝上
+        case doubleFingerUp
+        /// 胜利
+        case victory
+        /// 大 V 字
+        case bigV
+        /// 打电话
+        case phonecall
+        /// 作揖
+        case beg
+        /// 感谢
+        case thanks
+    }
+
+    public var mostLikelyGesutre: GestureType {
+        guard let properties = try? allProperties().compactMapValues({ $0 as? Float }),
+            let mostLikely = properties.max(by: { $0.value < $1.value }) else {
+                return .unknown
+        }
+        return GestureType(rawValue: mostLikely.key) ?? .unknown
+    }
+}

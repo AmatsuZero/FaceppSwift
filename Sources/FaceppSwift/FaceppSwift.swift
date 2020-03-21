@@ -287,3 +287,25 @@ extension FaceppClient: URLSessionTaskDelegate {
     }
     #endif
 }
+
+protocol PropertyLoopable {
+    func allProperties() throws -> [String: Any]
+}
+
+extension PropertyLoopable {
+    func allProperties() throws -> [String: Any] {
+        var result: [String: Any] = [:]
+        let mirror = Mirror(reflecting: self)
+        guard let style = mirror.displayStyle, style == .struct || style == .class else {
+            //throw some error
+            throw NSError(domain: "com.daubert.facepp.propertyLoop", code: -777, userInfo: nil)
+        }
+        for (labelMaybe, valueMaybe) in mirror.children {
+            guard let label = labelMaybe else {
+                continue
+            }
+            result[label] = valueMaybe
+        }
+        return result
+    }
+}

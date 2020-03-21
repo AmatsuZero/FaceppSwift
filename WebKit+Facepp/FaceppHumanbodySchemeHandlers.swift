@@ -12,6 +12,7 @@ import WebKit
 public protocol FaceppSkeletonSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppSkeletonSchemeHandler,
                        rawImage: UIImage,
+                       error: Error?,
                        detect skeletons: [SkeletonDetectResponse.Skeleton]?) -> UIImage?
 }
 
@@ -19,6 +20,7 @@ public protocol FaceppSkeletonSchemeHandlerDelegate: FaceppSchemeHandlerDelegate
 public extension FaceppSkeletonSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppSkeletonSchemeHandler,
                        rawImage: UIImage,
+                       error: Error?,
                        detect skeletons: [SkeletonDetectResponse.Skeleton]?) -> UIImage? {
         return rawImage
     }
@@ -68,17 +70,13 @@ public class FaceppSkeletonSchemeHandler: FaceppBaseSchemeHandler {
         defer {
             tasks.removeValue(forKey: task.request)
         }
-        guard error == nil else {
-            task.didFailWithError(error!)
-            return
-        }
-        let newImage = _delegate?.schemeHandler(self, rawImage: rawImage,
+        let newImage = _delegate?.schemeHandler(self, rawImage: rawImage, error: error,
                                                 detect: response?.skeletons) ?? rawImage
         task.complete(with: newImage)
     }
 }
 
-/// 人体抠图是schemeHandler
+/// 人体抠图schemeHandler
 @available(iOS 11.0, *)
 public class FaceppSegmentSchemeHandler: FaceppBaseSchemeHandler {
 
@@ -111,7 +109,7 @@ public class FaceppSegmentSchemeHandler: FaceppBaseSchemeHandler {
             tasks.removeValue(forKey: task.request)
         }
         guard error == nil else {
-            task.didFailWithError(error!)
+            task.complete(with: rawImage)
             return
         }
         if let gray = response?.result,
@@ -134,5 +132,144 @@ public class FaceppSegmentSchemeHandler: FaceppBaseSchemeHandler {
         } else {
             task.complete(with: rawImage)
         }
+    }
+}
+
+@available(iOS 11.0, *)
+public protocol FaceppGestureSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
+    func schemeHandler(_ handler: FaceppGestureSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
+                       detect hands: [HumanBodyGestureResponse.Hands]?) -> UIImage?
+}
+
+@available(iOS 11.0, *)
+public extension FaceppGestureSchemeHandlerDelegate {
+    func schemeHandler(_ handler: FaceppGestureSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
+                       detect hands: [HumanBodyGestureResponse.Hands]?) -> UIImage? {
+        return rawImage
+    }
+}
+
+/// 手势识别schemeHandler
+@available(iOS 11.0, *)
+public class FaceppGestureSchemeHandler: FaceppBaseSchemeHandler {
+
+    private weak var _delegate: FaceppGestureSchemeHandlerDelegate?
+
+    public override var delegate: FaceppSchemeHandlerDelegate? {
+        set {
+            if let value = newValue as? FaceppGestureSchemeHandlerDelegate {
+                _delegate = value
+            }
+        }
+        get {
+            return _delegate
+        }
+    }
+
+    public override func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+        guard let (url, params) = urlSchemeTask.request.url?
+            .customURL(webviewURL: webView.url, resourceDir: resourceDirURL),
+            let picURL = url  else {
+                urlSchemeTask.didFailWithError(FppHandlerRuntimeError("Not Support"))
+                return
+        }
+        var ret = true
+        if let value = params["return_gray_scale"]?.integerValue {
+            ret = value == 1
+        }
+        extraOriginalImage(url: picURL) { [weak self] error, rawImage in
+            guard let img = rawImage else {
+                urlSchemeTask.didFailWithError(error!)
+                return
+            }
+            self?.handle(urlSchemeTask, rawImage: img, returnGesture: ret)
+        }
+    }
+
+    func handle(_ schemeTask: WKURLSchemeTask, rawImage: UIImage, returnGesture: Bool) {
+        let task = rawImage.gesture(returnGesture: returnGesture) { [weak self] error, resp in
+            defer {
+                self?.tasks.removeValue(forKey: schemeTask.request)
+            }
+            guard let self = self else {
+                return
+            }
+            let newImage = self._delegate?.schemeHandler(self, rawImage: rawImage,
+                                                         error: error, detect: resp?.hands) ?? rawImage
+            schemeTask.complete(with: newImage)
+        }
+        tasks[schemeTask.request] = task
+    }
+}
+
+@available(iOS 11.0, *)
+public protocol FaceppHumanBodyDetectSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
+    func schemeHandler(_ handler: FaceppHumanBodyDetectSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
+                       detect humanbodies: [HumanBodyDetectResponse.HumanBody]?) -> UIImage?
+}
+
+@available(iOS 11.0, *)
+public extension FaceppHumanBodyDetectSchemeHandlerDelegate {
+    func schemeHandler(_ handler: FaceppHumanBodyDetectSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
+                       detect humanbodies: [HumanBodyDetectResponse.HumanBody]?) -> UIImage? {
+        return rawImage
+    }
+}
+
+/// 人体检测和人体属性 schemeHandler
+@available(iOS 11.0, *)
+public class FaceppHumanBodyDetectSchemeHandler: FaceppBaseSchemeHandler {
+
+    private weak var _delegate: FaceppHumanBodyDetectSchemeHandlerDelegate?
+
+    public override var delegate: FaceppSchemeHandlerDelegate? {
+        set {
+            if let value = newValue as? FaceppHumanBodyDetectSchemeHandlerDelegate {
+                _delegate = value
+            }
+        }
+        get { return _delegate }
+    }
+
+    public override func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+        guard let (url, params) = urlSchemeTask.request.url?
+            .customURL(webviewURL: webView.url, resourceDir: resourceDirURL),
+            let picURL = url  else {
+                urlSchemeTask.didFailWithError(FppHandlerRuntimeError("Not Support"))
+                return
+        }
+        let attributes: [HumanBodyDetectOption.ReturnAttributes] = params["return-attributes"]?
+            .components(separatedBy: ",")
+            .compactMap { HumanBodyDetectOption.ReturnAttributes(rawValue: $0) } ?? [.none]
+        extraOriginalImage(url: picURL) { [weak self] error, rawImage in
+            guard error == nil else {
+                urlSchemeTask.didFailWithError(error!)
+                return
+            }
+            self?.handle(urlSchemeTask, rawImage: rawImage!, attributes: attributes)
+        }
+    }
+
+    func handle(_ task: WKURLSchemeTask, rawImage: UIImage, attributes: [HumanBodyDetectOption.ReturnAttributes] ) {
+        let dataTask = rawImage.detectBody(attributes: Set(attributes)) { [weak self] error, resp in
+            defer {
+                self?.tasks.removeValue(forKey: task.request)
+            }
+            guard let self = self else {
+                return
+            }
+            let newImage = self._delegate?.schemeHandler(self, rawImage: rawImage,
+                                                         error: error, detect: resp?.humanbodies) ?? rawImage
+            task.complete(with: newImage)
+        }
+        tasks[task.request] = dataTask
     }
 }

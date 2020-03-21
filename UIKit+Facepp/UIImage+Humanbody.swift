@@ -84,3 +84,27 @@ public extension UIImage {
         return task
     }
 }
+
+public extension HumanBodyDetectResponse.Color {
+    var color: UIColor {
+        switch self {
+        case .black: return .black
+        case .blue: return .blue
+        case .cyan: return .cyan
+        case .gray: return .gray
+        case .magenta: return .magenta
+        case .green: return .green
+        case .orange: return .orange
+        case .purple: return .purple
+        case .yellow: return .yellow
+        case .white: return .white
+        case .red: return .red
+        }
+    }
+}
+
+public extension HumanBodyDetectResponse.RGBColor {
+    var color: UIColor {
+        return UIColor(red: CGFloat(r / 255), green: CGFloat(g / 255), blue: CGFloat(b / 255), alpha: 1)
+    }
+}

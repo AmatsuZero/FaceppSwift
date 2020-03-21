@@ -12,14 +12,16 @@ import WebKit
 public protocol FaceppDetectFacesSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppDetectFacesSchemeHandler,
                        rawImage: UIImage,
-                       detect skeletons: [Face]) -> UIImage?
+                       error: Error?,
+                       detect skeletons: [Face]?) -> UIImage?
 }
 
 @available(iOS 11.0, *)
 public extension FaceppDetectFacesSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppDetectFacesSchemeHandler,
                        rawImage: UIImage,
-                       detect skeletons: [Face]) -> UIImage? {
+                       error: Error?,
+                       detect skeletons: [Face]?) -> UIImage? {
         return rawImage
     }
 }
@@ -60,8 +62,31 @@ public class FaceppDetectFacesSchemeHandler: FaceppBaseSchemeHandler {
                 return
             }
             option.imageBase64 = rawImg?.base64String()
-            self?.handle(urlSchemeTask, rawImage: rawImg, option: option)
+            self?.handle(urlSchemeTask, rawImage: rawImg!, option: option)
         }
+    }
+
+    func handle(_ urlSchemeTask: WKURLSchemeTask, rawImage: UIImage, option: FaceDetectOption) {
+        let task = Facepp.detect(option: option) { [weak self] error, resp in
+            guard error == nil,
+                let self = self else {
+                urlSchemeTask.didFailWithError(error!)
+                return
+            }
+            self.draw(task: urlSchemeTask, originalImage: rawImage, error: error, faces: resp?.faces)
+        }.request()
+        self.tasks[urlSchemeTask.request] = task
+    }
+
+    func draw(task: WKURLSchemeTask, originalImage: UIImage, error: Error?, faces: [Face]?) {
+        defer {
+            tasks.removeValue(forKey: task.request)
+        }
+        let newImage = _delegate?.schemeHandler(self,
+                                                rawImage: originalImage,
+                                                error: error,
+                                                detect: faces) ?? originalImage
+        task.complete(with: newImage)
     }
 }
 
@@ -86,33 +111,5 @@ extension FaceDetectOption {
         if let landmark = params["return_landmark"]?.integerValue {
             returnLandmark = ReturnLandmark(rawValue: landmark) ?? .no
         }
-    }
-}
-
-@available(iOS 11.0, *)
-extension FaceppDetectFacesSchemeHandler {
-    func handle(_ urlSchemeTask: WKURLSchemeTask, rawImage: UIImage?, option: FaceDetectOption) {
-        let task = Facepp.detect(option: option) { [weak self] error, resp in
-            guard error == nil,
-                let self = self else {
-                urlSchemeTask.didFailWithError(error!)
-                return
-            }
-            self.draw(task: urlSchemeTask, originalImage: rawImage, faces: resp?.faces)
-        }.request()
-        self.tasks[urlSchemeTask.request] = task
-    }
-
-    func draw(task: WKURLSchemeTask, originalImage: UIImage?, faces: [Face]?) {
-        defer {
-            tasks.removeValue(forKey: task.request)
-        }
-        guard let originalImage  = originalImage, let faces = faces else {
-            task.didFailWithError(FppHandlerRuntimeError("请求出错"))
-            return
-        }
-        let newImage = _delegate?.schemeHandler(self, rawImage: originalImage,
-                                                detect: faces) ?? originalImage
-        task.complete(with: newImage)
     }
 }

@@ -12,14 +12,16 @@ import WebKit
 public protocol FaceppTextDetectSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppTextDetectSchemeHandler,
                        rawImage: UIImage,
-                       detect result: [ImagepprecognizeTextResponse.Result]) -> UIImage?
+                       error: Error?,
+                       detect result: [ImagepprecognizeTextResponse.Result]?) -> UIImage?
 }
 
 @available(iOS 11.0, *)
 public extension FaceppTextDetectSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppTextDetectSchemeHandler,
                        rawImage: UIImage,
-                       detect result: [ImagepprecognizeTextResponse.Result]) -> UIImage? {
+                       error: Error?,
+                       detect result: [ImagepprecognizeTextResponse.Result]?) -> UIImage? {
         return rawImage
     }
 }
@@ -61,13 +63,12 @@ public class FaceppTextDetectSchemeHandler: FaceppBaseSchemeHandler {
             defer {
                 self?.tasks.removeValue(forKey: schemeTask.request)
             }
-            guard let result = resp?.result,
-                let self = self else {
-                    schemeTask.didFailWithError(error!)
-                    return
+            guard let self = self else {
+                return
             }
             let newImage = self._delegate?.schemeHandler(self, rawImage: image,
-                                                         detect: result) ?? image
+                                                         error: error,
+                                                         detect: resp?.result) ?? image
             schemeTask.complete(with: newImage)
         }
         tasks[schemeTask.request] = task
@@ -78,14 +79,16 @@ public class FaceppTextDetectSchemeHandler: FaceppBaseSchemeHandler {
 public protocol FaceppTemplateSchemeHandlerDelegate: FaceppSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppTemplateSchemeHandler,
                        rawImage: UIImage,
-                       detect results: [OCRTemplateResponse.Result]) -> UIImage?
+                       error: Error?,
+                       detect results: [OCRTemplateResponse.Result]?) -> UIImage?
 }
 
 @available(iOS 11.0, *)
 public extension FaceppTemplateSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppTemplateSchemeHandler,
                        rawImage: UIImage,
-                       detect results: [OCRTemplateResponse.Result]) -> UIImage? {
+                       error: Error?,
+                       detect results: [OCRTemplateResponse.Result]?) -> UIImage? {
         return rawImage
     }
 }
@@ -138,13 +141,12 @@ public class FaceppTemplateSchemeHandler: FaceppBaseSchemeHandler {
             defer {
                 self?.tasks.removeValue(forKey: schemeTask.request)
             }
-            guard let result = resp?.result,
-                let self = self else {
-                    schemeTask.didFailWithError(error!)
-                    return
+            guard let self = self else {
+                return
             }
             let newImage = self._delegate?.schemeHandler(self, rawImage: image,
-                                                         detect: result) ?? image
+                                                         error: error,
+                                                         detect: resp?.result) ?? image
             schemeTask.complete(with: newImage)
         }
         tasks[schemeTask.request] = task

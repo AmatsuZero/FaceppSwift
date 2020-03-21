@@ -14,19 +14,23 @@ import FaceppSwift
 class ViewController: UIViewController {
     let beautyHandler = FaceppBeautifySchemeHandler()
     let markHandler = FaceppDetectFacesSchemeHandler()
-    let bodyHandler = FaceppSkeletonSchemeHandler()
+    let skeletonHandler = FaceppSkeletonSchemeHandler()
     let textHandler = FaceppTextDetectSchemeHandler()
     let templateHandler = FaceppTemplateSchemeHandler()
     let segmendHandler = FaceppSegmentSchemeHandler()
+    let gestureHandler = FaceppGestureSchemeHandler()
+    let bodyHandler = FaceppHumanBodyDetectSchemeHandler()
 
     lazy var webView: WKWebView = {
         let configureation = WKWebViewConfiguration()
         configureation.setURLSchemeHandler(beautyHandler, forURLScheme: "test1")
         configureation.setURLSchemeHandler(markHandler, forURLScheme: "test2")
-        configureation.setURLSchemeHandler(bodyHandler, forURLScheme: "test3")
+        configureation.setURLSchemeHandler(skeletonHandler, forURLScheme: "test3")
         configureation.setURLSchemeHandler(textHandler, forURLScheme: "test4")
         configureation.setURLSchemeHandler(templateHandler, forURLScheme: "test5")
         configureation.setURLSchemeHandler(segmendHandler, forURLScheme: "test6")
+        configureation.setURLSchemeHandler(gestureHandler, forURLScheme: "test7")
+        configureation.setURLSchemeHandler(bodyHandler, forURLScheme: "test8")
         return WKWebView(frame: .zero, configuration: configureation)
     }()
 
@@ -39,9 +43,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         markHandler.delegate = self
-        bodyHandler.delegate = self
+        skeletonHandler.delegate = self
         textHandler.delegate = self
         templateHandler.delegate = self
+        gestureHandler.delegate = self
+        bodyHandler.delegate = self
         if let url = Bundle.main.url(forResource: "Beautify",
                                      withExtension: "html",
                                      subdirectory: "WebPages") {
@@ -53,7 +59,11 @@ class ViewController: UIViewController {
 extension ViewController: FaceppDetectFacesSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppDetectFacesSchemeHandler,
                        rawImage: UIImage,
-                       detect faces: [Face]) -> UIImage? {
+                       error: Error?,
+                       detect faces: [Face]?) -> UIImage? {
+        guard error == nil, let faces = faces else {
+            return rawImage
+        }
         let imageSize = rawImage.size
         UIGraphicsBeginImageContextWithOptions(imageSize, false, rawImage.scale)
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -83,8 +93,13 @@ extension ViewController: FaceppDetectFacesSchemeHandlerDelegate {
 }
 
 extension ViewController: FaceppSkeletonSchemeHandlerDelegate {
-    func schemeHandler(_ handler: FaceppSkeletonSchemeHandler, rawImage: UIImage,
+    func schemeHandler(_ handler: FaceppSkeletonSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
                        detect skeletons: [SkeletonDetectResponse.Skeleton]?) -> UIImage? {
+        guard error == nil else {
+            return rawImage
+        }
         let imageSize = rawImage.size
         UIGraphicsBeginImageContextWithOptions(imageSize, false, rawImage.scale)
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -153,7 +168,11 @@ extension ViewController: FaceppSkeletonSchemeHandlerDelegate {
 extension ViewController: FaceppTextDetectSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppTextDetectSchemeHandler,
                        rawImage: UIImage,
-                       detect result: [ImagepprecognizeTextResponse.Result]) -> UIImage? {
+                       error: Error?,
+                       detect result: [ImagepprecognizeTextResponse.Result]?) -> UIImage? {
+        guard error == nil else {
+            return rawImage
+        }
         let imageSize = rawImage.size
         UIGraphicsBeginImageContextWithOptions(imageSize, false, rawImage.scale)
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -170,7 +189,11 @@ extension ViewController: FaceppTextDetectSchemeHandlerDelegate {
 extension ViewController: FaceppTemplateSchemeHandlerDelegate {
     func schemeHandler(_ handler: FaceppTemplateSchemeHandler,
                        rawImage: UIImage,
-                       detect results: [OCRTemplateResponse.Result]) -> UIImage? {
+                       error: Error?,
+                       detect results: [OCRTemplateResponse.Result]?) -> UIImage? {
+        guard error == nil, let results = results else {
+            return rawImage
+        }
         let imageSize = rawImage.size
         UIGraphicsBeginImageContextWithOptions(imageSize, false, rawImage.scale)
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -225,5 +248,99 @@ extension ViewController: FaceppTemplateSchemeHandlerDelegate {
         ctx.saveGState()
         title.draw(at: .init(x: leftTop.x + padding, y: leftTop.y))
         ctx.restoreGState()
+    }
+}
+
+extension ViewController: FaceppGestureSchemeHandlerDelegate {
+    func schemeHandler(_ handler: FaceppGestureSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
+                       detect hands: [HumanBodyGestureResponse.Hands]?) -> UIImage? {
+        guard error == nil else {
+            return rawImage
+        }
+        let imageSize = rawImage.size
+        UIGraphicsBeginImageContextWithOptions(imageSize, false, rawImage.scale)
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return rawImage
+        }
+        rawImage.draw(at: .zero)
+        context.setLineWidth(3.0)
+        hands?.forEach { self.draw(context, hand: $0) }
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+
+    func draw(_ ctx: CGContext, hand: HumanBodyGestureResponse.Hands) {
+        ctx.setStrokeColor(UIColor.systemBlue.cgColor)
+        let rect = hand.handRectangle.asCGRect()
+        ctx.addRect(rect)
+        ctx.drawPath(using: .stroke)
+        ctx.saveGState()
+        let scale = UIScreen.main.scale
+        let title = NSAttributedString(string: "\(hand.gesture.mostLikelyGesutre)", attributes: [
+            NSAttributedString.Key.foregroundColor: UIColor.blue,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12 * scale)
+        ])
+        var origin = rect.origin
+        origin.x += 5 * scale
+        origin.y += 5 * scale
+        title.draw(at: origin)
+        ctx.restoreGState()
+    }
+}
+
+extension ViewController: FaceppHumanBodyDetectSchemeHandlerDelegate {
+    func schemeHandler(_ handler: FaceppHumanBodyDetectSchemeHandler,
+                       rawImage: UIImage,
+                       error: Error?,
+                       detect humanbodies: [HumanBodyDetectResponse.HumanBody]?) -> UIImage? {
+        guard error == nil, let bodies = humanbodies else {
+            return rawImage
+        }
+        let imageSize = rawImage.size
+        UIGraphicsBeginImageContextWithOptions(imageSize, false, rawImage.scale)
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return rawImage
+        }
+        rawImage.draw(at: .zero)
+        context.setLineWidth(3.0)
+        bodies.forEach { self.draw(context, body: $0) }
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+
+    func draw(_ ctx: CGContext, body: HumanBodyDetectResponse.HumanBody) {
+        let rect = body.humanbodyRectangle.asCGRect()
+        let upperColor = body.attributes?.upperBodyCloth?.upperBodyClothColorRgb.color ?? .blue
+        ctx.beginPath()
+        ctx.setStrokeColor(upperColor.cgColor)
+        ctx.move(to: .init(x: rect.minX, y: rect.midY))
+        ctx.addLine(to: rect.origin)
+        ctx.addLine(to: .init(x: rect.maxX, y: rect.minY))
+        ctx.addLine(to: .init(x: rect.maxX, y: rect.midY))
+        ctx.strokePath()
+
+        let lowerColor = body.attributes?.lowerBodyCloth?.lowerBodyClothColorRgb.color ?? .blue
+        ctx.beginPath()
+        ctx.setStrokeColor(lowerColor.cgColor)
+        ctx.move(to: .init(x: rect.minX, y: rect.midY))
+        ctx.addLine(to: .init(x: rect.minX, y: rect.maxY))
+        ctx.addLine(to: .init(x: rect.maxX, y: rect.maxY))
+        ctx.addLine(to: .init(x: rect.maxX, y: rect.midY))
+        ctx.strokePath()
+
+        let gender = body.attributes?.mostLikelySex ?? .unknown
+        let scale = UIScreen.main.scale
+        let title = NSAttributedString(string: "\(gender)", attributes: [
+            NSAttributedString.Key.foregroundColor: UIColor.blue,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10 * scale)
+        ])
+        var origin = rect.origin
+        origin.x += 5 * scale
+        origin.y += 5 * scale
+        title.draw(at: origin)
     }
 }

@@ -44,9 +44,9 @@ public struct HumanBodyDetectResponse: FaceppResponseProtocol {
 
     public struct Gender: Codable, Hashable {
         /// 性别为男性的置信度
-        public let male: Float?
+        public let male: Float
         /// 性别为女性的置信度
-        public let female: Float?
+        public let female: Float
     }
 
     public struct RGBColor: Codable, Hashable {
@@ -99,4 +99,17 @@ public struct HumanBodyDetectResponse: FaceppResponseProtocol {
     public let humanbodies: [HumanBody]?
     /// 被检测的图片在系统中的标识
     public let imageId: String?
+}
+
+public extension HumanBodyDetectResponse.Attributes {
+    enum Sex {
+        case male, female, unknown
+    }
+
+    var mostLikelySex: Sex {
+        guard let gender = self.gender else {
+            return .unknown
+        }
+        return gender.male > gender.female ? .male : .female
+    }
 }
