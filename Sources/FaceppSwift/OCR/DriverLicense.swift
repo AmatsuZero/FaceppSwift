@@ -49,6 +49,26 @@ public class OCRDriverLicenseV2Option: CardppV1Requst {
         return kCardppV2URL?.appendingPathComponent("ocrdriverlicense")
     }
 
+    public required init(params: [String: Any]) {
+        if let value = params["return_score"] as? Int {
+            needReturnScore = value == 1
+        } else {
+            needReturnScore = false
+        }
+        if let value = params["mode"] as? String {
+            mode = Mode(rawValue: value) ?? .fast
+        } else {
+            mode = .fast
+        }
+        super.init(params: params)
+    }
+
+    public override init() {
+        mode = .fast
+        needReturnScore = false
+        super.init()
+    }
+
     override func params() throws -> (Params, [Params]?) {
         var (params, files) = try super.params()
         params["return_score"] = needReturnScore ? 1 : 0

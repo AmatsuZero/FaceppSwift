@@ -18,7 +18,7 @@ let kFaceAlbumBaseURL: URL? = {
 public struct FaceAlbum: Codable, UseFaceppClientProtocol, Hashable {
     /// faceAlbum 的标识
     public let facealbumToken: String
-    
+
     public init(facealbumToken: String) {
         self.facealbumToken = facealbumToken
     }
@@ -31,19 +31,19 @@ public class FaceAlbumBaseRequest: RequestProtocol {
     public var timeoutInterval: TimeInterval = 60
     /// FaceAlbum 标识
     public var facealbumToken: String
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init(facealbumToken: String) {
         self.facealbumToken = facealbumToken
         needCheckParams = false
     }
-    
+
     public convenience init(album: FaceAlbum) {
         self.init(facealbumToken: album.facealbumToken)
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -60,11 +60,11 @@ public class FaceAlbumBaseRequest: RequestProtocol {
             facealbumToken = ""
         }
     }
-    
+
     var requsetURL: URL? {
         return kFaceAlbumBaseURL
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         return (["facealbum_token": facealbumToken], nil)
     }
@@ -75,19 +75,19 @@ public class FaceAlbumBaseRequest: RequestProtocol {
  如果付费用户透支账户余额后，创建的FaceAlbum会保留30天，然后被删除。
  */
 public struct CreateFaceAlbumOption: RequestProtocol {
-    
+
     public var needCheckParams: Bool = false
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
     var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("createalbum")
     }
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init() {}
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }
@@ -95,7 +95,7 @@ public struct CreateFaceAlbumOption: RequestProtocol {
             timeoutInterval = value
         }
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         return ([:], nil)
     }
@@ -118,7 +118,7 @@ public extension FaceAlbum {
                        completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func
         createAlbum(completionHandler: @escaping (Error?, FaceAlbum?) -> Void) -> URLSessionTask? {
@@ -136,7 +136,7 @@ public extension FaceAlbum {
 public class FaceAlbumDeleteOption: FaceAlbumBaseRequest {
     /// 删除时是否检查 FaceAlbum 中是否存在 face_token
     public var checkEmpty = false
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["check_empty"] = checkEmpty ? 1 : 0
@@ -150,7 +150,7 @@ public extension FaceAlbum {
                        completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func deleteAlbum(option: FaceAlbumDeleteOption,
                             completionHandler: @escaping (Error?, FaceAlbum?) -> Void) -> URLSessionTask? {
@@ -162,7 +162,7 @@ public extension FaceAlbum {
             }
         }
     }
-    
+
     @discardableResult
     func delete(checkEmpty: Bool = false,
                 completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
@@ -176,18 +176,18 @@ public extension FaceAlbum {
 public class FaceAlbumFindCandidateOption: FaceAlbumBaseRequest {
     /// 用以查找相似分组的人脸分组的标识GroupID 不能为 0 或者 -1
     public var groupId: String
-    
+
     public init(token: String, groupId: String) {
         self.groupId = groupId
         super.init(facealbumToken: token)
         needCheckParams = true
     }
-    
+
     public convenience init(album: FaceAlbum, groupId: String) {
         self.init(token: album.facealbumToken, groupId: groupId)
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["group_id"] as? String {
             groupId = value
         } else {
@@ -195,11 +195,11 @@ public class FaceAlbumFindCandidateOption: FaceAlbumBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("findcandidate")
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -209,7 +209,7 @@ public class FaceAlbumFindCandidateOption: FaceAlbumBaseRequest {
         }
         return true
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["group_id"] = groupId
@@ -226,7 +226,7 @@ public struct FaceAlbumFindCandidateResponse: FaceppResponseProtocol {
     public var timeUsed: Int?
     /// 创建的 FaceAlbum 的标识。
     public let facealbumToken: String?
-    
+
     public struct CandidateGroup: Codable, Hashable {
         public let groupId: String
         /// 置信度
@@ -245,7 +245,7 @@ public extension FaceAlbum {
                               completionHandler: @escaping (Error?, FaceAlbumFindCandidateResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func findCandidate(groupId: String,
                        completionHandler: @escaping (Error?, [FaceAlbumFindCandidateResponse.CandidateGroup]?) -> Void)
@@ -270,17 +270,17 @@ public class FaceAlbumSearchImageOption: FaceppBaseRequest {
      例：http://cburl?task_id=xxxxxxx
      */
     public var callbackURL: URL?
-    
+
     public init(facealbumToken: String) {
         self.facealbumToken = facealbumToken
         super.init()
     }
-    
+
     public convenience init(album: FaceAlbum) {
         self.init(facealbumToken: album.facealbumToken)
     }
-    
-    required public init(params: [String : Any]) {
+
+    required public init(params: [String: Any]) {
         if let value = params["facealbum_token"] as? String {
             facealbumToken = value
         } else {
@@ -291,11 +291,11 @@ public class FaceAlbumSearchImageOption: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("searchimage")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, files) = try super.params()
         params["facealbum_token"] = facealbumToken
@@ -326,7 +326,7 @@ public extension FaceAlbum {
                             completionHandler:@escaping (Error?, FaceAlbumSearchImageResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func searchImage(imageURL: URL?,
                      imageFile: URL?,
@@ -345,16 +345,16 @@ public class FaceAlbumTaskQueryBaseOption: RequestProtocol {
     public let taskId: String
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
-    
+
     public var needCheckParams: Bool = false
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init(taskId: String) {
         self.taskId = taskId
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }
@@ -367,11 +367,11 @@ public class FaceAlbumTaskQueryBaseOption: RequestProtocol {
             taskId = ""
         }
     }
-    
+
     var requsetURL: URL? {
         return kFaceAlbumBaseURL
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         return (["task_id": taskId], nil)
     }
@@ -396,19 +396,19 @@ public struct FaceAlbumSearchImageTaskQueryResponse: FaceppResponseProtocol {
     public let isCompleted: Bool?
     /// FaceAlbum 标识
     public let facealbumToken: String?
-    
+
     private enum CodingKeys: String, CodingKey {
         case requestId, errorMessage, timeUsed, taskId
         case searchResult, taskFailureMessage, facealbumToken
         case isCompleted = "status"
     }
-    
+
     public struct SearchResult: Codable, Hashable {
         /// 该face在提供图片中的位置
         public let faceRectangle: FaceppRectangle
         /// 相册中拥有该相同face的相片image_id的String, 多个用逗号分隔
         public let imageIdSet: Set<String>
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             faceRectangle = try container.decode(FaceppRectangle.self, forKey: .faceRectangle)
@@ -418,10 +418,10 @@ public struct FaceAlbumSearchImageTaskQueryResponse: FaceppResponseProtocol {
     }
     /// 提供图片中每个人脸返回一个搜索结果
     public let searchResult: [SearchResult]?
-    
+
     /// 当异步任务失败时才会返回此字符串，否则此字段不存在
     public let taskFailureMessage: String?
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.requestId) {
@@ -487,19 +487,19 @@ public class FaceAlbumUpdateFaceOption: FaceAlbumBaseRequest {
      如果传入 -1，则人脸会被置为“未分组”状态。
      */
     public var newGroupId: String
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("updateface")
     }
-    
+
     public init(faceTokens: [String], newGroupId: String, faceAlbumToken: String) {
         self.faceTokens = faceTokens
         self.newGroupId = newGroupId
         super.init(facealbumToken: faceAlbumToken)
         needCheckParams = true
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let tokens = params["face_tokens"] as? String {
             faceTokens = tokens.components(separatedBy: ",")
         } else {
@@ -512,7 +512,7 @@ public class FaceAlbumUpdateFaceOption: FaceAlbumBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -522,7 +522,7 @@ public class FaceAlbumUpdateFaceOption: FaceAlbumBaseRequest {
         }
         return try super.paramsCheck()
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["face_tokens"] = faceTokens.joined(separator: ",")
@@ -540,7 +540,7 @@ public struct FaceAlbumUpdateFaceResponse: FaceppResponseProtocol {
     public var timeUsed: Int?
     /// 分组修改成功的face_tokens
     public let faceTokensSuccess: [String]?
-    
+
     public struct FailureDetail: Codable, Hashable {
         /// 人脸标识
         public let faceToken: String
@@ -549,7 +549,7 @@ public struct FaceAlbumUpdateFaceResponse: FaceppResponseProtocol {
     }
     /// 无法更新 group_id 的 face_token 以及原因
     public let failureDetail: [FailureDetail]?
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.requestId) {
@@ -587,7 +587,7 @@ public extension FaceAlbum {
                            completionHandler:@escaping (Error?, FaceAlbumUpdateFaceResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func updateFace(faceTokens: [String],
                     newGroupId: String,
@@ -602,17 +602,17 @@ public extension FaceAlbum {
 public class FaceAblbumGetFaceDetailOption: FaceAlbumBaseRequest {
     /// 人脸标识face_token字符串
     public let faceToken: String
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("getfacedetail")
     }
-    
+
     public init(faceAlbumToken: String, faceToken: String) {
         self.faceToken = faceToken
         super.init(facealbumToken: faceAlbumToken)
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let token = params["face_token"] as? String {
             faceToken = token
         } else {
@@ -620,7 +620,7 @@ public class FaceAblbumGetFaceDetailOption: FaceAlbumBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["face_token"] = faceToken
@@ -670,7 +670,7 @@ public extension FaceAlbum {
                               completionHandler:@escaping (Error?, FaceAblbumGetFaceDetailResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func getFaceDetail(faceToken: String,
                        completionHandler:@escaping (Error?, FaceAblbumGetFaceDetailResponse?) -> Void) -> URLSessionTask? {
@@ -682,17 +682,17 @@ public extension FaceAlbum {
 public class FaceAlbumGetImageDetailOption: FaceAlbumBaseRequest {
     /// 要查看图片在系统中的标识
     public let imageId: String
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("getimagedetail")
     }
-    
+
     public init(faceAlbumToken: String, imageId: String) {
         self.imageId = imageId
         super.init(facealbumToken: faceAlbumToken)
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["image_id"] as? String {
             imageId = value
         } else {
@@ -700,7 +700,7 @@ public class FaceAlbumGetImageDetailOption: FaceAlbumBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["image_id"] = imageId
@@ -721,7 +721,7 @@ public struct FaceAlbumGetImageDetailResponse: FaceppResponseProtocol {
     public let facealbumToken: String?
     /// 该图片所拥有的face_token的String
     public let faceTokens: [String]?
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.requestId) {
@@ -765,7 +765,7 @@ public extension FaceAlbum {
         -> URLSessionTask? {
             return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func getImageDetail(imageId: String,
                         completionHandler: @escaping (Error?, FaceAlbumGetImageDetailResponse?) -> Void) -> URLSessionTask? {
@@ -787,14 +787,14 @@ public struct FaceAblumGetAllOption: RequestProtocol {
      您可以输入之前请求本 API 返回的 next 值，用以获得接下来的 100 个 faceset_token。
      */
     public var start: Int
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init(start: Int = 1) {
         self.start = start
     }
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -811,11 +811,11 @@ public struct FaceAblumGetAllOption: RequestProtocol {
             start = 1
         }
     }
-    
+
     var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("getfacealbums")
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         return (["start": start], nil)
     }
@@ -853,11 +853,11 @@ public extension FaceAlbum {
 public class FaceAlbumGetAlbumDetailOption: FaceAlbumBaseRequest {
     /// 之前请求本 API 返回的 next_token 标识，用来获取下100个 face_token。默认值为空，返回 FaceAlbum 下前100个 face_token。
     public var startToken: String?
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("getalbumdetail")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["start_token"] = startToken
@@ -900,7 +900,7 @@ public extension FaceAlbum {
         -> URLSessionTask? {
             return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     func getAlbumDetail(startToken: String? = nil,
                         completionHandler: @escaping (Error?, FaceAlbumGetAlbumDetailResponse?) -> Void) -> URLSessionTask? {
         let option = FaceAlbumGetAlbumDetailOption(album: self)
@@ -912,13 +912,13 @@ public extension FaceAlbum {
 public class FaceAlbumAddImageOption: FaceppBaseRequest {
     /// FaceAlbum标识
     public var facealbumToken: String
-    
+
     public init(facealbumToken: String) {
         self.facealbumToken = facealbumToken
         super.init()
     }
-    
-    required public init(params: [String : Any]) {
+
+    required public init(params: [String: Any]) {
         if let token = params["facealbum_token"] as? String {
             facealbumToken = token
         } else {
@@ -926,11 +926,11 @@ public class FaceAlbumAddImageOption: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("addimage")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, files) = try super.params()
         params["facealbum_token"] = facealbumToken
@@ -960,7 +960,7 @@ public extension FaceAlbum {
                          completionHandler: @escaping (Error?, FaceAlbumAddImageResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func addImage(imageURL: URL? = nil,
                   imageFile: URL? = nil,
@@ -981,22 +981,22 @@ public class FaceAlbumAddImageAsyncOption: FaceAlbumAddImageOption {
      例：http://cburl?task_id=xxxxxxx
      */
     public var callbackURL: URL?
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["callback_url"] as? String {
             callbackURL = URL(string: value)
         }
         super.init(params: params)
     }
-    
+
     public override init(facealbumToken: String) {
         super.init(facealbumToken: facealbumToken)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceAlbumBaseURL?.appendingPathComponent("addimageasync")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, files) = try super.params()
         params["callback_url"] = callbackURL
@@ -1026,7 +1026,7 @@ public extension FaceAlbum {
                               completionHandler: @escaping (Error?, FaceAlbumAddImageAsyncResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func addImageAsync(imageURL: URL? = nil,
                        imageFile: URL? = nil,
@@ -1063,7 +1063,7 @@ public struct FaceAlbumAddImageTaskQueryResponse: FaceppResponseProtocol {
     public let isCompleted: Bool?
     /// 被检测的图片在系统中的标识
     public let imageId: String?
-    
+
     public struct Face: Codable, Hashable {
         public let faceToken: String
         public let faceRectangle: FaceppRectangle
@@ -1072,13 +1072,13 @@ public struct FaceAlbumAddImageTaskQueryResponse: FaceppResponseProtocol {
     public let faces: [Face]?
     /// 当异步任务失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
     public let taskFailureMessage: String?
-    
+
     private enum CodingKeys: String, CodingKey {
         case requestId, errorMessage, timeUsed, taskId
         case taskFailureMessage, faces, imageId, facealbumToken
         case isCompleted = "status"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.requestId) {
@@ -1144,17 +1144,17 @@ public class FaceAlbumDeleteFaceOption: FaceAlbumBaseRequest {
     public var faceTokens: [String]?
     /// 需要移除的一个图片id字符串，删除该image_id拥有的所有face_token。
     public var imageId: String?
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("deleteface")
     }
-    
+
     public override init(facealbumToken: String) {
         super.init(facealbumToken: facealbumToken)
         needCheckParams = true
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["face_tokens"] as? String {
             faceTokens = value.components(separatedBy: ",")
         }
@@ -1163,7 +1163,7 @@ public class FaceAlbumDeleteFaceOption: FaceAlbumBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -1176,7 +1176,7 @@ public class FaceAlbumDeleteFaceOption: FaceAlbumBaseRequest {
         }
         return imageId != nil
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["face_tokens"] = faceTokens?.joined(separator: ",")
@@ -1198,7 +1198,7 @@ public struct FaceAlbumDeleteFaceResponse: FaceppResponseProtocol {
      一个 face_token 的数组，包括所有成功移除的face_token
      */
     public let faceRemovedDetail: [String]?
-    
+
     public struct Reason: Codable, Hashable {
         /// 人脸标识
         public let faceToken: String
@@ -1215,7 +1215,7 @@ public extension FaceAlbum {
                            completionHandler:@escaping (Error?, FaceAlbumDeleteFaceResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func deleteFace(faceTokens: [String]? = nil,
                     imageId: String? = nil,
@@ -1242,12 +1242,12 @@ public class FaceAlbumGroupFaceOption: FaceAlbumBaseRequest {
      例：http://cburl?task_id=xxxxxxx
      */
     public var callbackURL: URL?
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("groupface")
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["operation_type"] as? String {
             operationType = OperationType(rawValue: value) ?? .incremental
         } else {
@@ -1258,11 +1258,11 @@ public class FaceAlbumGroupFaceOption: FaceAlbumBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     public override init(facealbumToken: String) {
         super.init(facealbumToken: facealbumToken)
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["operation_type"] = operationType.rawValue
@@ -1293,7 +1293,7 @@ public extension FaceAlbum {
                           completionHandler:@escaping (Error?, FaceAlbumGroupFaceResponse?) -> Void) -> URLSessionTask? {
         return parse(option: option, completionHandler: completionHandler)
     }
-    
+
     func groupFace(operationType: FaceAlbumGroupFaceOption.OperationType = .incremental,
                    callbackURL: URL? = nil,
                    completionHandler:@escaping (Error?, FaceAlbumGroupFaceResponse?) -> Void) -> URLSessionTask? {
@@ -1325,7 +1325,7 @@ public struct FaceAlbumGroupFaceTaskQueryResponse: FaceppResponseProtocol, Hasha
     public let isCompleted: Bool?
     /// FaceAlbum 标识
     public let facealbumToken: String?
-    
+
     public struct GroupResult: Codable, Hashable {
         /// 分组信息
         public let groupId: String
@@ -1336,13 +1336,13 @@ public struct FaceAlbumGroupFaceTaskQueryResponse: FaceppResponseProtocol, Hasha
     }
     /// 人脸分组结果，当任务还在进行中时，不返回该字符串
     public let groupResult: [GroupResult]?
-    
+
     private enum CodingKeys: String, CodingKey {
         case requestId, errorMessage, timeUsed, taskId
         case taskFailureMessage, groupResult, facealbumToken
         case isCompleted = "status"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.requestId) {

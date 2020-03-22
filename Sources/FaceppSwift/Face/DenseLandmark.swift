@@ -19,8 +19,8 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
         self.returnLandMark = returnLandMark
         super.init()
     }
-    
-    required public init(params: [String : Any]) {
+
+    required public init(params: [String: Any]) {
         if let value = params["face_token"] as? String {
             faceToken = value
         }
@@ -33,7 +33,7 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     public enum ReturnLandMark: String, Option {
         case leftEyeBrow = "left_eyebrow"
         case rightEyeBrow = "right_eyebrow"

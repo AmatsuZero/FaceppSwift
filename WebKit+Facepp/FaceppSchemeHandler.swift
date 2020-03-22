@@ -5,6 +5,9 @@ struct FppHandlerRuntimeError: Error, CustomStringConvertible {
     init(_ desc: String) {
         description = desc
     }
+    var localizedDescription: String {
+        return description
+    }
 }
 
 @available(iOS 11.0, *)

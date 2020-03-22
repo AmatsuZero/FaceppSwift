@@ -32,8 +32,8 @@ public class BeautifyV1Option: FaceppBaseRequest {
         smoothing = 100
         super.init()
     }
-    
-    required public init(params: [String : Any]) {
+
+    required public init(params: [String: Any]) {
         if let value = params["whitening"] as? UInt {
             whitening = value
         } else {
@@ -46,7 +46,7 @@ public class BeautifyV1Option: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("beautify")
     }
@@ -192,8 +192,8 @@ public class BeautifyV2Option: BeautifyV1Option {
         whitening = 50
         smoothing = 50
     }
-    
-    required public init(params: [String : Any]) {
+
+    required public init(params: [String: Any]) {
         var params = params
         if let value = params["thin_face"] as? UInt {
             thinface = value
@@ -226,7 +226,7 @@ public class BeautifyV2Option: BeautifyV1Option {
         }
         super.init(params: params)
     }
-    
+
     override func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true

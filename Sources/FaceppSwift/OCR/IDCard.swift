@@ -22,8 +22,8 @@ public class OCRIDCardOption: CardppV1Requst {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("ocridcard")
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["legality"] as? Int {
             needLegality = value == 1
         } else {
@@ -31,7 +31,7 @@ public class OCRIDCardOption: CardppV1Requst {
         }
         super.init(params: params)
     }
-    
+
     public override init() {
         super.init()
     }

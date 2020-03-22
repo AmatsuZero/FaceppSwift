@@ -9,18 +9,57 @@
             width: 100%;
             height: 100%;
         }
+        button {
+            width: 300px;
+            height: 100px;
+            margin: 0 auto; 
+            display: block;
+            font-size: 40px;
+        }
+        input {
+            width: 100%;
+            font-size: 40px;
+        }
     </style>
     <script>
         function faceppHandler(error, resp) {
-
+            if (error !== null) {
+                document.getElementById("name").value="请求出错"
+                document.getElementById("sex").value="请求出错"
+                document.getElementById("race").value="请求出错"
+                document.getElementById("number").value="请求出错"
+                document.getElementById("birthday").value="请求出错"
+                document.getElementById("addr").value="请求出错"
+                return
+            }
+            const card = resp.cards[0]
+            document.getElementById("name").value=card.name
+            document.getElementById("sex").value=card.gender
+            document.getElementById("race").value=card.race
+            document.getElementById("number").value=card.id_card_number
+            document.getElementById("birthday").value=card.birthday
+            document.getElementById("addr").value=card.address
+        }
+        function sendMessage() {
+            document.getElementById("name").value="请求中..."
+            document.getElementById("sex").value="请求中..."
+            document.getElementById("race").value="请求中..."
+            document.getElementById("number").value="请求中..."
+            document.getElementById("birthday").value="请求中..."
+            document.getElementById("addr").value="请求中..."
+            webkit.messageHandlers.idcard.postMessage({
+                'legality': 1,
+                'image_url': 'http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg'
+            })
         }
     </script>
+
     <head>
 
     <body>
         <div>
             <h1>美颜</h1>
-            <img src="test1://pics/interception.jpg?filter_type=memory&thin_face=100" alt="美颜" />
+            <img src="test1://pics/interception.jpg?filter_type=chanel&thin_face=100" alt="美颜" />
         </div>
         <div>
             <h1>人脸检测</h1>
@@ -50,7 +89,19 @@
         </div>
         <div>
             <h1>人体检测</h1>
-            <img src="test8://https^www.faceplusplus.com.cn/scripts/demoScript/images/demo-pic68.jpg?return-attributes=gender,upper_body_cloth,lower_body_cloth" alt="手势识别" />
+            <img src="test8://https^www.faceplusplus.com.cn/scripts/demoScript/images/demo-pic68.jpg?return-attributes=gender,upper_body_cloth,lower_body_cloth"
+                alt="手势识别" />
+        </div>
+        <div>
+            <h1>Message Handler</h1>
+            <img src="http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg"/>
+            姓名： <input type="text" id="name" value=""><br/>
+            性别： <input type="text" id="sex" value=""><br>
+            地址： <input type="text" id="addr" value=""><br/>
+            民族:  <input type="text" id="race" value=""><br/>
+            出生日期： <input type="text" id="birthday" value=""><br/>
+            身份证号： <input type="text" id="number" value=""><br/>
+            <button type="button" onclick="sendMessage()">识别</button>
         </div>
     </body>
 

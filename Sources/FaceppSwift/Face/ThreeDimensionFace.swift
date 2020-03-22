@@ -9,7 +9,7 @@
 import Foundation
 
 public struct ThreeDimensionFaceOption: RequestProtocol {
-    
+
     public var needCheckParams: Bool = true
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
@@ -51,12 +51,12 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
     public var needTexture = false
     /// 是否返回mtl文件
     public var needMtl = false
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init() {}
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }
@@ -97,7 +97,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
             needMtl = value == 1
         }
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -105,11 +105,11 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         if let url = imageFile1, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
             throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
         }
-        
+
         if let url = imageFile2, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
             throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
         }
-        
+
         if let url = imageFile3, try !url.fileSizeNotExceed(mb: uploadFileMBSize) {
             throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
         }
@@ -133,16 +133,16 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         }
         return (imageURL1 != nil || imageFile1 != nil || imageBase641 != nil)
     }
-    
+
     var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("3dface")
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         var params = Params()
         params["texture"] = needTexture ? 1 : 0
         params["mtl"] = needMtl ? 1 : 0
-        
+
         var files = [Params]()
         params["image_url_1"] = imageURL1
         params["image_base64_1"] = imageBase641
@@ -154,7 +154,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "data": data
             ])
         }
-        
+
         params["image_url_2"] = imageURL2
         params["image_base64_2"] = imageBase642
         if let url = imageFile2 {
@@ -165,7 +165,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "data": data
             ])
         }
-        
+
         params["image_url_3"] = imageURL3
         params["image_base64_3"] = imageBase643
         if let url = imageFile3 {
@@ -176,7 +176,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
                 "data": data
             ])
         }
-        
+
         return (params, files)
     }
 }

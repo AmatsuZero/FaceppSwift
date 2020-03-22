@@ -23,12 +23,12 @@ public class HumanBodyDetectOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kHumanBodyV1URL?.appendingPathComponent("detect")
     }
-    
+
     public override init() {
         super.init()
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["return_attributes"] as? String {
             returnAttributes = Set(value
                 .components(separatedBy: ",")

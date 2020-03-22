@@ -8,25 +8,25 @@
 import Foundation
 
 public struct FaceSetUserIdOption: RequestProtocol {
-    
+
     public var timeoutInterval: TimeInterval = 60
-    
+
     public var needCheckParams: Bool = true
-    
+
     public var metricsReporter: FaceppMetricsReporter?
-    
+
     /// 人脸标识face_token
     public var faceToken: String
-    
+
     /// 用户自定义的user_id，不超过255个字符，不能包括^@,&=*'"建议将同一个人的多个face_token设置同样的user_id。
     public var userId: String
-    
+
     public init(token: String, id: String) {
         self.faceToken = token
         self.userId = id
     }
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -48,13 +48,13 @@ public struct FaceSetUserIdOption: RequestProtocol {
             userId = ""
         }
     }
-    
+
     var requsetURL: URL? {
         return kFaceppV3URL?
             .appendingPathComponent("face")
             .appendingPathComponent("setuserid")
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -64,7 +64,7 @@ public struct FaceSetUserIdOption: RequestProtocol {
         }
         return true
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         var params: Params = [
             "face_token": faceToken
@@ -89,18 +89,18 @@ public struct FaceSetUserIdResponse: FaceppResponseProtocol {
 
 public struct FaceGetDetailOption: RequestProtocol {
     public var timeoutInterval: TimeInterval = 60
-    
+
     public var needCheckParams: Bool = false
-    
+
     public var metricsReporter: FaceppMetricsReporter?
-    
+
     public var faceToken: String
-    
+
     public init(token: String) {
         self.faceToken = token
     }
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -117,13 +117,13 @@ public struct FaceGetDetailOption: RequestProtocol {
             faceToken = ""
         }
     }
-    
+
     var requsetURL: URL? {
         return kFaceppV3URL?
             .appendingPathComponent("face")
             .appendingPathComponent("getdetail")
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         return (["face_token": faceToken], nil)
     }
@@ -150,9 +150,9 @@ public struct FaceGetDetailResponse: FaceppResponseProtocol {
 
 public struct FaceAnalyzeOption: RequestProtocol {
     public var timeoutInterval: TimeInterval = 60
-    
+
     public var needCheckParams: Bool = true
-    
+
     public var metricsReporter: FaceppMetricsReporter?
     /// 一个字符串，由一个或多个人脸标识组成，用逗号分隔。最多支持 5 个 face_token。
     public var faceTokens: [String]
@@ -164,18 +164,18 @@ public struct FaceAnalyzeOption: RequestProtocol {
     public var beautyScoreMin = 0
     /// 颜值评分分数区间的最大值。默认为100
     public var beautyScoreMax = 100
-    
+
     var requsetURL: URL? {
         return kFaceppV3URL?
             .appendingPathComponent("face")
             .appendingPathComponent("analyze")
     }
-    
+
     public init(tokens: [String]) {
         self.faceTokens = tokens
     }
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -214,7 +214,7 @@ public struct FaceAnalyzeOption: RequestProtocol {
             returnAttributes = [.none]
         }
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -225,7 +225,7 @@ public struct FaceAnalyzeOption: RequestProtocol {
         }
         return !faceTokens.isEmpty && faceTokens.count < 6
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         var params = Params()
         params["return_landmark"] = returnLandmark.rawValue

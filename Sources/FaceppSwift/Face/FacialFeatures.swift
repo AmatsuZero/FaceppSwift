@@ -11,8 +11,8 @@ import Foundation
 public class FacialFeaturesOption: FaceppBaseRequest {
     /// 是否返回人脸矫正后图片。合法值为：
     public var returnImageReset = false
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["return_imagereset"] as? Int {
             returnImageReset = value == 1
         } else {
@@ -20,7 +20,7 @@ public class FacialFeaturesOption: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     public override init() {
         super.init()
     }

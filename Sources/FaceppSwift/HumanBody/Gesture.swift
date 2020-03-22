@@ -20,8 +20,8 @@ public class HumanBodyGestureOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kHumanBodyV1URL?.appendingPathComponent("gesture")
     }
-    
-    public required init(params: [String : Any]) {
+
+    public required init(params: [String: Any]) {
         if let value = params["return_gesture"] as? Int {
             returnGesture = value == 1
         } else {
@@ -29,7 +29,7 @@ public class HumanBodyGestureOption: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-    
+
     public override init() {
         super.init()
     }

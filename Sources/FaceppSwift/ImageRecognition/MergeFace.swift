@@ -55,8 +55,8 @@ public struct ImageppMergeFaceOption: RequestProtocol {
     public weak var metricsReporter: FaceppMetricsReporter?
 
     public init() {}
-    
-    public init(params: [String : Any]) {
+
+    public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }

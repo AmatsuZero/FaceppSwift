@@ -20,6 +20,7 @@ class ViewController: UIViewController {
     let segmendHandler = FaceppSegmentSchemeHandler()
     let gestureHandler = FaceppGestureSchemeHandler()
     let bodyHandler = FaceppHumanBodyDetectSchemeHandler()
+    let messageHandler = FaceppMessageHandler<OCRIDCardOption>(callBack: "faceppHandler")
 
     lazy var webView: WKWebView = {
         let configureation = WKWebViewConfiguration()
@@ -31,6 +32,11 @@ class ViewController: UIViewController {
         configureation.setURLSchemeHandler(segmendHandler, forURLScheme: "test6")
         configureation.setURLSchemeHandler(gestureHandler, forURLScheme: "test7")
         configureation.setURLSchemeHandler(bodyHandler, forURLScheme: "test8")
+
+        let userController = WKUserContentController()
+        userController.add(messageHandler, name: "idcard")
+        configureation.userContentController = userController
+
         return WKWebView(frame: .zero, configuration: configureation)
     }()
 

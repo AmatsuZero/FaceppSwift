@@ -2,6 +2,7 @@ disabled_rules: # rule identifiers to exclude from running
   - identifier_name
   - file_length
   - type_body_length
+  - cyclomatic_complexity
 opt_in_rules: # some rules are only opt-in
   - empty_count
   # Find all the available rules by running:
