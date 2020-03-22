@@ -33,6 +33,29 @@ public class SearchOption: FaceppBaseRequest {
      注：只有在传入 image_url、image_file 和 image_base64 三个参数中任意一个时，本参数才生效。
      */
     public var faceRectangle: FaceppRectangle?
+    
+    public override convenience init() {
+        self.init(params: [:])
+    }
+    
+    public required init(params: [String : Any]) {
+        if let value = params["faceset_token"]  as? String {
+            facesetToken = value
+        }
+        if let value = params["face_token"] as? String {
+            faceToken = value
+        }
+        if let value = params["outer_id"] as? String {
+            outerId = value
+        }
+        if let value = params["return_result_count"] as? UInt {
+            returnResultCount = value
+        }
+        if let value = params["face_rectangle"] as? String {
+            faceRectangle = FaceppRectangle(string: value)
+        }
+        super.init(params: params)
+    }
 
     override func paramsCheck() throws -> Bool {
         guard needCheckParams else {
@@ -58,6 +81,7 @@ public class SearchOption: FaceppBaseRequest {
         }
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
+        params["face_token"] = faceToken
         return (params, files)
     }
 }

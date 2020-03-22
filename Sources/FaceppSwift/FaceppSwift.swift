@@ -4,14 +4,14 @@ import FoundationNetworking
 #endif
 
 public class FaceppClient: NSObject {
-    private let apiKey: String
-    private let apiSecret: String
-    private lazy var session: URLSession = {
+    let apiKey: String
+    let apiSecret: String
+    lazy var session: URLSession = {
         return URLSession(configuration: .default, delegate: self, delegateQueue: nil)
     }()
     static private(set) var shared: FaceppClient?
     private var tasksMap = [URLSessionTask: RequestProtocol]()
-
+    
     public class func initialization(key: String, secret: String) {
         #if os(Linux)
         if shared == nil { // 原来的 Dispatch once 写法在Linux上无法通过编译，退化
@@ -26,7 +26,7 @@ public class FaceppClient: NSObject {
     private override init() {
         fatalError("不要调用原来的初始化")
     }
-
+    
     private init(apikey key: String, apiSecret secret: String) {
         self.apiKey = key
         self.apiSecret = secret
@@ -43,7 +43,7 @@ public enum Facepp: UseFaceppClientProtocol {
         case analyze(option: FaceAnalyzeOption,
             completionHandler:(Error?, FaceAnalyzeResponse?) -> Void)
     }
-
+    
     case detect(option: FaceDetectOption,
         completionHandler: (Error?, FaceDetectResponse?) -> Void)
     case compare(option: CompareOption,
@@ -62,7 +62,7 @@ public enum Facepp: UseFaceppClientProtocol {
         completionHandler: (Error?, SkinAnalyzeResponse?) -> Void)
     case skinAnalyzeAdvanced(option: SkinAnalyzeAdvancedOption,
         completionHandler: (Error?, SkinAnalyzeAdvancedResponse?) -> Void)
-
+    
     @discardableResult
     public func request() -> URLSessionTask? {
         switch self {
@@ -103,13 +103,13 @@ extension Facepp.Face: UseFaceppClientProtocol {
 }
 
 extension FaceppClient {
-
+    
     static func getDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }
-
+    
     @discardableResult
     func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
                                           completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
@@ -121,12 +121,12 @@ extension FaceppClient {
             completionHandler(error, nil)
             return nil
         }
-
+        
         guard let req = request else {
             completionHandler(FaceppRequestError.argumentsError(.missingArguments), nil)
             return nil
         }
-
+        
         let task = session.uploadTask(with: req, from: data) { data, _, error in
             guard error == nil, let data = data else {
                 return completionHandler(error, nil)
@@ -171,18 +171,37 @@ public class FaceppBaseRequest: RequestProtocol {
      如果同时传入了image_url、image_file和image_base64参数，本API使用顺序为image_file优先，image_url最低。
      */
     public var imageBase64: String?
-
+    
     /// 是否检查参数设置
     public var needCheckParams: Bool = true
-
+    
     public weak var metricsReporter: FaceppMetricsReporter?
-
+    
     public init() {}
-
+    
+    required public init(params: [String: Any]) {
+        if let value = params["need_check_params"] as? Bool {
+            needCheckParams = value
+        } else {
+            needCheckParams = true
+        }
+        if let value = params["timeout_interval"] as? TimeInterval {
+            timeoutInterval = value
+        } else {
+            timeoutInterval = 60
+        }
+        if let url = params["image_file"] as? String {
+            imageFile = URL(fileURLWithPath: url)
+        }
+        if let value = params["image_base64"] as? String {
+            imageBase64 = value
+        }
+    }
+    
     var requsetURL: URL? {
         return kFaceBaseURL
     }
-
+    
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -198,7 +217,7 @@ public class FaceppBaseRequest: RequestProtocol {
         }
         return imageURL != nil || imageFile != nil || imageBase64 != nil
     }
-
+    
     func params() throws -> (Params, [Params]?) {
         var params = Params()
         var files = [Params]()
@@ -236,6 +255,7 @@ public protocol FaceppRequestConfigProtocol {
     var timeoutInterval: TimeInterval { get set }
     var needCheckParams: Bool { get set }
     var metricsReporter: FaceppMetricsReporter? { get set }
+    init(params: [String: Any])
 }
 
 protocol RequestProtocol: FaceppRequestConfigProtocol {
@@ -250,7 +270,7 @@ extension RequestProtocol {
     var uploadFileMBSize: Double {
         return 2.0
     }
-
+    
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true

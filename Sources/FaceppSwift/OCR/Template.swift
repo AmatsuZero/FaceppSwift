@@ -19,7 +19,19 @@ public class OCRTemplateOption: CardppV1Requst {
         self.templateId = templateId
         super.init()
     }
-
+    
+    required init(params: [String : Any]) {
+        if let value = params["template_id"] as? String {
+            templateId = value
+        } else {
+            fatalError("No template id")
+        }
+        if let value = params["extra_info"] as? String {
+            extraInfo = value.components(separatedBy: ",")
+        }
+        super.init(params: params)
+    }
+    
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("templateocr")
     }

@@ -17,8 +17,23 @@ public class ThousandLandMarkOption: FaceppBaseRequest {
 
     public init(returnLandMark: Set<ReturnLandMark>) {
         self.returnLandMark = returnLandMark
+        super.init()
     }
-
+    
+    required public init(params: [String : Any]) {
+        if let value = params["face_token"] as? String {
+            faceToken = value
+        }
+        if let attributs = params["return_landmark"] as? String {
+            returnLandMark = Set(attributs
+                .components(separatedBy: ",")
+                .compactMap { ReturnLandMark(rawValue: $0) })
+        } else {
+            returnLandMark = .all
+        }
+        super.init(params: params)
+    }
+    
     public enum ReturnLandMark: String, Option {
         case leftEyeBrow = "left_eyebrow"
         case rightEyeBrow = "right_eyebrow"

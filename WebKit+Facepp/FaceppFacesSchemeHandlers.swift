@@ -92,24 +92,11 @@ public class FaceppDetectFacesSchemeHandler: FaceppBaseSchemeHandler {
 
 extension FaceDetectOption {
     convenience init(picURL: URL, params: [String: String]) {
-        self.init(picURL: picURL)
-        if let value = params["beauty_score_min"]?.integerValue {
-            beautyScoreMin = value
-        }
-        if let value = params["beauty_score_max"]?.integerValue {
-            beautyScoreMin = value
-        }
-        if let value = params["calculate_all"]?.integerValue {
-            calculateAll = value == 1
-        }
-        if let attribbutes = params["return_attributes"]?.components(separatedBy: ",") {
-            returnAttributes = Set(attribbutes.compactMap { ReturnAttributes(rawValue: $0) })
-        }
-        if let pts = params["face_rectangle"] {
-            faceRectangle = FaceppRectangle(string: pts)
-        }
-        if let landmark = params["return_landmark"]?.integerValue {
-            returnLandmark = ReturnLandmark(rawValue: landmark) ?? .no
+        self.init(params: params)
+        if picURL.scheme == "file" {
+            imageFile = picURL
+        } else {
+            imageURL = picURL
         }
     }
 }

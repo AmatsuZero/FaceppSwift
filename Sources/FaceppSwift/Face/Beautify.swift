@@ -32,7 +32,21 @@ public class BeautifyV1Option: FaceppBaseRequest {
         smoothing = 100
         super.init()
     }
-
+    
+    required public init(params: [String : Any]) {
+        if let value = params["whitening"] as? UInt {
+            whitening = value
+        } else {
+            whitening = 100
+        }
+        if let value = params["smoothing"] as? UInt {
+            smoothing = value
+        } else {
+            smoothing = 100
+        }
+        super.init(params: params)
+    }
+    
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("beautify")
     }
@@ -178,7 +192,41 @@ public class BeautifyV2Option: BeautifyV1Option {
         whitening = 50
         smoothing = 50
     }
-
+    
+    required public init(params: [String : Any]) {
+        var params = params
+        if let value = params["thin_face"] as? UInt {
+            thinface = value
+        } else {
+            thinface = 50
+        }
+        if let value = params["shrink_face"] as? UInt {
+            shrinkFace = value
+        } else {
+            shrinkFace = 50
+        }
+        if let value = params["enlarge_eye"] as? UInt {
+            enlargeEye = value
+        } else {
+            enlargeEye = 50
+        }
+        if let value = params["remove_eyebrow"] as? UInt {
+            removeEyebrow = value
+        } else {
+            removeEyebrow = 50
+        }
+        if let value = params["filter_type"] as? String {
+            filterType = FilterType(rawValue: value)
+        }
+        if params["whitening"] == nil {
+            params["whitening"] = 50
+        }
+        if params["smoothing"] == nil {
+            params["smoothing"] = 50
+        }
+        super.init(params: params)
+    }
+    
     override func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true

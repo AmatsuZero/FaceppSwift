@@ -226,9 +226,10 @@ public extension UIImage {
 
 public extension FaceppBaseRequest {
     convenience init(image: UIImage) {
-        self.init()
-        imageBase64 = image.base64String()
-        metricsReporter = metricsReporter
+        var params = Params()
+        params["image_base64"] = image.base64String()
+        self.init(params: params)
+        metricsReporter = image.fppMetricsReport
     }
 }
 

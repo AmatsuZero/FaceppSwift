@@ -55,6 +55,45 @@ public struct ImageppMergeFaceOption: RequestProtocol {
     public weak var metricsReporter: FaceppMetricsReporter?
 
     public init() {}
+    
+    public init(params: [String : Any]) {
+        if let value = params["need_check_params"] as? Bool {
+            needCheckParams = value
+        }
+        if let value = params["timeout_interval"] as? TimeInterval {
+            timeoutInterval = value
+        }
+        if let url = params["template_url"] as? String {
+            templateURL = URL(string: url)
+        }
+        if let url = params["template_file"] as? String {
+            templateFile = URL(fileURLWithPath: url)
+        }
+        if let value = params["template_base64"] as? String {
+            templateBase64 = value
+        }
+        if let value = params["template_rectangle"] as? String {
+            templateRectangle = FaceppRectangle(string: value)
+        }
+        if let value = params["merge_url"] as? String {
+            mergeURL = URL(string: value)
+        }
+        if let value = params["merge_file"] as? String {
+            mergeFile = URL(fileURLWithPath: value)
+        }
+        if let value = params["merge_base64"] as? String {
+            mergeBase64 = value
+        }
+        if let value = params["merge_rectangle"] as? String {
+            mergeRectangle = FaceppRectangle(string: value)
+        }
+        if let value = params["merge_rate"] as? UInt {
+            mergeRate = value
+        }
+        if let value = params["feature_rate"] as? UInt {
+            featureRate = value
+        }
+    }
 
     public var requsetURL: URL? {
         return kImageppV1URL?.appendingPathComponent("mergeface")

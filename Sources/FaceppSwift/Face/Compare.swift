@@ -19,7 +19,7 @@ public struct CompareOption: RequestProtocol {
     public var imageFile1: URL?
     /// base64 编码的二进制图片数据。如果同时传入了 image_url1、image_file1 和 image_base64_1 参数，本 API 使用顺序为image_file1 优先，image_url1 最低。
     public var imageBase641: String?
-
+    
     /// 第二个人脸标识 face_token，优先使用该参数
     public var faceToken2: String?
     /// 第二张图片的 URL
@@ -28,7 +28,7 @@ public struct CompareOption: RequestProtocol {
     public var imageFile2: URL?
     /// base64 编码的二进制图片数据。如果同时传入了 image_url2、image_file2 和 image_base64_2 参数，本API 使用顺序为 image_file2优先，image_url2 最低。
     public var imageBase642: String?
-
+    
     /**
      当传入图片进行人脸检测时，是否指定人脸框位置进行检测。
      
@@ -59,15 +59,54 @@ public struct CompareOption: RequestProtocol {
     public var faceRectangle2: FaceppRectangle?
     /// 是否检查入参
     public var needCheckParams: Bool = true
-
+    
     public weak var metricsReporter: FaceppMetricsReporter?
-
+    
     public init() {}
-
+    
+    public init(params: [String : Any]) {
+        if let value = params["need_check_params"] as? Bool {
+            needCheckParams = value
+        }
+        if let value = params["timeout_interval"] as? TimeInterval {
+            timeoutInterval = value
+        }
+        if let url = params["image_url1"] as? String {
+            imageURL1 = URL(string: url)
+        }
+        if let url = params["image_file1"] as? String {
+            imageFile1 = URL(fileURLWithPath: url)
+        }
+        if let value = params["image_base64_1"] as? String {
+            imageBase641 = value
+        }
+        if let value = params["face_token1"] as? String {
+            faceToken1 = value
+        }
+        if let url = params["image_url2"] as? String {
+            imageURL2 = URL(string: url)
+        }
+        if let url = params["image_file2"] as? String {
+            imageFile2 = URL(fileURLWithPath: url)
+        }
+        if let value = params["image_base64_2"] as? String {
+            imageBase642 = value
+        }
+        if let value = params["face_token2"] as? String {
+            faceToken2 = value
+        }
+        if let value = params["face_rectangle1"] as? String {
+            faceRectangle1 = FaceppRectangle(string: value)
+        }
+        if let value = params["face_rectangle2"] as? String {
+            faceRectangle2 = FaceppRectangle(string: value)
+        }
+    }
+    
     var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("compare")
     }
-
+    
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -75,7 +114,7 @@ public struct CompareOption: RequestProtocol {
         if let url = imageFile1, try !url.fileSizeNotExceed(mb: 2) {
             throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
         }
-
+        
         if let url = imageFile2, try !url.fileSizeNotExceed(mb: 2) {
             throw FaceppRequestError.argumentsError(.fileTooLarge(size: uploadFileMBSize, path: url))
         }
@@ -94,7 +133,7 @@ public struct CompareOption: RequestProtocol {
         return (faceToken1 != nil || imageURL1 != nil || imageBase641 != nil || imageFile1 != nil)
             && (faceToken2 != nil || imageURL2 != nil || imageBase642 != nil || imageFile2 != nil)
     }
-
+    
     func params() throws -> (Params, [Params]?) {
         var params = Params()
         var files = [Params]()
@@ -109,7 +148,7 @@ public struct CompareOption: RequestProtocol {
                 "data": data
             ])
         }
-
+        
         params["face_token2"] = faceToken2
         params["image_url2"] = imageURL2
         params["image_base64_2"] = imageBase642
@@ -121,11 +160,11 @@ public struct CompareOption: RequestProtocol {
                 "data": data
             ])
         }
-
+        
         if let rectangle = faceRectangle1 {
             params["face_rectangle1"] = "\(rectangle)"
         }
-
+        
         if let rectangle = faceRectangle2 {
             params["face_rectangle2"] = "\(rectangle)"
         }
