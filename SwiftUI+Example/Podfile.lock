@@ -1,0 +1,18 @@
+PODS:
+  - FaceppSwift/Core (0.1.9)
+  - FaceppSwift/SwiftUI (0.1.9):
+    - FaceppSwift/Core
+
+DEPENDENCIES:
+  - FaceppSwift/SwiftUI (from `../`)
+
+EXTERNAL SOURCES:
+  FaceppSwift:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  FaceppSwift: 6cd27ee2bccb0ae5cc4a1a795cdcbfed312f1f9c
+
+PODFILE CHECKSUM: 2a902595de270c98013e284e7bc4eeba01efb39b
+
+COCOAPODS: 1.9.1
