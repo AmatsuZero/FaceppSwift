@@ -49,4 +49,7 @@ Pods/
 !Example/Example.xcodeproj
 Example/Example.xcworkspace
 
+!SwiftUI+Example/SwiftUI+Example.xcodeproj
+SwiftUI+Example/SwiftUI+Example.xcworkspace
+
 node_modules/

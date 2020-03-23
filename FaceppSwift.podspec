@@ -38,4 +38,11 @@ Pod::Spec.new do |s|
       ss.ios.framework = 'UIKit', 'WebKit'
       ss.dependency 'FaceppSwift/UIKit'
     end
+
+    s.subspec 'SwiftUI' do |ss|
+      ss.ios.deployment_target = '13.0'
+      ss.source_files = 'SwiftUI+Facepp'
+      ss.ios.framework = 'SwiftUI', 'Combine'
+      ss.dependency 'FaceppSwift/Core'
+    end  
   end
