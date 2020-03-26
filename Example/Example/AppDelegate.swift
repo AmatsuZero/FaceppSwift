@@ -20,6 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let secret = dict.object(forKey: "api_secret") as? String {
             FaceppClient.initialization(key: key, secret: secret)
         }
+        var id: Int?
+        let task = URLSession.shared.dataTask(with: URL(string: "https://www.baidu.com")!) { _, _, _ in
+            print("------")
+            print(id ?? "no")
+        }
+        id = task.taskIdentifier
+        task.resume()
         return true
     }
 

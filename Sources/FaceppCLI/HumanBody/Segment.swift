@@ -72,9 +72,11 @@ final class FppHumanBodySegment: FaceCLIBasicCommand {
     func runV1() throws {
         let option = try HumanBodySegmentV1Option(self)
         semaRun { sema in
-            FaceppHumanBody.segmentV1(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
+            var id: Int?
+            let task = FaceppHumanBody.segmentV1(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 
@@ -82,9 +84,11 @@ final class FppHumanBodySegment: FaceCLIBasicCommand {
         let option = try HumanBodySegmentV2Option(self)
         option.returnGrayScale = grayScale
         semaRun { sema in
-            FaceppHumanBody.segmentV2(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = FaceppHumanBody.segmentV2(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 }

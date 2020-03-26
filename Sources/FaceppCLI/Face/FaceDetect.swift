@@ -96,9 +96,10 @@ final class FppDetectCommand: FaceCLIBasicCommand {
         option.beautyScoreMax = beautyScoreMax
         option.beautyScoreMin = beautyScoreMin
         semaRun { sema in
-            FaceppSwift.Facepp.detect(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppSwift.Facepp.detect(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }
@@ -133,9 +134,10 @@ final class FaceGetDetailCommand: FaceCLIBaseCommand {
         var option = FaceGetDetailOption(token: faceToken)
         option.setup(self)
         semaRun { sema in
-            FaceppSwift.Facepp.Face.getDetail(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppSwift.Facepp.Face.getDetail(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }
@@ -190,9 +192,10 @@ final class FaceAnalyzeCommand: FaceCLIBaseCommand {
         option.beautyScoreMax = beautyScoreMax
         option.beautyScoreMin = beautyScoreMin
         semaRun { sema in
-            FaceppSwift.Facepp.Face.analyze(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppSwift.Facepp.Face.analyze(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

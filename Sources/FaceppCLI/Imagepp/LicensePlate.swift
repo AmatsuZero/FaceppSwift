@@ -50,9 +50,10 @@ final class FppLicensePlateCommand: FaceCLIBasicCommand {
     func run() throws {
         let option = try ImageppLicensePlateOption(self)
         semaRun { sema in
-            Imagepp.licensePlate(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Imagepp.licensePlate(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

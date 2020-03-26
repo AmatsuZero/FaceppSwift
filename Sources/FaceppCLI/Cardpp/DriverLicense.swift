@@ -81,9 +81,10 @@ final class FppDriverLicenseCommand: FaceCLIBasicCommand {
     func runV1() throws {
         let option = try OCRDriverLicenseV1Option(self)
         semaRun { sema in
-            Cardpp.driverLicenseV1(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Cardpp.driverLicenseV1(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 
@@ -92,9 +93,10 @@ final class FppDriverLicenseCommand: FaceCLIBasicCommand {
         option.needReturnScore = score
         option.mode = mode
         semaRun { sema in
-            Cardpp.driverLicenseV2(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Cardpp.driverLicenseV2(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

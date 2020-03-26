@@ -18,12 +18,13 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "0.0.1"),
-        .package(url: "https://github.com/weichsel/ZIPFoundation/", .upToNextMajor(from: "0.9.0"))
+        .package(url: "https://github.com/weichsel/ZIPFoundation/", .upToNextMajor(from: "0.9.0")),
+        .package(url: "https://github.com/onevcat/Rainbow", from: "3.0.0")
     ],
     targets: [
         .target(
             name: "FaceppCLI",
-            dependencies: ["FaceppSwift", "ArgumentParser", "ZIPFoundation"]),
+            dependencies: ["FaceppSwift", "ArgumentParser", "ZIPFoundation", "Rainbow"]),
         .target(
             name: "FaceppSwift",
             dependencies: []),

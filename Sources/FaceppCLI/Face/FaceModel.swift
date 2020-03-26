@@ -105,8 +105,8 @@ final class FppFaceModelCommand: FaceCLIBaseCommand {
         if let url = imageFile3 {
             option.imageFile3 = URL(fileURLWithPath: url)
         }
-
-        FaceppSwift.Facepp.threeDimensionFace(option: option) { error, resp in
+        var taskID: Int?
+        let task = FaceppSwift.Facepp.threeDimensionFace(option: option) { error, resp in
             defer {
                 Self.exit(withError: error)
             }
@@ -116,9 +116,10 @@ final class FppFaceModelCommand: FaceCLIBaseCommand {
                 } catch let e {
                     writeError(e)
                 }
-                writeMessage(resp, error: error)
+                writeMessage(resp, taskId: taskID, error: error)
             }
         }.request()
+        taskID = task?.taskIdentifier
         RunLoop.current.run()
     }
 }

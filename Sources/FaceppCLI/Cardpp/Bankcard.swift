@@ -64,18 +64,22 @@ final class FppBankcardCommand: FaceCLIBasicCommand {
     func runV1() throws {
         let option = try OCRBankCardV1Option(self)
         semaRun { sema in
-            Cardpp.bankCardV1(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = Cardpp.bankCardV1(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 
     func runBeta() throws {
         let option = try OCRBankCardBetaOption(self)
         semaRun { sema in
-            Cardpp.bankCardBeta(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = Cardpp.bankCardBeta(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 }

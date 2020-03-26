@@ -38,9 +38,10 @@ final class FppFaceAlbumSearchTaskQueryCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         semaRun { sema in
-            FaceAlbum.searchImageTaskQuery(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceAlbum.searchImageTaskQuery(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+                }?.taskIdentifier
         }
     }
 }
@@ -75,9 +76,10 @@ final class FppFaceAlbumAddTaskQueryCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         semaRun { sema in
-            FaceAlbum.addImageTaskQuery(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceAlbum.addImageTaskQuery(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }?.taskIdentifier
         }
     }
 }
@@ -112,9 +114,10 @@ final class FppFaceAlbumGroupTaskQueryCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         semaRun { sema in
-            FaceAlbum.groupFaceTaskQuery(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceAlbum.groupFaceTaskQuery(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+                }?.taskIdentifier
         }
     }
 }

@@ -56,9 +56,11 @@ final class FppFeaturesCommand: FaceCLIBasicCommand {
         let option = try FacialFeaturesOption(self)
         option.returnImageReset = returnImageReset
         semaRun { sema in
-            FaceppSwift.Facepp.facialFeatures(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
+            var id: Int?
+            let task = FaceppSwift.Facepp.facialFeatures(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 }

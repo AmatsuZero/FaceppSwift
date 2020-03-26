@@ -96,9 +96,10 @@ final class FppFaceCompareCommand: FaceCLIBaseCommand {
         option.faceRectangle2 = faceRectangle2
 
         semaRun { sema in
-            FaceppSwift.Facepp.compare(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppSwift.Facepp.compare(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }
