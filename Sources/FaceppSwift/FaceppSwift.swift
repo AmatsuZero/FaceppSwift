@@ -10,7 +10,7 @@ public class FaceppClient: NSObject {
         return URLSession(configuration: .default, delegate: self, delegateQueue: nil)
     }()
     static private(set) var shared: FaceppClient?
-    private var tasksMap = [URLSessionTask: RequestProtocol]()
+    var tasksMap = [URLSessionTask: RequestProtocol]()
 
     public class func initialization(key: String, secret: String) {
         #if os(Linux)
