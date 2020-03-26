@@ -93,9 +93,10 @@ private extension FppFaceBeautifyCommand {
         let option = try BeautifyV1Option(self)
         option.smoothing = smoothing
         option.whitening = whitening
-        FaceppSwift.Facepp.beautifyV1(option: option) { error, resp in
-            commonResponseHandler(sema, error: error, resp: resp)
-        }.request()
+        var id: Int?
+        id = FaceppSwift.Facepp.beautifyV1(option: option) { error, resp in
+            commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+        }.request()?.taskIdentifier
         sema.wait()
     }
 
@@ -110,9 +111,10 @@ private extension FppFaceBeautifyCommand {
         option.thinface = thinface
 
         semaRun { sema in
-            FaceppSwift.Facepp.beautifyV2(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppSwift.Facepp.beautifyV2(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

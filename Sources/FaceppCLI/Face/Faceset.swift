@@ -62,9 +62,10 @@ final class FppCreateFacesetCommand: FaceCLIBaseCommand {
         option.userData = userData
 
         semaRun { sema in
-            FaceSet.create(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }
+            var id: Int?
+            id = FaceSet.create(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }?.taskIdentifier
         }
     }
 }
@@ -104,9 +105,10 @@ final class FppFacesetGetAllCommand: FaceCLIBaseCommand {
         option.start = start
 
         semaRun { sema in
-            FaceSet.getFaceSets(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceSet.getFaceSets(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+                }?.taskIdentifier
         }
     }
 }
@@ -155,9 +157,10 @@ final class FppFacesetDetailCommand: FaceCLIBaseCommand {
         option.start = start
 
         semaRun { sema in
-            FaceSet.detail(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceSet.detail(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+                }?.taskIdentifier
         }
     }
 }
@@ -213,9 +216,11 @@ final class FppFacesetUpdateCommand: FaceCLIBaseCommand {
         option.displayName = displayName
 
         semaRun { sema in
-            FaceSet.update(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = FaceSet.update(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }
+            id = task?.taskIdentifier
         }
     }
 }
@@ -266,9 +271,10 @@ final class FppFacesetRemoveCommand: FaceCLIBaseCommand {
         try setup()
         option.faceTokens = faceTokens
         semaRun { sema in
-            FaceSet.remove(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceSet.remove(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }?.taskIdentifier
         }
     }
 
@@ -279,9 +285,10 @@ final class FppFacesetRemoveCommand: FaceCLIBaseCommand {
         try setup()
         option.faceTokens = faceTokens
         semaRun { sema in
-            FaceSet.asyncRemove(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }
+            var id: Int?
+            id = FaceSet.asyncRemove(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+                }?.taskIdentifier
         }
     }
 }
@@ -332,9 +339,11 @@ final class FppFacesetAddFaceCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         semaRun { sema in
-            FaceSet.add(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = FaceSet.add(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }
+            id = task?.taskIdentifier
         }
     }
 
@@ -345,9 +354,11 @@ final class FppFacesetAddFaceCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         semaRun { sema in
-            FaceSet.asyncAdd(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = FaceSet.asyncAdd(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }
+            id = task?.taskIdentifier
         }
     }
 }
@@ -382,9 +393,11 @@ final class FppFacesetTaskStatusCommand: FaceCLIBaseCommand {
         option.setup(self)
         try setup()
         semaRun { sema in
-            FaceSet.asyncQuery(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
+            var id: Int?
+            let task = FaceSet.asyncQuery(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
             }
+            id = task?.taskIdentifier
         }
     }
 }

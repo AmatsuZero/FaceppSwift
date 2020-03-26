@@ -61,9 +61,11 @@ final class FppHumanBodyGesture: FaceCLIBasicCommand {
         let option = try HumanBodyGestureOption(self)
         option.returnGesture = detail
         semaRun { sema in
-            FaceppHumanBody.gesture(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
+            var id: Int?
+            let task = FaceppHumanBody.gesture(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 }

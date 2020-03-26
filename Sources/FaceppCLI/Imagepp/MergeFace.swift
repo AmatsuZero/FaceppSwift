@@ -98,9 +98,11 @@ final class FppMergeFaceCommand: FaceCLIBaseCommand {
         option.mergeRate = mergeRate
         option.featureRate = featureRate
         semaRun { sema in
-            Imagepp.mergeFace(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task =  Imagepp.mergeFace(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 }

@@ -50,9 +50,11 @@ final class FppRecognizeTextCommand: FaceCLIBasicCommand {
     func run() throws {
         let option = try ImageppRecognizeTextOption(self)
         semaRun { sema in
-            Imagepp.recognizeText(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
+            var id: Int?
+            let task = Imagepp.recognizeText(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
             }.request()
+            id = task?.taskIdentifier
         }
     }
 }

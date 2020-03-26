@@ -9,6 +9,7 @@ import Foundation
 import ArgumentParser
 import FaceppSwift
 import ZIPFoundation
+import Rainbow
 
 let kVersion = "0.1.9"
 
@@ -80,13 +81,14 @@ extension FaceppBaseRequest {
 }
 
 func commonResponseHandler<R: FaceppResponseProtocol>(_ sema: DispatchSemaphore,
+                                                      taskID: Int?,
                                                       error: Swift.Error? = nil,
                                                       resp: R? = nil) {
     guard error == nil else {
         leave(error: error)
         return
     }
-    writeMessage(resp)
+    writeMessage(resp, taskId: taskID)
     sema.signal()
 }
 
@@ -95,7 +97,7 @@ enum OutputType {
     case standard
 }
 
-func writeMessage<R: FaceppResponseProtocol>(_ message: R?, error: Swift.Error? = nil) {
+func writeMessage<R: FaceppResponseProtocol>(_ message: R?, taskId: Int?, error: Swift.Error? = nil) {
     if let err = error {
         writeError(err)
     } else if let resp = message {
@@ -104,8 +106,15 @@ func writeMessage<R: FaceppResponseProtocol>(_ message: R?, error: Swift.Error? 
         encoder.keyEncodingStrategy = .convertToSnakeCase
         do {
             let data = try encoder.encode(resp)
-            let output = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            print(output)
+            var output = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+            if var dict = output as? [String: Any], let id = taskId {
+                dict["metrics"] = FppConfig.reports[id]
+                output = dict
+            }
+            let outputStr = String(data: try JSONSerialization.data(withJSONObject: output,
+                                                                options: .prettyPrinted),
+                               encoding: .utf8) ?? ""
+            print(outputStr.lightBlue)
         } catch {
             writeError(error)
         }
@@ -113,7 +122,7 @@ func writeMessage<R: FaceppResponseProtocol>(_ message: R?, error: Swift.Error? 
 }
 
 func writeError(_ error: Swift.Error) {
-    fputs("\u{001B}[0;31m\(error.localizedDescription)\n", stderr)
+    fputs("\(error.localizedDescription)\n".red.onWhite, stderr)
 }
 
 extension URL {

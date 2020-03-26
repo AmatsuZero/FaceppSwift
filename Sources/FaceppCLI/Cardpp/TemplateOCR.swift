@@ -79,9 +79,10 @@ final class FppTemplateOCRCommand: FaceCLIBasicCommand {
         option.extraInfo = extraInfo?.components(separatedBy: ",")
 
         semaRun { sema in
-            Cardpp.templateOCR(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Cardpp.templateOCR(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

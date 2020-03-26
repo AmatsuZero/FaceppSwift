@@ -21,6 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             FaceppClient.initialization(key: key, secret: secret)
             FaceppClient.shared?.maxRequestConut = 1
         }
+        var id: Int?
+        let task = URLSession.shared.dataTask(with: URL(string: "https://www.baidu.com")!) { _, _, _ in
+            print("------")
+            print(id ?? "no")
+        }
+        id = task.taskIdentifier
+        task.resume()
         return true
     }
 

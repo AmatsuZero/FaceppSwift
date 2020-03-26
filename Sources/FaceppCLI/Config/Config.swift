@@ -25,6 +25,8 @@ class FppConfig: Codable {
         return URLSession(configuration: .default)
     }()
 
+    static var reports = [Int: String]()
+
     static var currentUser: FppConfig? = {
         var rawData: Data?
         #if os(macOS)
@@ -200,7 +202,7 @@ extension FppConfig: FaceppMetricsReporter {
     func option(_ option: FaceppRequestConfigProtocol,
                 task: URLSessionTask,
                 didFinishCollecting metrics: URLSessionTaskMetrics) {
-        print(metrics)
+        FppConfig.reports[task.taskIdentifier] = "\(metrics)"
     }
     #endif
 }

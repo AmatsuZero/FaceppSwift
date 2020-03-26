@@ -50,9 +50,10 @@ final class FppDetectSceneAndObjectCommand: FaceCLIBasicCommand {
     func run() throws {
         let option = try ImageppDetectScenceAndObjectOption(self)
         semaRun { sema in
-            Imagepp.detectsceneandobject(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Imagepp.detectsceneandobject(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

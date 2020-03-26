@@ -75,9 +75,10 @@ final class FppFaceSearchCommand: FaceCLIBasicCommand {
         option.facesetToken = facesetToken
 
         semaRun { sema in
-            FaceppSwift.FaceSet.search(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }
+            var id: Int?
+            id = FaceppSwift.FaceSet.search(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+                }?.taskIdentifier
         }
     }
 }
@@ -115,9 +116,10 @@ final class FaceSetUserIdCommand: FaceCLIBaseCommand {
         var option = FaceSetUserIdOption(token: faceToken, id: userId)
         option.setup(self)
         semaRun { sema in
-            FaceppSwift.Facepp.Face.setUserId(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppSwift.Facepp.Face.setUserId(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

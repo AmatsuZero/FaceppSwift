@@ -53,9 +53,10 @@ final class FppVehicleLicenseCommand: FaceCLIBasicCommand {
     func run() throws {
         let option = try OCRVehicleLicenseOption(self)
         semaRun { sema in
-            Cardpp.vehicleLicense(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Cardpp.vehicleLicense(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

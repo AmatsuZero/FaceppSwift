@@ -55,16 +55,20 @@ final class FppSkinAnalyzeCommand: FaceCLIBasicCommand {
         if advanced {
             let option = try SkinAnalyzeAdvancedOption(self)
             semaRun { sema in
-                FaceppSwift.Facepp.skinAnalyzeAdvanced(option: option) { error, resp in
-                    commonResponseHandler(sema, error: error, resp: resp)
+                var id: Int?
+                let task = FaceppSwift.Facepp.skinAnalyzeAdvanced(option: option) { error, resp in
+                    commonResponseHandler(sema, taskID: id, error: error, resp: resp)
                 }.request()
+                id = task?.taskIdentifier
             }
         } else {
             let option = try SkinAnalyzeOption(self)
             semaRun { sema in
-                FaceppSwift.Facepp.skinAnalyze(option: option) { error, resp in
-                    commonResponseHandler(sema, error: error, resp: resp)
+                var id: Int?
+                let task = FaceppSwift.Facepp.skinAnalyze(option: option) { error, resp in
+                    commonResponseHandler(sema, taskID: id, error: error, resp: resp)
                 }.request()
+                id = task?.taskIdentifier
             }
         }
     }

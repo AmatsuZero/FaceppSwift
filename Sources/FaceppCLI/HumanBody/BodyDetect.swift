@@ -62,9 +62,10 @@ final class FppHumanBodyDetect: FaceCLIBasicCommand {
             option.returnAttributes = Set(attributes)
         }
         semaRun { sema in
-            FaceppHumanBody.bodyDetect(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppHumanBody.bodyDetect(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

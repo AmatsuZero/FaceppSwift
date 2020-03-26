@@ -53,9 +53,10 @@ final class FppIDCardCommand: FaceCLIBasicCommand {
         let option = try OCRIDCardOption(self)
         option.needLegality = legality
         semaRun { sema in
-            Cardpp.idCard(option: option) { err, resp in
-                commonResponseHandler(sema, error: err, resp: resp)
-            }.request()
+            var id: Int?
+            id = Cardpp.idCard(option: option) { err, resp in
+                commonResponseHandler(sema, taskID: id, error: err, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }

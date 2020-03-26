@@ -53,9 +53,10 @@ final class FppHumanBodySkeleton: FaceCLIBasicCommand {
     func run() throws {
         let option = try SkeletonDetectOption(self)
         semaRun { sema in
-            FaceppHumanBody.skeleton(option: option) { error, resp in
-                commonResponseHandler(sema, error: error, resp: resp)
-            }.request()
+            var id: Int?
+            id = FaceppHumanBody.skeleton(option: option) { error, resp in
+                commonResponseHandler(sema, taskID: id, error: error, resp: resp)
+            }.request()?.taskIdentifier
         }
     }
 }
