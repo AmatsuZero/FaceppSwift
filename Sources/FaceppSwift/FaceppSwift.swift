@@ -10,7 +10,7 @@ public class FaceppClient: NSObject {
         return URLSession(configuration: .default, delegate: self, delegateQueue: nil)
     }()
     static private(set) var shared: FaceppClient?
-    private var tasksMap = [URLSessionTask: RequestProtocol]()
+    var tasksMap = [URLSessionTask: RequestProtocol]()
 
     public class func initialization(key: String, secret: String) {
         #if os(Linux)
@@ -37,11 +37,11 @@ public class FaceppClient: NSObject {
 public enum Facepp: UseFaceppClientProtocol {
     public enum Face {
         case setUserId(option: FaceSetUserIdOption,
-            completionHandler:(Error?, FaceSetUserIdResponse?) -> Void)
+            completionHandler: (Error?, FaceSetUserIdResponse?) -> Void)
         case getDetail(option: FaceGetDetailOption,
-            completionHandler:(Error?, FaceGetDetailResponse?) -> Void)
+            completionHandler: (Error?, FaceGetDetailResponse?) -> Void)
         case analyze(option: FaceAnalyzeOption,
-            completionHandler:(Error?, FaceAnalyzeResponse?) -> Void)
+            completionHandler: (Error?, FaceAnalyzeResponse?) -> Void)
     }
 
     case detect(option: FaceDetectOption,
@@ -55,7 +55,7 @@ public enum Facepp: UseFaceppClientProtocol {
     case thousandLandmark(option: ThousandLandMarkOption,
         completionHandler: (Error?, ThousandLandmarkResponse?) -> Void)
     case facialFeatures(option: FacialFeaturesOption,
-        completionHandler:  (Error?, FacialFeaturesResponse?) -> Void)
+        completionHandler: (Error?, FacialFeaturesResponse?) -> Void)
     case threeDimensionFace(option: ThreeDimensionFaceOption,
         completionHandler: (Error?, ThreeDimensionFaceResponse?) -> Void)
     case skinAnalyze(option: SkinAnalyzeOption,
