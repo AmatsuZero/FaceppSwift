@@ -41,7 +41,7 @@ struct FppFaceAlbumCommand: ParsableCommand {
 
 struct FppImageppCommand: ParsableCommand {
     static var configuration = CommandConfiguration(
-        commandName: "imagepp",
+        commandName: "image",
         abstract: "图像识别",
         subcommands: [
             FppLicensePlateCommand.self,

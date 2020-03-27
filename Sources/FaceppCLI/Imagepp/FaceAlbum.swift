@@ -18,23 +18,23 @@ final class FppAFaceAlbumCreateCommand: FaceCLIBaseCommand {
         免费用户的相册自创建后会保存100天，然后会被删除。如果付费用户透支账户余额后，创建的FaceAlbum会保留30天，然后被删除。
         """
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     func run() throws {
         var option = CreateFaceAlbumOption()
         option.setup(self)
@@ -50,34 +50,34 @@ final class FppAFaceAlbumCreateCommand: FaceCLIBaseCommand {
 
 final class FppFaceAlbumDeleteCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
-        commandName: "delete",
+        commandName: "del",
         abstract: "删除 FaceAlbum，该相册对应的image_id, face_token，face_token对应的group_id也都会被删除"
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Argument(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Flag(default: false,
           inversion: .prefixedEnableDisable,
           help: "删除时是否检查 FaceAlbum 中是否存在 face_token")
     var emptyCheck: Bool
-
+    
     func run() throws {
         var option = FaceAlbumDeleteOption(facealbumToken: token)
         option.checkEmpty = emptyCheck
@@ -97,29 +97,29 @@ final class FppFaceAlbumFindCommand: FaceCLIBaseCommand {
         commandName: "find",
         abstract: "查找与某一分组相似的分组，用于在同一个人的人脸被分为多个组的情况下，提示用户确认两个分组的人脸是否属于同一个人"
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("id"), help: "用以查找相似分组的人脸分组的标识GroupID 不能为 0 或者 -1")
     var groupId: String
-
+    
     func run() throws {
         var option = FaceAlbumFindCandidateOption(token: token, groupId: groupId)
         option.setup(self)
@@ -146,35 +146,35 @@ final class FppFaceAlbumSearchCommand: FaceCLIBasicCommand {
         该接口为异步接口，聚类结果可通过 facepp album query search --id <task_id> 来查询。
         """
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: [.customShort("U"), .customLong("url")], help: "图片的 URL")
     var imageURL: String?
-
+    
     @Option(name: [.customShort("F"), .customLong("file")], help: "图片路径")
     var imageFile: String?
-
+    
     @Option(name: .customLong("base64"), help: "base64 编码的二进制图片数据")
     var imageBase64: String?
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("cb"),
             help: """
 一个URL。API任务完成后会调用该url，通知用户任务完成。
@@ -182,7 +182,7 @@ final class FppFaceAlbumSearchCommand: FaceCLIBasicCommand {
 例：http://cburl?task_id=xxxxxxx
 """)
     var callback: String?
-
+    
     func run() throws {
         var option = FaceAlbumSearchImageOption(facealbumToken: token)
         option.setup(self)
@@ -216,36 +216,36 @@ final class FppFaceAlbumUpdateCommand: FaceCLIBaseCommand {
         commandName: "update",
         abstract: "更新指定 FaceAlbum 中某个或某些face_token 的分组信息"
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(name: .customLong("id"),
             help: """
             人脸的新的分组信息。可以传入三类值：如果传入一个已经存在的 group_id，则人脸会被分到相应的组中。如果传入“CreateNewGroup”，则会为传入人脸创建一个新的分组，并返回新的 group_id。
             如果传入 -1，则人脸会被置为“未分组”状态
             """)
     var newGroupId: String
-
+    
     @Argument(help: "由人脸标识 face_token 组成的字符串。至少传入一个 face_token，最多不超过10个，多个用逗号分隔")
     var faceTokens: [String]
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     func run() throws {
         var option = FaceAlbumUpdateFaceOption(faceTokens: faceTokens,
                                                newGroupId: newGroupId,
@@ -276,35 +276,35 @@ final class FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
         异步接口适用于人数较多的图片。添加结果可通过 facepp album query add --id <task_id> 来查询。
         """
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: [.customShort("U"), .customLong("url")], help: "图片的 URL")
     var imageURL: String?
-
+    
     @Option(name: [.customShort("F"), .customLong("file")], help: "图片路径")
     var imageFile: String?
-
+    
     @Option(name: .customLong("base64"), help: "base64 编码的二进制图片数据")
     var imageBase64: String?
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("cb"),
             help: """
     一个URL。API任务完成后会调用该url，通知用户任务完成。
@@ -312,10 +312,10 @@ final class FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
     例：http://cburl?task_id=xxxxxxx
     """)
     var callback: String?
-
+    
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "是否异步")
     var async: Bool
-
+    
     func run() throws {
         if async {
             try runAsync()
@@ -323,7 +323,7 @@ final class FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
             try runSync()
         }
     }
-
+    
     func runSync() throws {
         var option = FaceAlbumAddImageOption(facealbumToken: token)
         option.setup(self)
@@ -347,7 +347,7 @@ final class FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
                 }?.taskIdentifier
         }
     }
-
+    
     func runAsync() throws {
         var option = FaceAlbumAddImageAsyncOption(facealbumToken: token)
         option.setup(self)
@@ -378,32 +378,32 @@ final class FppFaceAlbumAddFaceCommand: FaceCLIBasicCommand {
 
 final class FppFaceAlbumGetDetailCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
-        commandName: "facedetail",
+        commandName: "fdetail",
         abstract: "查看某个人脸的信息"
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(help: "人脸标识face_token字符串")
     var face: String
-
+    
     func run() throws {
         var option = FaceAblbumGetFaceDetailOption(faceAlbumToken: token,
                                                    faceToken: face)
@@ -420,32 +420,32 @@ final class FppFaceAlbumGetDetailCommand: FaceCLIBaseCommand {
 
 final class FppGetImageDetailCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
-        commandName: "imagedetail",
+        commandName: "idetail",
         abstract: "查看某个图片的信息"
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("id"), help: "要查看图片在系统中的标识")
     var imageId: String
-
+    
     func run() throws {
         var option = FaceAlbumGetImageDetailOption(faceAlbumToken: token,
                                                    imageId: imageId)
@@ -468,23 +468,23 @@ final class FppGetAllFaceAlbumFCommand: FaceCLIBaseCommand {
         单次查询最多返回 100 个 FaceAlbum。如需获取全量数据，需要配合使用 start 和 next 参数。
         """
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(default: 1, help: """
     一个数字 n，表示开始返回的 faceset_token 在传入的 API Key 下的序号。 n 是 [1,9999999] 间的一个整数。
     通过传入数字 n，可以控制本 API 从第 n 个 faceset_token 开始返回。返回的 faceset_token 按照创建时间排序，每次返回 100 个 faceset_token。
@@ -492,7 +492,7 @@ final class FppGetAllFaceAlbumFCommand: FaceCLIBaseCommand {
     您可以输入之前请求本 API 返回的 next 值，用以获得接下来的 100 个 faceset_token。
     """)
     var start: Int
-
+    
     func run() throws {
         var option = FaceAblumGetAllOption(start: start)
         option.setup(self)
@@ -511,30 +511,30 @@ final class FppFaceAlbumGetdetailCommand: FaceCLIBaseCommand {
         commandName: "detail",
         abstract: "查看获取 FaceAlbum 详情"
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("startToken"),
             help: "之前请求本 API 返回的 next_token 标识，用来获取下100个 face_token。默认值为空，返回 FaceAlbum 下前100个 face_token")
     var startToken: String?
-
+    
     func run() throws {
         var option = FaceAlbumGetAlbumDetailOption(facealbumToken: token)
         option.setup(self)
@@ -557,32 +557,32 @@ final class FppFaceAlbumRemoveFaceCommand: FaceCLIBaseCommand {
         当一个image_id所属的所有face_token从FaceAlbum里移除后，该image_id也被移除了。
         """
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("faceTokens"), help: "需要移除的人脸标识字符串，至少传入一个 face_token，最多不超过10个，多个用逗号分隔")
     var faceTokens: String?
-
+    
     @Option(name: .customLong("id"), help: "需要移除的一个图片id字符串，删除该image_id拥有的所有face_token")
     var imageId: String?
-
+    
     func run() throws {
         var option = FaceAlbumDeleteFaceOption(facealbumToken: token)
         option.faceTokens = faceTokens?.components(separatedBy: ",")
@@ -611,36 +611,36 @@ final class FppFaceAlbumGroupFaceCommand: FaceCLIBaseCommand {
         该接口的执行时间与要聚类的face_token数量有关系，请参考下表来确定查询接口的等待时间。
         """
     )
-
+    
     @Flag(default: true, inversion: .prefixedEnableDisable, help: "检查参数")
     var checkParams: Bool
-
+    
     @available(OSX 10.12, *)
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "请求报告，macOS only")
     var metrics: Bool
-
+    
     @Option(name:[.customShort("T"), .long], default: 60, help: "超时时间，默认60s")
     var timeout: TimeInterval
-
+    
     @Option(name: .customLong("key"), help: "调用此API的API Key")
     var apiKey: String?
-
+    
     @Option(name: .customLong("secret"), help: "调用此API的API Secret")
     var apiSecret: String?
-
+    
     @Option(help: "FaceAlbum 标识")
     var token: String
-
+    
     @Option(name: .customLong("cb"), help: """
     一个URL。API任务完成后会调用该url，通知用户任务完成。
     注：任务完成后，会向传入的 callback_url 发送一个 GET 请求，将 task_id 作为 querystring 中的 task_id 参数传递给用户，
     例：http://cburl?task_id=xxxxxxx
     """)
     var callbackURL: String?
-
+    
     @Option(default: .incremental, help: "人脸分组操作类型")
     var type: FaceAlbumGroupFaceOption.OperationType
-
+    
     func run() throws {
         var option = FaceAlbumGroupFaceOption(facealbumToken: token)
         if let url = callbackURL {

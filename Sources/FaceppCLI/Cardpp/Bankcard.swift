@@ -11,7 +11,7 @@ import FaceppSwift
 
 final class FppBankcardCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
-        commandName: "bankcard",
+        commandName: "bank",
         abstract: "检测和识别各类银行卡，并返回银行卡卡片边框坐标、银行卡号码、所属银行及支持的金融组织服务。支持任意角度的识别",
         discussion: """
         图片要求 ：

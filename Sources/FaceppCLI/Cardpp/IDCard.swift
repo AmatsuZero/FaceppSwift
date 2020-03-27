@@ -11,7 +11,7 @@ import ArgumentParser
 
 final class FppIDCardCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
-        commandName: "idcard",
+        commandName: "id",
         abstract: "检测和识别中华人民共和国第二代身份证的关键字段内容，并支持返回身份证正反面信息、身份证照片分类判断",
         discussion: """
         图片要求 ：

@@ -19,6 +19,38 @@ let configDir = FileManager.default
     .appendingPathComponent("com.daubertjiang.faceppcli")
     .createDirIfNotExist()
 
+struct FappRegisterCommand: ParsableCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "register",
+        abstract: "前去官网注册"
+    )
+    
+    let website = "https://console.faceplusplus.com.cn/register"
+    
+    func run() throws {
+        let task = Process()
+        task.launchPath = "/usr/bin/env"
+        #if os(macOS)
+        task.arguments = ["open", website]
+        #else
+        task.arguments = ["xdg-open", website]
+        #endif
+        if #available(OSX 10.13, *) {
+            try task.run()
+        } else {
+            let pipe = Pipe()
+            task.standardError = pipe
+            task.launch()
+            
+            let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
+            let error = String(decoding: errorData, as: UTF8.self)
+            if !error.isEmpty {
+                throw NSError(domain: error, code: -1, userInfo: nil)
+            }
+        }
+    }
+}
+
 struct Facepp: ParsableCommand {
     static var configuration = CommandConfiguration(
         abstract: "Face++ 命令行工具",
@@ -30,7 +62,8 @@ struct Facepp: ParsableCommand {
             FppCardppCommand.self,
             FppImageppCommand.self,
             FppFaceAlbumCommand.self,
-            FppToysCommand.self
+            FppToysCommand.self,
+            FappRegisterCommand.self
         ])
 
     @Flag(name: .shortAndLong, help: "版本号")
