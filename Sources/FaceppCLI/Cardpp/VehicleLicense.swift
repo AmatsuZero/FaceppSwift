@@ -11,7 +11,7 @@ import FaceppSwift
 
 final class FppVehicleLicenseCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
-        commandName: "vehiclelicense",
+        commandName: "vlicense",
         abstract: "检测和识别中华人民共和国机动车行驶证（以下称“行驶证”）图像为结构化的文字信息。目前只支持行驶证主页正面，不支持副页正面反面。",
         discussion: """
         行驶证图像须为正拍（垂直角度拍摄），但是允许有一定程度的旋转角度；

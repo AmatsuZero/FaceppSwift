@@ -114,7 +114,7 @@ func writeMessage<R: FaceppResponseProtocol>(_ message: R?, taskId: Int?, error:
             let outputStr = String(data: try JSONSerialization.data(withJSONObject: output,
                                                                 options: .prettyPrinted),
                                encoding: .utf8) ?? ""
-            print(outputStr.lightBlue)
+            print(outputStr.green)
         } catch {
             writeError(error)
         }
@@ -122,7 +122,8 @@ func writeMessage<R: FaceppResponseProtocol>(_ message: R?, taskId: Int?, error:
 }
 
 func writeError(_ error: Swift.Error) {
-    fputs("\(error.localizedDescription)\n".red.onWhite, stderr)
+    fputs("\(error.localizedDescription)\n".applyingCodes(Color.red, BackgroundColor.white, Style.bold),
+          stderr)
 }
 
 extension URL {

@@ -227,7 +227,7 @@ final class FppFacesetUpdateCommand: FaceCLIBaseCommand {
 
 final class FppFacesetRemoveCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
-        commandName: "remove",
+        commandName: "rm",
         abstract: "移除一个FaceSet中的某些或者全部face_token"
     )
 

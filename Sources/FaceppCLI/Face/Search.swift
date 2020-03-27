@@ -85,7 +85,7 @@ final class FppFaceSearchCommand: FaceCLIBasicCommand {
 
 final class FaceSetUserIdCommand: FaceCLIBaseCommand {
     static var configuration = CommandConfiguration(
-        commandName: "setid",
+        commandName: "sid",
         abstract: "为检测出的某一个人脸添加标识信息，该信息会在Search接口结果中返回，用来确定用户身份"
     )
 

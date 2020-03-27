@@ -13,7 +13,7 @@ extension OCRDriverLicenseV2Option.Mode: ExpressibleByArgument, Decodable {}
 
 final class FppDriverLicenseCommand: FaceCLIBasicCommand {
     static var configuration = CommandConfiguration(
-        commandName: "driverlicense",
+        commandName: "dlicense",
         abstract: "检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息",
         discussion: """
         V1: 只支持驾照主页正面，不支持副页正面反面.

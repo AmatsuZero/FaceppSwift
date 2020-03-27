@@ -69,7 +69,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testDenseLandmark() throws {
         let output = try getProcess([
-            "face", "thousandlandmark",
+            "face", "landmark",
             "--enable-metrics",
             "-T", "30.0",
             "--url", "https://bellard.org/bpg/lena5.jpg",
@@ -176,7 +176,7 @@ final class FaceppCLITests: XCTestCase {
     func testRemoveFace() throws {
         XCTAssertNotNil(facesetToken)
         let output = try getProcess([
-            "faceset", "remove",
+            "faceset", "rm",
             "--token",
             facesetToken!,
             "RemoveAllFaceTokens",
@@ -233,7 +233,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testIDCard() throws {
         let output = try getProcess([
-            "card", "idcard",
+            "card", "id",
             "--legality",
             "--url", "http://5b0988e595225.cdn.sohucs.com/images/20170807/aea9cf16c3eb49349f5c56e8de583240.jpeg",
         ])
@@ -244,7 +244,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testDriverLicense() throws {
         let output = try getProcess([
-            "card", "driverlicense",
+            "card", "dlicense",
             "--url", "http://pic.wodingche.com/carimg/kqfmpmny.jpeg",
         ])
         XCTAssertNotNil(output)
@@ -254,7 +254,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testVehicleLicense() throws {
         let output = try getProcess([
-            "card", "vehiclelicense",
+            "card", "vlicense",
             "--url", "https://imgs.icauto.com.cn/allimg/180912/18-1P9121K31Y01.png",
         ])
         XCTAssertNotNil(output)
@@ -264,7 +264,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testBandcard() throws {
         let output = try getProcess([
-            "card", "bankcard",
+            "card", "bank",
             "--url", "http://www.kaka868.com/FileLocal/2016002144-jsd.jpg",
         ])
         XCTAssertNotNil(output)
@@ -350,7 +350,7 @@ final class FaceppCLITests: XCTestCase {
     func testGetFaceDetail() throws {
         XCTAssertNotNil(albumToken)
         let output = try getProcess([
-            "album", "facedetail",
+            "album", "fdetail",
             "--token", albumToken!,
             "--face", "24ed7c35ddd48e37f6546179abf0eb53",
         ])
@@ -362,7 +362,7 @@ final class FaceppCLITests: XCTestCase {
     func testGetImageDetail() throws {
         XCTAssertNotNil(albumToken)
         let output = try getProcess([
-            "album", "imagedetail",
+            "album", "idetail",
             "--token", albumToken!,
             "--id", "00ec51d63b4c3ab1d3c955c6e056ee59",
         ])
@@ -426,7 +426,7 @@ final class FaceppCLITests: XCTestCase {
     
     func testFaceSetUserId() throws {
         let output = try getProcess([
-            "face", "setid",
+            "face", "sid",
             "--token", "bfe72b1a722adfb3cc2ba3faa9bc61f2",
             "--id", #function
         ])
