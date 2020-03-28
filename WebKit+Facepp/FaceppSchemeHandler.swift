@@ -1,14 +1,11 @@
-import WebKit
+//
+//  FaceppSchemeHandler.swift
+//  FaceppSwift
+//
+//  Created by 姜振华 on 2020/3/13.
+//
 
-struct FppHandlerRuntimeError: Error, CustomStringConvertible {
-    var description: String
-    init(_ desc: String) {
-        description = desc
-    }
-    var localizedDescription: String {
-        return description
-    }
-}
+import WebKit
 
 @available(iOS 11.0, *)
 @objc public protocol FaceppSchemeHandlerDelegate: class, NSObjectProtocol {

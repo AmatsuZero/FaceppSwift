@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		80A37264242F563D00CBF62F /* ThreeDimensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80A37263242F563D00CBF62F /* ThreeDimensionViewController.swift */; };
 		80CF9E87241FE2900075CE97 /* WebPages in Resources */ = {isa = PBXBuildFile; fileRef = 80CF9E86241FE2900075CE97 /* WebPages */; };
 		80DD10812419CF220063ABFB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD10802419CF220063ABFB /* AppDelegate.swift */; };
 		80DD10832419CF220063ABFB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD10822419CF220063ABFB /* SceneDelegate.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		5D9EDF1AEAC886246EA480AA /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		80A37263242F563D00CBF62F /* ThreeDimensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeDimensionViewController.swift; sourceTree = "<group>"; };
 		80CF9E86241FE2900075CE97 /* WebPages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WebPages; sourceTree = "<group>"; };
 		80DD107D2419CF220063ABFB /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80DD10802419CF220063ABFB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				80DD10802419CF220063ABFB /* AppDelegate.swift */,
 				80DD10822419CF220063ABFB /* SceneDelegate.swift */,
 				80DD10842419CF220063ABFB /* ViewController.swift */,
+				80A37263242F563D00CBF62F /* ThreeDimensionViewController.swift */,
 				80DD10862419CF220063ABFB /* Main.storyboard */,
 				80DD10892419CF230063ABFB /* Assets.xcassets */,
 				80DD108E2419CF230063ABFB /* Info.plist */,
@@ -230,6 +233,7 @@
 			files = (
 				80DD10852419CF220063ABFB /* ViewController.swift in Sources */,
 				80DD10812419CF220063ABFB /* AppDelegate.swift in Sources */,
+				80A37264242F563D00CBF62F /* ThreeDimensionViewController.swift in Sources */,
 				80DD10832419CF220063ABFB /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,6 +7,16 @@
 
 import UIKit
 
+struct FppHandlerRuntimeError: Error, CustomStringConvertible {
+    var description: String
+    init(_ desc: String) {
+        description = desc
+    }
+    var localizedDescription: String {
+        return description
+    }
+}
+
 public protocol FppImageDelegate: class {
     func image(_ image: UIImage, option: FaceppRequestConfigProtocol, taskDidBeigin: URLSessionTask?)
     func image(_ image: UIImage, taskDidEndWithEror: Error?, response: FaceppResponseBaseProtocol?)

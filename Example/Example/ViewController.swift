@@ -35,6 +35,7 @@ class ViewController: UIViewController {
 
         let userController = WKUserContentController()
         userController.add(messageHandler, name: "idcard")
+        userController.add(self, name: "facemodel")
         configureation.userContentController = userController
 
         return WKWebView(frame: .zero, configuration: configureation)
@@ -59,6 +60,11 @@ class ViewController: UIViewController {
                                      subdirectory: "WebPages") {
             webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
         }
+    }
+
+    deinit {
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "idcard")
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "facemodel")
     }
 }
 
@@ -348,5 +354,17 @@ extension ViewController: FaceppHumanBodyDetectSchemeHandlerDelegate {
         origin.x += 5 * scale
         origin.y += 5 * scale
         title.draw(at: origin)
+    }
+}
+
+extension ViewController: WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        switch message.name {
+        case "facemodel":
+            let controller = ThreeDimensionViewController()
+            present(controller, animated: true, completion: nil)
+        default:
+            break
+        }
     }
 }
