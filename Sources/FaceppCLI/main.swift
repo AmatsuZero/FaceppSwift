@@ -24,9 +24,9 @@ struct FappRegisterCommand: ParsableCommand {
         commandName: "register",
         abstract: "前去官网注册"
     )
-    
+
     let website = "https://console.faceplusplus.com.cn/register"
-    
+
     func run() throws {
         let task = Process()
         task.launchPath = "/usr/bin/env"
@@ -41,7 +41,7 @@ struct FappRegisterCommand: ParsableCommand {
             let pipe = Pipe()
             task.standardError = pipe
             task.launch()
-            
+
             let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
             let error = String(decoding: errorData, as: UTF8.self)
             if !error.isEmpty {
