@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let key = dict.object(forKey: "api_key") as? String,
             let secret = dict.object(forKey: "api_secret") as? String {
             FaceppClient.initialization(key: key, secret: secret)
+            FaceppClient.shared?.maxRequestConut = 1
         }
         return true
     }

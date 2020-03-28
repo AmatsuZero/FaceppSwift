@@ -9,7 +9,7 @@ public class FaceppClient: NSObject {
     lazy var session: URLSession = {
         return URLSession(configuration: .default, delegate: self, delegateQueue: nil)
     }()
-    static private(set) var shared: FaceppClient?
+    public static private(set) var shared: FaceppClient?
     var tasksMap = [URLSessionTask: RequestProtocol]()
 
     public class func initialization(key: String, secret: String) {
@@ -23,6 +23,17 @@ public class FaceppClient: NSObject {
         }
         #endif
     }
+
+    /// 最大并发请求数
+    public var maxRequestConut: Int {
+        get {
+            session.configuration.httpMaximumConnectionsPerHost
+        }
+        set {
+            session.configuration.httpMaximumConnectionsPerHost = newValue
+        }
+    }
+
     private override init() {
         fatalError("不要调用原来的初始化")
     }
@@ -31,6 +42,7 @@ public class FaceppClient: NSObject {
         self.apiKey = key
         self.apiSecret = secret
         super.init()
+
     }
 }
 
