@@ -166,8 +166,8 @@ public struct FaceGetDetailResponse: FaceppResponseProtocol {
     public var returnLandmark = FaceDetectOption.ReturnLandmark.no
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
     @nonobjc public var returnAttributes: Set<FaceDetectOption.ReturnAttributes> = [.none]
-    
-    @objc public var returnAttributesString: Set<String> {
+
+    public var returnAttributesString: Set<String> {
         set {
             returnAttributes = Set(newValue.compactMap { FaceDetectOption.ReturnAttributes(rawValue: $0) })
         }
@@ -175,7 +175,7 @@ public struct FaceGetDetailResponse: FaceppResponseProtocol {
             Set(returnAttributes.map { $0.rawValue })
         }
     }
-    
+
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
     /// 颜值评分分数区间的最大值。默认为100

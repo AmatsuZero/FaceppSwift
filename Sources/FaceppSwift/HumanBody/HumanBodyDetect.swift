@@ -20,8 +20,8 @@ import Foundation
     }
 
     @nonobjc public var returnAttributes: Set<ReturnAttributes> = [.none]
-    
-    @objc public var returnAttributesString: Set<String> {
+
+    public var returnAttributesString: Set<String> {
         set {
             returnAttributes = Set(newValue.compactMap { ReturnAttributes(rawValue: $0) })
         }

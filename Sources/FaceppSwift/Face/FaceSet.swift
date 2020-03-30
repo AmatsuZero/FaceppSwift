@@ -13,7 +13,8 @@ import FoundationNetworking
 let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
 
 // MARK: - 人脸集合
-public struct FaceSet: Codable, UseFaceppClientProtocol, Hashable {
+@objc(FppFaceSet)
+@objcMembers public final class FaceSet: NSObject, Codable, UseFaceppClientProtocol {
     /// FaceSet 的标识
     public let facesetToken: String?
     /// 用户提供的FaceSet标识，如果未提供为""
@@ -33,7 +34,7 @@ public struct FaceSet: Codable, UseFaceppClientProtocol, Hashable {
         self.tags = tags
     }
 
-    public init(from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.facesetToken) {
             facesetToken = try container.decode(String.self, forKey: .facesetToken)
@@ -56,6 +57,7 @@ public struct FaceSet: Codable, UseFaceppClientProtocol, Hashable {
         } else {
             tags = nil
         }
+        super.init()
     }
 }
 
@@ -65,7 +67,8 @@ public struct FaceSet: Codable, UseFaceppClientProtocol, Hashable {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888397
  */
-public struct FaceSetGetOption: RequestProtocol {
+@objc(FppFaceSetGetOption)
+@objcMembers public final class FaceSetGetOption: NSObject, RequestProtocol {
     public var needCheckParams: Bool = true
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
@@ -172,7 +175,8 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888393
  */
-public class FaceSetBaseRequest: RequestProtocol {
+@objc(FppFaceSetBaseRequest)
+@objcMembers public class FaceSetBaseRequest: NSObject, RequestProtocol {
     public var needCheckParams: Bool = true
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
@@ -211,6 +215,7 @@ public class FaceSetBaseRequest: RequestProtocol {
         if let value = params["outer_id"] as? String {
             outerId = value
         }
+        super.init()
     }
 
     var requsetURL: URL? {
@@ -232,7 +237,8 @@ public class FaceSetBaseRequest: RequestProtocol {
     }
 }
 
-public class FaceSetsDeleteOption: FaceSetBaseRequest {
+@objc(FppFaceSetsDeleteOption)
+@objcMembers public class FaceSetsDeleteOption: FaceSetBaseRequest {
     /// 删除时是否检查FaceSet中是否存在face_token
     public var checkEmpty = true
 
@@ -291,7 +297,8 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888395
  */
-public class FacesetGetDetailOption: FaceSetBaseRequest {
+@objc(FppFacesetGetDetailOption)
+@objcMembers public class FacesetGetDetailOption: FaceSetBaseRequest {
     /**
      一个数字 n，表示开始返回的 face_token 在本 FaceSet 中的序号， n 是 [1,10000] 间的一个整数。
      
@@ -378,7 +385,8 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888401
  */
-public class FacesetUpdateOption: FaceSetBaseRequest {
+@objc(FppFacesetUpdateOption)
+@objcMembers public class FacesetUpdateOption: FaceSetBaseRequest {
     /// 在api_key下全局唯一的FaceSet自定义标识，可以用来管理FaceSet对象。最长255个字符，不能包括字符^@,&=*'"
     public var newOuterId: String?
     /// 人脸集合的名字，256个字符
@@ -491,7 +499,8 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888399
  */
-public class FaceSetRemoveOption: FaceSetBaseRequest {
+@objc(FppFaceSetRemoveOption)
+@objcMembers public class FaceSetRemoveOption: FaceSetBaseRequest {
     /// 是否删除全部
     fileprivate var removeAll = false
     /**
@@ -590,7 +599,8 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888389
  */
-public class FaceSetAddFaceOption: FaceSetBaseRequest {
+@objc(FppFaceSetAddFaceOption)
+@objcMembers public class FaceSetAddFaceOption: FaceSetBaseRequest {
     /**
      人脸标识 face_token 组成的字符串，可以是一个或者多个，用逗号分隔。最多不超过5个face_token
      */
@@ -673,7 +683,8 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/4888391
  */
-public struct FaceSetCreateOption: RequestProtocol {
+@objc(FppFaceSetCreateOption)
+@objcMembers public final class FaceSetCreateOption: NSObject, RequestProtocol {
     public var needCheckParams: Bool = true
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
@@ -700,9 +711,11 @@ public struct FaceSetCreateOption: RequestProtocol {
 
     public weak var metricsReporter: FaceppMetricsReporter?
 
-    public init() {}
+    public override init() {
+        super.init()
+    }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -731,6 +744,7 @@ public struct FaceSetCreateOption: RequestProtocol {
         if let value = params["force_merge"] as? Int {
             forceMerge = value
         }
+        super.init()
     }
 
     func paramsCheck() throws -> Bool {
@@ -832,7 +846,8 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
  
  Wiki: https://console.faceplusplus.com.cn/documents/40622157
  */
-public struct FaceSetTaskQueryOption: RequestProtocol {
+@objc(FppFaceSetTaskQueryOption)
+@objcMembers public class FaceSetTaskQueryOption: NSObject, RequestProtocol {
     public var needCheckParams: Bool = false
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
@@ -843,9 +858,10 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
 
     public init(taskId: String) {
         self.taskId = taskId
+        super.init()
     }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -861,6 +877,7 @@ public struct FaceSetTaskQueryOption: RequestProtocol {
         } else {
             taskId = ""
         }
+        super.init()
     }
 
     var requsetURL: URL? {
@@ -921,6 +938,7 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/40622166
  */
+@objc(FppFaceSetAsyncAddFaceOption)
 public class FaceSetAsyncAddFaceOption: FaceSetAddFaceOption {
     override var requsetURL: URL? {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("addface")
@@ -963,6 +981,7 @@ public extension FaceSet {
  
  Wiki: https://console.faceplusplus.com.cn/documents/40622169
  */
+@objc(FppFaceSetAsyncRemoveOption)
 public class FaceSetAsyncRemoveOption: FaceSetRemoveOption {
     override var requsetURL: URL? {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("removeface")

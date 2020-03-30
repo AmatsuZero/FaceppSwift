@@ -46,7 +46,7 @@ public class OCRDriverLicenseV1Option: CardppV1Requst {
      快速识别模式只可识别驾照正本(main sheet)正面；完备识别模式支持识别驾照正本和副本。
      */
     public var mode = Mode.fast
-    
+
     public var modeString: String {
         set {
             mode = Mode(rawValue: newValue) ?? .fast

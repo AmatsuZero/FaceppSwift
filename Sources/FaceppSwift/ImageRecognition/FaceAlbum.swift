@@ -15,16 +15,19 @@ let kFaceAlbumBaseURL: URL? = {
     return kImageppV1URL?.appendingPathComponent("facealbum")
 }()
 
-public struct FaceAlbum: Codable, UseFaceppClientProtocol, Hashable {
+@objc(FppFaceAlbum)
+public final class FaceAlbum: NSObject, Codable, UseFaceppClientProtocol {
     /// faceAlbum 的标识
     public let facealbumToken: String
 
     public init(facealbumToken: String) {
         self.facealbumToken = facealbumToken
+        super.init()
     }
 }
 
-public class FaceAlbumBaseRequest: RequestProtocol {
+@objc(FppFaceAlbumBaseRequest)
+@objcMembers public class FaceAlbumBaseRequest: NSObject, RequestProtocol {
     /// 是否检查参数
     public var needCheckParams: Bool
     /// 超时时间
@@ -37,6 +40,7 @@ public class FaceAlbumBaseRequest: RequestProtocol {
     public init(facealbumToken: String) {
         self.facealbumToken = facealbumToken
         needCheckParams = false
+        super.init()
     }
 
     public convenience init(album: FaceAlbum) {
@@ -59,6 +63,7 @@ public class FaceAlbumBaseRequest: RequestProtocol {
         } else {
             facealbumToken = ""
         }
+        super.init()
     }
 
     var requsetURL: URL? {
@@ -74,7 +79,8 @@ public class FaceAlbumBaseRequest: RequestProtocol {
  注意：免费用户可最多创建10个FaceAlbum，而付费用户没有相册数量限制。免费用户的相册自创建后会保存100天，然后会被删除。
  如果付费用户透支账户余额后，创建的FaceAlbum会保留30天，然后被删除。
  */
-public struct CreateFaceAlbumOption: RequestProtocol {
+@objc(FppCreateFaceAlbumOption)
+@objcMembers public final class CreateFaceAlbumOption: NSObject, RequestProtocol {
 
     public var needCheckParams: Bool = false
     /// 超时时间
@@ -85,15 +91,18 @@ public struct CreateFaceAlbumOption: RequestProtocol {
 
     public weak var metricsReporter: FaceppMetricsReporter?
 
-    public init() {}
+    public override init() {
+        super.init()
+    }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }
         if let value = params["timeout_interval"] as? TimeInterval {
             timeoutInterval = value
         }
+        super.init()
     }
 
     func params() throws -> (Params, [Params]?) {
@@ -133,7 +142,8 @@ public extension FaceAlbum {
 }
 
 /// 删除 FaceAlbum，该相册对应的image_id, face_token，face_token对应的group_id也都会被删除。
-public class FaceAlbumDeleteOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumDeleteOption)
+@objcMembers public class FaceAlbumDeleteOption: FaceAlbumBaseRequest {
     /// 删除时是否检查 FaceAlbum 中是否存在 face_token
     public var checkEmpty = false
 
@@ -173,7 +183,8 @@ public extension FaceAlbum {
 }
 
 /// 查找与某一分组相似的分组，用于在同一个人的人脸被分为多个组的情况下，提示用户确认两个分组的人脸是否属于同一个人。
-public class FaceAlbumFindCandidateOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumFindCandidateOption)
+@objcMembers public class FaceAlbumFindCandidateOption: FaceAlbumBaseRequest {
     /// 用以查找相似分组的人脸分组的标识GroupID 不能为 0 或者 -1
     public var groupId: String
 
@@ -261,7 +272,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumSearchImageOption: FaceppBaseRequest {
+@objc(FppFaceAlbumSearchImageOption)
+@objcMembers public class FaceAlbumSearchImageOption: FaceppBaseRequest {
     /// FaceAlbum标识
     public var facealbumToken: String
     /**
@@ -340,7 +352,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumTaskQueryBaseOption: RequestProtocol {
+@objc(FppFaceAlbumTaskQueryBaseOption)
+@objcMembers public class FaceAlbumTaskQueryBaseOption: NSObject, RequestProtocol {
     /// 异步任务的唯一标识
     public let taskId: String
     /// 超时时间
@@ -377,6 +390,7 @@ public class FaceAlbumTaskQueryBaseOption: RequestProtocol {
     }
 }
 
+@objc(FppFaceAlbumSearchImageTaskQueryOption)
 public class FaceAlbumSearchImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("searchimagetaskquery")
@@ -477,7 +491,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumUpdateFaceOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumUpdateFaceOption)
+@objcMembers public class FaceAlbumUpdateFaceOption: FaceAlbumBaseRequest {
     /// 由人脸标识 face_token 组成的字符串。至少传入一个 face_token，最多不超过10个
     public var faceTokens: [String]
     /**
@@ -599,7 +614,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAblbumGetFaceDetailOption: FaceAlbumBaseRequest {
+@objc(FppFaceAblbumGetFaceDetailOption)
+@objcMembers public class FaceAblbumGetFaceDetailOption: FaceAlbumBaseRequest {
     /// 人脸标识face_token字符串
     public let faceToken: String
 
@@ -679,7 +695,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumGetImageDetailOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumGetImageDetailOption)
+@objcMembers public class FaceAlbumGetImageDetailOption: FaceAlbumBaseRequest {
     /// 要查看图片在系统中的标识
     public let imageId: String
 
@@ -775,7 +792,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAblumGetAllOption: RequestProtocol {
+@objc(FppFaceAblumGetAllOption)
+@objcMembers public final class FaceAblumGetAllOption: NSObject, RequestProtocol {
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
     public var needCheckParams: Bool = false
@@ -850,7 +868,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumGetAlbumDetailOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumGetAlbumDetailOption)
+@objcMembers public class FaceAlbumGetAlbumDetailOption: FaceAlbumBaseRequest {
     /// 之前请求本 API 返回的 next_token 标识，用来获取下100个 face_token。默认值为空，返回 FaceAlbum 下前100个 face_token。
     public var startToken: String?
 
@@ -909,7 +928,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumAddImageOption: FaceppBaseRequest {
+@objc(FppFaceAlbumAddImageOption)
+@objcMembers public class FaceAlbumAddImageOption: FaceppBaseRequest {
     /// FaceAlbum标识
     public var facealbumToken: String
 
@@ -974,7 +994,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumAddImageAsyncOption: FaceAlbumAddImageOption {
+@objc(FppFaceAlbumAddImageAsyncOption)
+@objcMembers public class FaceAlbumAddImageAsyncOption: FaceAlbumAddImageOption {
     /**
      一个URL。API任务完成后会调用该url，通知用户任务完成。
      注：任务完成后，会向传入的 callback_url 发送一个 GET 请求，将 task_id 作为 querystring 中的 task_id 参数传递给用户，
@@ -1042,7 +1063,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumAddImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
+@objc(FppFaceAlbumAddImageTaskQueryOption)
+@objcMembers public class FaceAlbumAddImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("addimagetaskquery")
     }
@@ -1139,7 +1161,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumDeleteFaceOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumDeleteFaceOption)
+@objcMembers public class FaceAlbumDeleteFaceOption: FaceAlbumBaseRequest {
     /// 需要移除的人脸标识字符串，至少传入一个 face_token，最多不超过10个
     public var faceTokens: [String]?
     /// 需要移除的一个图片id字符串，删除该image_id拥有的所有face_token。
@@ -1227,7 +1250,8 @@ public extension FaceAlbum {
     }
 }
 
-public class FaceAlbumGroupFaceOption: FaceAlbumBaseRequest {
+@objc(FppFaceAlbumGroupFaceOption)
+@objcMembers public class FaceAlbumGroupFaceOption: FaceAlbumBaseRequest {
     public enum OperationType: String {
         /// 增量操作
         case incremental
@@ -1235,7 +1259,16 @@ public class FaceAlbumGroupFaceOption: FaceAlbumBaseRequest {
         case entirefacealbum
     }
     /// 人脸分组操作类型
-    public var operationType = OperationType.incremental
+    @nonobjc public var operationType = OperationType.incremental
+
+    public var operationTypeString: String {
+        set {
+            operationType = OperationType(rawValue: newValue) ?? .incremental
+        }
+        get {
+            operationType.rawValue
+        }
+    }
     /**
      一个URL。API任务完成后会调用该url，通知用户任务完成。
      注：任务完成后，会向传入的 callback_url 发送一个 GET 请求，将 task_id 作为 querystring 中的 task_id 参数传递给用户，
@@ -1304,6 +1337,7 @@ public extension FaceAlbum {
     }
 }
 
+@objc(FppFaceAlbumGroupFaceTaskQueryOption)
 public class FaceAlbumGroupFaceTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("groupfacetaskquery")

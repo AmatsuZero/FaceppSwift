@@ -29,7 +29,7 @@ public extension UIImage {
                mergeRate: UInt = 50,
                featureRate: UInt = 45,
                completionHandler: ((Error?, ImageppMergeFaceResponse?) -> Void)?) -> URLSessionTask? {
-        var option = ImageppMergeFaceOption()
+        let option = ImageppMergeFaceOption()
         option.templateBase64 = base64String()
         option.templateRectangle = rect1?.asFaceppRectangle()
         option.mergeBase64 = image.base64String()

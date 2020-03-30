@@ -308,6 +308,7 @@ extension RequestProtocol {
     }
 }
 
+@objc(FppCardppV1Requst)
 public class CardppV1Requst: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kCardppV1URL

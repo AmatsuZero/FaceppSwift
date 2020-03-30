@@ -184,7 +184,7 @@ public class BeautifyV2Option: BeautifyV1Option {
      默认无滤镜效果
      */
     @nonobjc public var filterType: FilterType?
-    
+
     @objc public var filterString: String? {
         set {
             if let value = newValue {

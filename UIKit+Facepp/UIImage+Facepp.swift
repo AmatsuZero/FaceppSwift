@@ -57,7 +57,7 @@ public extension UIImage {
             fppDelegate?.image(self, option: option, taskDidBeigin: task)
             return task
     }
-    
+
     @discardableResult
     func beautifyV2(whitening: UInt = 50,
                     smoothing: UInt = 50,
@@ -86,7 +86,7 @@ public extension UIImage {
             fppDelegate?.image(self, option: option, taskDidBeigin: task)
             return task
     }
-    
+
     @discardableResult
     func beautifyV1(whitening: UInt = 50,
                     smoothing: UInt = 50,
@@ -104,7 +104,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func facialFeatures(returnImageReset: Bool = false,
                         completionHandler: ((Error?, FacialFeaturesResponse?) -> Void)? = nil) -> URLSessionTask? {
@@ -120,7 +120,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func search(returnResultCount count: UInt = 1,
                 faceRectangle frame: CGRect? = nil,
@@ -138,7 +138,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func skinAnalyze(completionHandler: ((Error?, SkinAnalyzeResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = SkinAnalyzeOption(image: self)
@@ -152,7 +152,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func skinAnalyzeAdvanced(completionHandler: ((Error?, SkinAnalyzeAdvancedResponse?) -> Void)? = nil) -> URLSessionTask? {
         let option = SkinAnalyzeAdvancedOption(image: self)
@@ -165,7 +165,7 @@ public extension UIImage {
         }.request()
         return task
     }
-    
+
     @discardableResult
     func denseLandmark(returnLandMark: Set<ThousandLandMarkOption.ReturnLandMark> = .all,
                        completionHandler: ((Error?, ThousandLandmarkResponse?) -> Void)? = nil) -> URLSessionTask? {
@@ -182,13 +182,13 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     func compare(faceRect rect1: CGRect? = nil,
                  with image2: UIImage,
                  faceRect2 rect2: CGRect? = nil,
                  completionHandler: ((Error?, CompareResponse?) -> Void)? = nil) -> URLSessionTask? {
-        var option = CompareOption()
+        let option = CompareOption()
         option.metricsReporter = fppMetricsReport
         option.imageBase641 = base64String()
         option.faceRectangle1 = rect1?.asFaceppRectangle()
@@ -204,7 +204,7 @@ public extension UIImage {
         fppDelegate?.image(self, option: option, taskDidBeigin: task)
         return task
     }
-    
+
     @discardableResult
     static func compare(image1: UIImage,
                         faceRect1: CGRect? = nil,
@@ -214,14 +214,14 @@ public extension UIImage {
         return image1.compare(faceRect: faceRect1, with: image2,
                               faceRect2: faceRect2, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func faceModel(faces: ThreeDimensionFaces,
                           needTexture: Bool = false,
                           needMTL: Bool = false,
                           needCheckParams: Bool = true,
                           completionHandler: @escaping (Error?, ThreeDimensionFaceResponse?) -> Void) -> URLSessionTask? {
-        var option = ThreeDimensionFaceOption()
+        let option = ThreeDimensionFaceOption()
         option.imageBase641 = faces.front.base64String()
         option.imageBase642 = faces.left.base64String()
         option.imageBase643 = faces.right.base64String()
@@ -247,7 +247,7 @@ fileprivate extension UInt32 {
     var G: UInt32 { (self >> 8).mask8 }
     var B: UInt32 { (self >> 16).mask8 }
     var A: UInt32 { (self >> 24).mask8 }
-    
+
     static func rgbAMake(r: UInt32, g: UInt32, b: UInt32, a: UInt32) -> UInt32 {
         return r.mask8 | g.mask8 << 8 | b.mask8 << 16 | a.mask8 << 24
     }
@@ -261,14 +261,14 @@ extension UIImage {
         //计算大小缩放比例
         let imageBytes = Float(size.width * size.height * 4)
         let byteScale = sqrtf(imageBytes / maxBytes)
-        
+
         //取最大缩放比
         let scale = max(sizeScale, CGFloat(byteScale))
         // 方向尺寸都OK
         guard imageOrientation != .up || scale > 1.0  else {
             return self
         }
-        
+
         let newSize = CGSize(width: size.width / scale, height: size.height / scale)
         UIGraphicsBeginImageContext(newSize)
         draw(in: .init(origin: .zero, size: newSize))
@@ -276,15 +276,15 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return fixImage
     }
-    
+
     func imageData() -> Data? {
         return self.jpegData(compressionQuality: 1.0)
     }
-    
+
     func base64String() -> String? {
         return imageData()?.base64EncodedString(options: .lineLength64Characters)
     }
-    
+
     func crop(rect: CGRect) -> UIImage? {
         guard let imageRef = cgImage?.cropping(to: rect)  else {
             return nil
@@ -321,7 +321,7 @@ extension FacialFeaturesResponse {
 }
 
 extension ThreeDimensionFaceResponse {
-    
+
     /// 保存人脸模型
     /// - Parameters:
     ///   - folderURL: 目标文件夹
@@ -344,7 +344,7 @@ extension ThreeDimensionFaceResponse {
                 .appendingPathExtension("jpg")
             try data.write(to: dest, options: .atomic)
         }
-        
+
         // 保存.obj文件
         if let objFile = objFile,
             let data = Data(base64Encoded: objFile) {
@@ -353,7 +353,7 @@ extension ThreeDimensionFaceResponse {
                 .appendingPathExtension("obj")
             try data.write(to: dest, options: .atomic)
         }
-        
+
         // 保存.mtl文件
         if let mtlFile = mtlFile,
             let data = Data(base64Encoded: mtlFile) {
@@ -363,7 +363,7 @@ extension ThreeDimensionFaceResponse {
             try data.write(to: dest, options: .atomic)
         }
     }
-    
+
     public func getScene() throws -> SCNScene {
         guard errorMessage == nil,
             let id = requestId else {

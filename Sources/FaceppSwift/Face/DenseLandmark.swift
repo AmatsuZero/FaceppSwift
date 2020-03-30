@@ -15,8 +15,8 @@ let kFaceBaseURL = kFaceappV1URL?.appendingPathComponent("face")
     /// 人脸标识 face_token，优先使用该参数
     public var faceToken: String?
     @nonobjc public var returnLandMark: Set<ReturnLandMark>
-    
-    @objc public var returnLandMarkString: Set<String> {
+
+    public var returnLandMarkString: Set<String> {
         set {
             returnLandMark = Set(newValue.compactMap { ReturnLandMark(rawValue: $0) })
         }
@@ -29,8 +29,8 @@ let kFaceBaseURL = kFaceappV1URL?.appendingPathComponent("face")
         self.returnLandMark = returnLandMark
         super.init()
     }
-    
-    @objc public init(returnLandMarkString: Set<String>) {
+
+    public init(returnLandMarkString: Set<String>) {
         returnLandMark = Set(returnLandMarkString.compactMap {
             ReturnLandMark(rawValue: $0)
         })

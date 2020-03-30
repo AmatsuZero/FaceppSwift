@@ -9,7 +9,7 @@
 import Foundation
 
 @objc(FppCompareOption)
-@objcMembers public final class CompareOption:NSObject, RequestProtocol {
+@objcMembers public final class CompareOption: NSObject, RequestProtocol {
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
     /// 第一个人脸标识 face_token，优先使用该参数
