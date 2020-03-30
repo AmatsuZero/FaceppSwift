@@ -8,7 +8,8 @@
 
 import Foundation
 
-public struct CompareOption: RequestProtocol {
+@objc(FppCompareOption)
+@objcMembers public final class CompareOption:NSObject, RequestProtocol {
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
     /// 第一个人脸标识 face_token，优先使用该参数
@@ -60,11 +61,13 @@ public struct CompareOption: RequestProtocol {
     /// 是否检查入参
     public var needCheckParams: Bool = true
 
-    public weak var metricsReporter: FaceppMetricsReporter?
+    @nonobjc public weak var metricsReporter: FaceppMetricsReporter?
 
-    public init() {}
+    public override init() {
+        super.init()
+    }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }

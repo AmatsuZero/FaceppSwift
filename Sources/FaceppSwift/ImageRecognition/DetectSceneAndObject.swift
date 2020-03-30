@@ -8,6 +8,7 @@
 
 import Foundation
 
+@objc(FppDetectScenceAndObjectOption)
 public class ImageppDetectScenceAndObjectOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kImageppBetaURL?.appendingPathComponent("detectsceneandobject")

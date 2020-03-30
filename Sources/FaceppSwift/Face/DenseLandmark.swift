@@ -10,13 +10,30 @@ import Foundation
 
 let kFaceBaseURL = kFaceappV1URL?.appendingPathComponent("face")
 
-public class ThousandLandMarkOption: FaceppBaseRequest {
+@objc(FppThousandLandMarkOption)
+@objcMembers public class ThousandLandMarkOption: FaceppBaseRequest {
     /// 人脸标识 face_token，优先使用该参数
     public var faceToken: String?
-    public var returnLandMark: Set<ReturnLandMark>
+    @nonobjc public var returnLandMark: Set<ReturnLandMark>
+    
+    @objc public var returnLandMarkString: Set<String> {
+        set {
+            returnLandMark = Set(newValue.compactMap { ReturnLandMark(rawValue: $0) })
+        }
+        get {
+            Set(returnLandMark.map { $0.rawValue })
+        }
+    }
 
-    public init(returnLandMark: Set<ReturnLandMark>) {
+    @nonobjc public init(returnLandMark: Set<ReturnLandMark>) {
         self.returnLandMark = returnLandMark
+        super.init()
+    }
+    
+    @objc public init(returnLandMarkString: Set<String>) {
+        returnLandMark = Set(returnLandMarkString.compactMap {
+            ReturnLandMark(rawValue: $0)
+        })
         super.init()
     }
 

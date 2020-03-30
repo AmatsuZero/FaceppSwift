@@ -12,7 +12,8 @@ import Foundation
  
  Wiki: https://console.faceplusplus.com.cn/documents/5671702
  */
-public class OCRIDCardOption: CardppV1Requst {
+@objc(FppIDCardOption)
+@objcMembers public class OCRIDCardOption: CardppV1Requst {
     /**
      是否返回身份证照片合法性检查结果
      注意：2017年6月7日之后，只有正式 API Key 能够调用此参数返回分类结果，免费 API Key 调用后无法返回分类结果。

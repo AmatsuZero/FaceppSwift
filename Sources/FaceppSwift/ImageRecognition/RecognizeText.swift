@@ -9,6 +9,7 @@
 import Foundation
 
 /// 调用者提供图片文件或者图片URL，进行图片分析，找出图片中出现的文字信息。
+@objc(FppecognizeTextOption)
 public class ImageppRecognizeTextOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kImageppV1URL?.appendingPathComponent("recognizetext")

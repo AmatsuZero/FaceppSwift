@@ -8,9 +8,11 @@
 
 import Foundation
 
-public class FaceDetectOption: FaceppBaseRequest {
-
+@objc(FppFaceDetectOption)
+@objcMembers public class FaceDetectOption: FaceppBaseRequest {
+    
     /// 是否检测并返回人脸关键点。合法值为：
+    @objc(FppFaceDetectReturnLandmark)
     public enum ReturnLandmark: Int {
         /// 无特征点
         case no = 0
@@ -19,35 +21,54 @@ public class FaceDetectOption: FaceppBaseRequest {
         /// 106特征点
         case all
     }
-
+    
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性。合法值为：
     public enum ReturnAttributes: String, Option {
         case gender, age, smiling, headpose, facequality, blur, eyestatus,
         emotion, ethnicity, beauty, mouthstatus, eyegaze, skinstatus
         case none
     }
-
+    
     /// 是否检测并返回人脸关键点
     public var returnLandmark = ReturnLandmark.no
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
-    public var returnAttributes: Set<ReturnAttributes> = [.none]
+    @nonobjc public var returnAttributes: Set<ReturnAttributes> = [.none]
     ///是否检测并返回所有人脸的人脸关键点和人脸属性。如果不使用此功能，则本 API 只会对人脸面积最大的五个人脸分析人脸关键点和人脸属性
-    public var calculateAll: Bool?
+    @nonobjc public var calculateAll: Bool?
+    /// 是否检测并返回所有人脸的人脸关键点和人脸属性。如果不使用此功能，则本 API 只会对人脸面积最大的五个人脸分析人脸关键点和人脸属性 (布尔值)
+    @objc public var calculateAllObjc: NSNumber? {
+        set {
+            calculateAll = newValue?.boolValue
+        }
+        get {
+            calculateAll != nil ? NSNumber(booleanLiteral: calculateAll!) : nil
+        }
+    }
+    /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
+    @objc public var returnAttributesString: Set<String> {
+        set {
+            returnAttributes = Set(newValue.compactMap { FaceDetectOption.ReturnAttributes(rawValue: $0) })
+        }
+        get {
+            Set(returnAttributes.map { $0.rawValue })
+        }
+    }
+    
     /// 是否指定人脸框位置进行人脸检测。
     public var faceRectangle: FaceppRectangle?
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
     /// 颜值评分分数区间的最大值。默认为100
     public var beautyScoreMax = 100
-
+    
     override var requsetURL: URL? {
         return kFaceppV3URL?.appendingPathComponent("detect")
     }
-
+    
     public override init() {
         super.init()
     }
-
+    
     public required init(params: [String: Any]) {
         if let value = params["beauty_score_min"] as? Int {
             beautyScoreMin = value
@@ -79,7 +100,7 @@ public class FaceDetectOption: FaceppBaseRequest {
         }
         super.init(params: params)
     }
-
+    
     override func params() throws -> (Params, [Params]?) {
         var (params, files) = try super.params()
         params["return_landmark"] = returnLandmark.rawValue
@@ -97,12 +118,12 @@ public class FaceDetectOption: FaceppBaseRequest {
 }
 
 public struct Attributes: Codable, Hashable {
-
+    
     public struct Threshold: Codable, Hashable {
         public let threshold: Float
         public let value: Float
     }
-
+    
     public struct EyeStatusInfo: Codable, Hashable {
         /// 眼睛被遮挡的置信度
         public let occlusion: Float
@@ -117,20 +138,20 @@ public struct Attributes: Codable, Hashable {
         /// 佩戴墨镜的置信度
         public let darkGlasses: Float
     }
-
+    
     public struct Age: Codable, Hashable {
         public let value: Int
     }
     /// 年龄分析结果。返回值为一个非负整数。
     public let age: Age?
-
+    
     public struct Beauty: Codable, Hashable {
         public let femaleScore: Float
         public let maleScore: Float
     }
     /// 颜值识别结果。返回值包含以下两个字段。每个字段的值是一个浮点数，范围 [0,100]，小数点后 3 位有效数字。
     public let beauty: Beauty?
-
+    
     public struct Blur: Codable, Hashable {
         public let blurness: Threshold
         public let gaussianblur: Threshold
@@ -138,7 +159,7 @@ public struct Attributes: Codable, Hashable {
     }
     /// 人脸模糊分析结果
     public let blur: Blur?
-
+    
     public struct Emotion: Codable, Hashable {
         public let anger: Float
         public let disgust: Float
@@ -150,19 +171,19 @@ public struct Attributes: Codable, Hashable {
     }
     /// 情绪识别结果。返回值包含以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let emotion: Emotion?
-
+    
     public struct EyeStatus: Codable, Hashable {
         public let leftEyeStatus: EyeStatusInfo
         public let rightEyeStatus: EyeStatusInfo
     }
-
+    
     /// 眼睛状态信息
     public let eyestatus: EyeStatus?
     /// 人脸质量判断结果
     public let facequality: Threshold?
     /// 人脸姿势分析结果
     public let headpose: FacialHeadPose?
-
+    
     public struct SkinStatus: Codable, Hashable {
         /// 健康
         public let health: Float
@@ -173,10 +194,10 @@ public struct Attributes: Codable, Hashable {
         /// 黑眼圈
         public let darkCircle: Float
     }
-
+    
     /// 面部特征识别结果，包括以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let skinstatus: SkinStatus?
-
+    
     public struct EyeGazeInfo: Codable, Hashable {
         /// 眼球中心位置的 X 轴坐标
         public let positionXCoordinate: Float
@@ -189,17 +210,17 @@ public struct Attributes: Codable, Hashable {
         /// 眼球视线方向向量的 Z 轴分量
         public let vectorZComponent: Float
     }
-
+    
     public struct EyeGaze: Codable, Hashable {
         /// 左眼的位置与视线状态
         public let leftEyeGaze: EyeGazeInfo
         /// 右眼的位置与视线状态
         public let rightEyeGaze: EyeGazeInfo
     }
-
+    
     /// 眼球位置与视线方向信息
     public let eyegaze: EyeGaze?
-
+    
     public struct MouthStatus: Codable, Hashable {
         /// 嘴部被医用口罩或呼吸面罩遮挡的置信度
         public let surgicalMaskOrRespirator: Float
@@ -216,20 +237,21 @@ public struct Attributes: Codable, Hashable {
     public let smile: Threshold?
 }
 
-public struct FaceppRectangle: Codable, Hashable {
+@objc(FppRectangle)
+@objcMembers public final class FaceppRectangle: NSObject, Codable {
     public var top = 0
     public var left = 0
     public var width = 0
     public var height = 0
-
-    public init(top: Int, left: Int, width: Int, height: Int) {
+    
+    @objc public init(top: Int, left: Int, width: Int, height: Int) {
         self.top = top
         self.left = left
         self.width = width
         self.height = height
     }
-
-    public init?(string: String) {
+    
+    @objc public init?(string: String) {
         let pts = string
             .components(separatedBy: ",")
             .compactMap { Int($0) }
@@ -241,12 +263,16 @@ public struct FaceppRectangle: Codable, Hashable {
         width = pts[2]
         height = pts[3]
     }
+    
+    public override var description: String {
+        return "\(top),\(left),\(width),\(height)"
+    }
 }
 
 public struct FaceppPoint: Codable, Hashable {
     public let x: Float
     public let y: Float
-
+    
     public init(x: Float, y: Float) {
         self.x = x
         self.y = y
@@ -338,7 +364,7 @@ public struct LandMark: Codable, Hashable {
     public let rightEyebrowUpperLeftQuarter: FaceppPoint
     public let rightEyebrowUpperMiddle: FaceppPoint
     public let rightEyebrowUpperRightQuarter: FaceppPoint
-
+    
     // MARK: - 106个特征点：https://console.faceplusplus.com.cn/documents/13207408
     public let contourLeft10: FaceppPoint?
     public let contourLeft11: FaceppPoint?

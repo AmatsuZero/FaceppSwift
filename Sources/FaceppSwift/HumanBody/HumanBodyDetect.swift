@@ -8,7 +8,8 @@
 
 import Foundation
 
-public class HumanBodyDetectOption: FaceppBaseRequest {
+@objc(FppHumanBodyDetectOption)
+@objcMembers public class HumanBodyDetectOption: FaceppBaseRequest {
 
     public enum ReturnAttributes: String, Option {
         /// 不检测属性
@@ -18,7 +19,16 @@ public class HumanBodyDetectOption: FaceppBaseRequest {
         case lower_body_cloth = "lower_body_cloth"
     }
 
-    public var returnAttributes: Set<ReturnAttributes> = [.none]
+    @nonobjc public var returnAttributes: Set<ReturnAttributes> = [.none]
+    
+    @objc public var returnAttributesString: Set<String> {
+        set {
+            returnAttributes = Set(newValue.compactMap { ReturnAttributes(rawValue: $0) })
+        }
+        get {
+            Set(returnAttributes.map { $0.rawValue })
+        }
+    }
 
     override var requsetURL: URL? {
         return kHumanBodyV1URL?.appendingPathComponent("detect")

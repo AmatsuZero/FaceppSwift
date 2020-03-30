@@ -7,7 +7,8 @@
 
 import Foundation
 
-public struct ImageppMergeFaceOption: RequestProtocol {
+@objc(FppMergeFaceOption)
+@objcMembers public final class ImageppMergeFaceOption: NSObject, RequestProtocol {
     public var needCheckParams: Bool = true
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
@@ -54,7 +55,9 @@ public struct ImageppMergeFaceOption: RequestProtocol {
 
     public weak var metricsReporter: FaceppMetricsReporter?
 
-    public init() {}
+    public override init() {
+        super.init()
+    }
 
     public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
@@ -93,6 +96,7 @@ public struct ImageppMergeFaceOption: RequestProtocol {
         if let value = params["feature_rate"] as? UInt {
             featureRate = value
         }
+        super.init()
     }
 
     public var requsetURL: URL? {

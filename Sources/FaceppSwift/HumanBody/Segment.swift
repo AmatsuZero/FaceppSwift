@@ -12,6 +12,7 @@ import Foundation
  识别传入图片中人体的完整轮廓，进行人形抠像。
  当图像中有多个人时，暂不支持从重叠部分区分出单个人的轮廓。
  */
+@objc(FppBodySegmentV1Option)
 public class HumanBodySegmentV1Option: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kHumanBodyV1URL?.appendingPathComponent("segment")
@@ -23,9 +24,11 @@ public class HumanBodySegmentV1Option: FaceppBaseRequest {
  当图像中有多个人时，暂不支持从重叠部分区分出单个人的轮廓。
  V2 升级内容：增加抠出人像的图片返回。
  */
-public class HumanBodySegmentV2Option: FaceppBaseRequest {
+@objc(FppBodySegmentV2Option)
+@objcMembers public class HumanBodySegmentV2Option: FaceppBaseRequest {
 
     /// 抠像后的返回值
+    @objc(FppReturnGrayScale)
     public enum ReturnGrayScale: Int {
         /// 不返回灰度图，仅返回人像图片
         case figureOnly = 0

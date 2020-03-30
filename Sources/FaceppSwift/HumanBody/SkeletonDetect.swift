@@ -13,6 +13,7 @@ import Foundation
 
  支持对图片中的所有人体进行骨骼检测
  */
+@objc(FppSkeletonDetectOption)
 public class SkeletonDetectOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kHumanBodyV1URL?.appendingPathComponent("skeleton")

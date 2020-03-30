@@ -8,6 +8,7 @@
 
 import Foundation
 
+@objc(FppBeautifyV1Option)
 public class BeautifyV1Option: FaceppBaseRequest {
     /**
      
@@ -17,7 +18,7 @@ public class BeautifyV1Option: FaceppBaseRequest {
      
      本参数默认值为 V1默认值为100，V2为50
      */
-    public var whitening: UInt
+    @objc public var whitening: UInt
     /**
      磨皮程度，取值范围 [0,100]
      
@@ -25,15 +26,15 @@ public class BeautifyV1Option: FaceppBaseRequest {
      
      本参数默认值为 V1默认值为100，V2为50
      */
-    public var smoothing: UInt
+    @objc public var smoothing: UInt
 
-    public override init() {
+    @objc public override init() {
         whitening = 100
         smoothing = 100
         super.init()
     }
 
-    required public init(params: [String: Any]) {
+    @objc required public init(params: [String: Any]) {
         if let value = params["whitening"] as? UInt {
             whitening = value
         } else {
@@ -72,6 +73,7 @@ public class BeautifyV1Option: FaceppBaseRequest {
     }
 }
 
+@objc(FppBeautifyV2Option)
 public class BeautifyV2Option: BeautifyV1Option {
     /**
      瘦脸程度，取值范围 [0,100]
@@ -80,7 +82,7 @@ public class BeautifyV2Option: BeautifyV1Option {
      
      本参数默认值为50
      */
-    public var thinface: UInt = 50
+    @objc public var thinface: UInt = 50
     /**
      小脸程度，取值范围 [0,100]
      
@@ -88,7 +90,7 @@ public class BeautifyV2Option: BeautifyV1Option {
      
      本参数默认值为50
      */
-    public var shrinkFace: UInt = 50
+    @objc public var shrinkFace: UInt = 50
     /**
      大眼程度，取值范围 [0,100]
      
@@ -96,7 +98,7 @@ public class BeautifyV2Option: BeautifyV1Option {
      
      本参数默认值为50
      */
-    public var enlargeEye: UInt = 50
+    @objc public var enlargeEye: UInt = 50
     /**
      去眉毛程度，取值范围 [0,100]
      
@@ -104,7 +106,7 @@ public class BeautifyV2Option: BeautifyV1Option {
      
      本参数默认值为50
      */
-    public var removeEyebrow: UInt = 50
+    @objc public var removeEyebrow: UInt = 50
 
     public enum FilterType: String {
         /// 黑白
@@ -181,19 +183,30 @@ public class BeautifyV2Option: BeautifyV1Option {
      
      默认无滤镜效果
      */
-    public var filterType: FilterType?
+    @nonobjc public var filterType: FilterType?
+    
+    @objc public var filterString: String? {
+        set {
+            if let value = newValue {
+                filterType = FilterType(rawValue: value)
+            }
+        }
+        get {
+            filterType?.rawValue
+        }
+    }
 
     override var requsetURL: URL? {
         return kFaceappV2URL?.appendingPathComponent("beautify")
     }
 
-    public override init() {
+    @objc public override init() {
         super.init()
         whitening = 50
         smoothing = 50
     }
 
-    required public init(params: [String: Any]) {
+    @objc required public init(params: [String: Any]) {
         var params = params
         if let value = params["thin_face"] as? UInt {
             thinface = value

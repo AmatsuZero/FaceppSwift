@@ -11,7 +11,8 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public class SearchOption: FaceppBaseRequest {
+@objc(FppSearchOption)
+@objcMembers public class SearchOption: FaceppBaseRequest {
     /// 进行搜索的目标人脸的 face_token，优先使用该参数
     public var faceToken: String?
     /// 用来搜索的 FaceSet 的标识

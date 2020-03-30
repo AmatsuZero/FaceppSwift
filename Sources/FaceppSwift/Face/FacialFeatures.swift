@@ -8,7 +8,8 @@
 
 import Foundation
 
-public class FacialFeaturesOption: FaceppBaseRequest {
+@objc(FppFacialFeaturesOption)
+@objcMembers public class FacialFeaturesOption: FaceppBaseRequest {
     /// 是否返回人脸矫正后图片。合法值为：
     public var returnImageReset = false
 

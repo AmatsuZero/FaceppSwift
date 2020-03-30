@@ -7,6 +7,7 @@
 
 import Foundation
 
+@objc(FppBankCardV1Option)
 public class OCRBankCardV1Option: CardppV1Requst {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("ocrbankcard")
@@ -55,6 +56,7 @@ public struct OCRBankCardResponse: FaceppResponseProtocol {
     public let bankCards: [Card]?
 }
 
+@objc(FppBankCardBetaOptio)
 public class OCRBankCardBetaOption: CardppV1Requst {
     override var requsetURL: URL? {
         return kCardppBetaURL?.appendingPathComponent("ocrbankcard")

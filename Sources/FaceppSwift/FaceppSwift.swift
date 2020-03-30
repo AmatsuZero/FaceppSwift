@@ -3,16 +3,17 @@ import Foundation
 import FoundationNetworking
 #endif
 
+@objc(FppClient)
 public class FaceppClient: NSObject {
     let apiKey: String
     let apiSecret: String
     lazy var session: URLSession = {
         return URLSession(configuration: .default, delegate: self, delegateQueue: nil)
     }()
-    public static private(set) var shared: FaceppClient?
+    @objc public static private(set) var shared: FaceppClient?
     var tasksMap = [URLSessionTask: RequestProtocol]()
 
-    public class func initialization(key: String, secret: String) {
+    @objc public class func initialization(key: String, secret: String) {
         #if os(Linux)
         if shared == nil { // 原来的 Dispatch once 写法在Linux上无法通过编译，退化
             shared = FaceppClient(apikey: key, apiSecret: secret)
@@ -25,7 +26,7 @@ public class FaceppClient: NSObject {
     }
 
     /// 最大并发请求数
-    public var maxRequestConut: Int {
+    @objc public var maxRequestConut: Int {
         get {
             session.configuration.httpMaximumConnectionsPerHost
         }
@@ -166,32 +167,33 @@ extension FaceppClient {
     }
 }
 
-public class FaceppBaseRequest: RequestProtocol {
+@objc(FppFaceppBaseRequest)
+public class FaceppBaseRequest: NSObject, RequestProtocol {
     /// 超时时间
-    public var timeoutInterval: TimeInterval = 60
+    @objc public var timeoutInterval: TimeInterval = 60
     /// 图片的URL
-    public var imageURL: URL?
+    @objc public var imageURL: URL?
     /**
      一个图片，二进制文件，需要用post multipart/form-data的方式上传。图像存储尺寸不能超过2MB，像素尺寸的长或宽都不能超过4096像素。
      
      如果同时传入了image_url和image_file参数，本API将使用image_file参数。
      */
-    public var imageFile: URL?
+    @objc public var imageFile: URL?
     /**
      base64编码的二进制图片数据
      
      如果同时传入了image_url、image_file和image_base64参数，本API使用顺序为image_file优先，image_url最低。
      */
-    public var imageBase64: String?
+    @objc public var imageBase64: String?
 
     /// 是否检查参数设置
-    public var needCheckParams: Bool = true
+    @objc public var needCheckParams: Bool = true
 
-    public weak var metricsReporter: FaceppMetricsReporter?
+    @nonobjc public weak var metricsReporter: FaceppMetricsReporter?
 
-    public init() {}
+    @objc public override init() {}
 
-    required public init(params: [String: Any]) {
+    @objc required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -211,6 +213,7 @@ public class FaceppBaseRequest: RequestProtocol {
         if let value = params["image_base64"] as? String {
             imageBase64 = value
         }
+        super.init()
     }
 
     var requsetURL: URL? {

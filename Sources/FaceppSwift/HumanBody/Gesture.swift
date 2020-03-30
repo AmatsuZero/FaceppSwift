@@ -13,7 +13,8 @@ import Foundation
  识别出的手部位置会以一个矩形框表示。矩形框包含的范围从手腕到指尖。
  注意：本算法目前是专为移动设备自拍场景设计，在其他场景下对手势的识别精度可能不足。
  */
-public class HumanBodyGestureOption: FaceppBaseRequest {
+@objc(FppHumanBodyGestureOption)
+@objcMembers public class HumanBodyGestureOption: FaceppBaseRequest {
     /// 是否计算并返回每个手的手势信息
     public var returnGesture = true
 

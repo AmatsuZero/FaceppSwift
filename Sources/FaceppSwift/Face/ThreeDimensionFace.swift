@@ -8,7 +8,8 @@
 
 import Foundation
 
-public struct ThreeDimensionFaceOption: RequestProtocol {
+@objc(FppThreeDimensionFaceOption)
+@objcMembers public class ThreeDimensionFaceOption: NSObject, RequestProtocol {
 
     public var needCheckParams: Bool = true
     /// 超时时间
@@ -54,9 +55,9 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
 
     public weak var metricsReporter: FaceppMetricsReporter?
 
-    public init() {}
+    public override init() {}
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         }
@@ -96,6 +97,7 @@ public struct ThreeDimensionFaceOption: RequestProtocol {
         if let value = params["mtl"] as? Int {
             needMtl = value == 1
         }
+        super.init()
     }
 
     func paramsCheck() throws -> Bool {

@@ -8,6 +8,7 @@
 
 import Foundation
 
+@objc(FppDriverLicenseV1Option)
 public class OCRDriverLicenseV1Option: CardppV1Requst {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("ocrdriverlicense")
@@ -18,7 +19,8 @@ public class OCRDriverLicenseV1Option: CardppV1Requst {
   检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息。
  只可识别驾照正本(main sheet)正面和副本(second sheet)正面，一张照片最多可识别一个正本正面和一个副本正面。
  */
-public class OCRDriverLicenseV2Option: CardppV1Requst {
+@objc(FppDriverLicenseV2Option)
+@objcMembers public class OCRDriverLicenseV2Option: CardppV1Requst {
     /**
      
      当传入照片输出OCR结果时，是否同时返回置信度
@@ -44,6 +46,15 @@ public class OCRDriverLicenseV2Option: CardppV1Requst {
      快速识别模式只可识别驾照正本(main sheet)正面；完备识别模式支持识别驾照正本和副本。
      */
     public var mode = Mode.fast
+    
+    public var modeString: String {
+        set {
+            mode = Mode(rawValue: newValue) ?? .fast
+        }
+        get {
+            mode.rawValue
+        }
+    }
 
     override var requsetURL: URL? {
         return kCardppV2URL?.appendingPathComponent("ocrdriverlicense")

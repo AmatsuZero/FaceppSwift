@@ -11,6 +11,7 @@ import Foundation
  /// 调用者传入一张图片文件或图片URL，检测并返回图片中车牌框并识别车牌颜色和车牌号。
  当传入图片中有多个车牌时，按照车牌框大小排序依次输出。
  */
+@objc(FppLicensePlateOption)
 public class ImageppLicensePlateOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kImageppV1URL?.appendingPathComponent("licenseplate")

@@ -9,6 +9,7 @@
 import Foundation
 
 /// 该API可对人脸图片，进行面部皮肤状态检测分析。
+@objc(FppSkinAnalyzeOption)
 public class SkinAnalyzeOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("skinanalyze")
@@ -153,6 +154,7 @@ extension SkinAnalyzeHasResult {
 }
 
 /// 该API可对人脸图片，进行面部皮肤状态检测分析。
+@objc(FppSkinAnalyzeAdvancedOption)
 public class SkinAnalyzeAdvancedOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("skinanalyze_advanced")

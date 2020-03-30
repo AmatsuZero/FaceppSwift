@@ -21,7 +21,7 @@ struct RuntimeError: Swift.Error, CustomStringConvertible {
 }
 
 extension FaceppRectangle: ExpressibleByArgument {
-    public init?(argument: String) {
+    public convenience init?(argument: String) {
         self.init(string: argument)
     }
 }

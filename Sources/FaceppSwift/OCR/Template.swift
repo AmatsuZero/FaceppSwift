@@ -7,7 +7,8 @@
 
 import Foundation
 
-public class OCRTemplateOption: CardppV1Requst {
+@objc(FppTemplateOption)
+@objcMembers public class OCRTemplateOption: CardppV1Requst {
     /// 指定的模板ID（模版ID在创建模板后由系统自动生成）
     public var templateId: String
     /**

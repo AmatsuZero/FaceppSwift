@@ -7,13 +7,14 @@
 
 import Foundation
 
-public struct FaceSetUserIdOption: RequestProtocol {
+@objc(FppFaceSetUserIdOption)
+@objcMembers public final class FaceSetUserIdOption: NSObject, RequestProtocol {
 
     public var timeoutInterval: TimeInterval = 60
 
     public var needCheckParams: Bool = true
 
-    public var metricsReporter: FaceppMetricsReporter?
+    @nonobjc public var metricsReporter: FaceppMetricsReporter?
 
     /// 人脸标识face_token
     public var faceToken: String
@@ -24,9 +25,10 @@ public struct FaceSetUserIdOption: RequestProtocol {
     public init(token: String, id: String) {
         self.faceToken = token
         self.userId = id
+        super.init()
     }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -47,6 +49,7 @@ public struct FaceSetUserIdOption: RequestProtocol {
         } else {
             userId = ""
         }
+        super.init()
     }
 
     var requsetURL: URL? {
@@ -87,12 +90,13 @@ public struct FaceSetUserIdResponse: FaceppResponseProtocol {
     public let faceToken: String?
 }
 
-public struct FaceGetDetailOption: RequestProtocol {
+@objc(FppFaceGetDetailOption)
+@objcMembers public final class FaceGetDetailOption: NSObject, RequestProtocol {
     public var timeoutInterval: TimeInterval = 60
 
     public var needCheckParams: Bool = false
 
-    public var metricsReporter: FaceppMetricsReporter?
+    @nonobjc public var metricsReporter: FaceppMetricsReporter?
 
     public var faceToken: String
 
@@ -100,7 +104,7 @@ public struct FaceGetDetailOption: RequestProtocol {
         self.faceToken = token
     }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -116,6 +120,7 @@ public struct FaceGetDetailOption: RequestProtocol {
         } else {
             faceToken = ""
         }
+        super.init()
     }
 
     var requsetURL: URL? {
@@ -148,7 +153,8 @@ public struct FaceGetDetailResponse: FaceppResponseProtocol {
     public let facesets: [FaceSet]?
 }
 
-public struct FaceAnalyzeOption: RequestProtocol {
+@objc(FppFaceAnalyzeOption)
+@objcMembers public class FaceAnalyzeOption: NSObject, RequestProtocol {
     public var timeoutInterval: TimeInterval = 60
 
     public var needCheckParams: Bool = true
@@ -159,7 +165,17 @@ public struct FaceAnalyzeOption: RequestProtocol {
     /// 是否检测并返回人脸关键点
     public var returnLandmark = FaceDetectOption.ReturnLandmark.no
     /// 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
-    public var returnAttributes: Set<FaceDetectOption.ReturnAttributes> = [.none]
+    @nonobjc public var returnAttributes: Set<FaceDetectOption.ReturnAttributes> = [.none]
+    
+    @objc public var returnAttributesString: Set<String> {
+        set {
+            returnAttributes = Set(newValue.compactMap { FaceDetectOption.ReturnAttributes(rawValue: $0) })
+        }
+        get {
+            Set(returnAttributes.map { $0.rawValue })
+        }
+    }
+    
     /// 颜值评分分数区间的最小值。默认为0
     public var beautyScoreMin = 0
     /// 颜值评分分数区间的最大值。默认为100
@@ -175,7 +191,7 @@ public struct FaceAnalyzeOption: RequestProtocol {
         self.faceTokens = tokens
     }
 
-    public init(params: [String: Any]) {
+    required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
         } else {
@@ -213,6 +229,7 @@ public struct FaceAnalyzeOption: RequestProtocol {
         } else {
             returnAttributes = [.none]
         }
+        super.init()
     }
 
     func paramsCheck() throws -> Bool {

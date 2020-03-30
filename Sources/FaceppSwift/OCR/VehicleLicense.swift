@@ -7,6 +7,7 @@
 
 import Foundation
 
+@objc(FppVehicleLicenseOption)
 public class OCRVehicleLicenseOption: CardppV1Requst {
     public override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("ocrvehiclelicense")
