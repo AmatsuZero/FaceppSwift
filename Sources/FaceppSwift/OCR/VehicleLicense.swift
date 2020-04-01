@@ -14,12 +14,14 @@ public class OCRVehicleLicenseOption: CardppV1Requst {
     }
 }
 
-public struct OCRVehicleLicenseResponse: FaceppResponseProtocol {
+@objc(FppVehicleLicenseResponse)
+@objcMembers public final class OCRVehicleLicenseResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
-    public struct Card: Codable, Hashable {
+    @objc(FppVehicleLicenseCard)
+    @objcMembers public final class Card: NSObject, Codable {
         /// 证件版本。
         public let type: OCRType
         /// 号牌号码

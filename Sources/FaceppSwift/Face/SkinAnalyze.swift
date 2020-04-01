@@ -16,7 +16,9 @@ public class SkinAnalyzeOption: FaceppBaseRequest {
     }
 }
 
-public struct SkinAnalyzeEyelids: Codable, Hashable {
+@objc(FppSkinAnalyzeEyelids)
+@objcMembers public final class SkinAnalyzeEyelids: NSObject, Codable {
+    @objc(FppSkinAnalyzeEyelidType)
     public enum EyelidType: Int, Codable {
         /// 单眼皮
         case singleFoldEyelid = 0
@@ -34,12 +36,26 @@ public struct SkinAnalyzeEyelids: Codable, Hashable {
     }
 }
 
-public struct SkinAnalyzeHasResult: Codable, Hashable {
+@objc(FppSkinAnalyzeHasResul)
+@objcMembers public final class SkinAnalyzeHasResult: NSObject, Codable {
     public let doseExist: Bool
     public let confidence: Double
+
+    private enum CodingKeys: String, CodingKey {
+        case doseExist = "value"
+        case confidence
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let value = try container.decode(Int.self, forKey: .doseExist)
+        doseExist = value == 1
+        confidence = try container.decode(Double.self, forKey: .confidence)
+    }
 }
 
-public struct SkinAnalyzeResponse: FaceppResponseProtocol, Hashable {
+@objc(FppSkinAnalyzeResponse)
+@objcMembers public final class SkinAnalyzeResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -67,7 +83,8 @@ public struct SkinAnalyzeResponse: FaceppResponseProtocol, Hashable {
      */
     public let warning: [String]?
 
-    public struct Result: Codable, Hashable {
+    @objc(FppSkinAnalyzeResult)
+    @objcMembers public final class Result: NSObject, Codable {
         /// 左眼双眼皮检测结果：
         public let leftEyelids: SkinAnalyzeEyelids?
         /// 右眼双眼皮检测结果：
@@ -107,7 +124,10 @@ public struct SkinAnalyzeResponse: FaceppResponseProtocol, Hashable {
     public let result: Result?
 }
 
-public struct SkinAnalyzeSkinType: Codable, Hashable {
+@objc(FppSkinAnalyzeSkinType)
+@objcMembers public final class SkinAnalyzeSkinType: NSObject, Codable {
+
+    @objc(FppSkinAnalyzeSkinEnum)
     public enum SkinType: Int, Codable {
         /// 油性皮肤
         case oilySkin = 0
@@ -123,7 +143,8 @@ public struct SkinAnalyzeSkinType: Codable, Hashable {
 
     public let details: SkinTypeResult
 
-    public struct SkinTypeResult: Codable, Hashable {
+    @objc(FppSkinAnalyzeSkinTypeResult)
+    @objcMembers public final class SkinTypeResult: NSObject, Codable {
         public let oilySkin: SkinAnalyzeHasResult
         public let drySkin: SkinAnalyzeHasResult
         public let neutralSkin: SkinAnalyzeHasResult
@@ -140,19 +161,6 @@ extension SkinAnalyzeSkinType.SkinTypeResult {
     }
 }
 
-extension SkinAnalyzeHasResult {
-    private enum CodingKeys: String, CodingKey {
-        case doseExist = "value"
-        case confidence
-    }
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let value = try container.decode(Int.self, forKey: .doseExist)
-        doseExist = value == 1
-        confidence = try container.decode(Double.self, forKey: .confidence)
-    }
-}
-
 /// 该API可对人脸图片，进行面部皮肤状态检测分析。
 @objc(FppSkinAnalyzeAdvancedOption)
 public class SkinAnalyzeAdvancedOption: FaceppBaseRequest {
@@ -161,7 +169,8 @@ public class SkinAnalyzeAdvancedOption: FaceppBaseRequest {
     }
 }
 
-public struct SkinAnalyzeAdvancedResponse: FaceppResponseProtocol {
+@objc(FppSkinAnalyzeAdvancedResponse)
+@objcMembers public final class SkinAnalyzeAdvancedResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -183,6 +192,7 @@ public struct SkinAnalyzeAdvancedResponse: FaceppResponseProtocol {
     public let warning: [String]?
 
     /// 肤色
+    @objc(FppSkinColorType)
     public enum SkinColorType: Int, Codable {
         /// 透白
         case seeThroughWhite = 0
@@ -196,16 +206,20 @@ public struct SkinAnalyzeAdvancedResponse: FaceppResponseProtocol {
         case dark
     }
 
-    public struct SkinColor: Codable, Hashable {
+    @objc(FppSkinColor)
+    @objcMembers public final class SkinColor: NSObject, Codable {
         /// 肤色
         public let value: SkinColorType
         /// 置信度
         public let confidence: Float
     }
-    public struct SkinAge: Codable, Hashable {
+
+    @objc(FppSkinAge)
+    @objcMembers public final class SkinAge: NSObject, Codable {
         public let value: Int
     }
 
+    @objc(FppBlackHeadDegree)
     public enum BlackHeadDegree: Int, Codable {
         /// 无
         case none = 0
@@ -217,16 +231,19 @@ public struct SkinAnalyzeAdvancedResponse: FaceppResponseProtocol {
         case serious
     }
 
-    public struct BlackHead: Codable, Hashable {
+    @objc(FppBlackHead)
+    @objcMembers public final class BlackHead: NSObject, Codable {
         public let value: BlackHeadDegree
         public let confidence: Double
     }
 
-    public struct Spot: Codable, Hashable {
+    @objc(FppSkinAnalysisSpot)
+    @objcMembers public final class Spot: NSObject, Codable {
         public let rectangle: [FaceppRectangle]
     }
 
-    public struct Result: Codable, Hashable {
+    @objc(FppSkinAnalysisResult)
+    @objcMembers public final class Result: NSObject, Codable {
         /// 肤色
         public let skinColor: SkinColor?
         /// 肤龄

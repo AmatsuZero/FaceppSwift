@@ -117,14 +117,16 @@ import Foundation
     }
 }
 
-public struct Attributes: Codable, Hashable {
-
-    public struct Threshold: Codable, Hashable {
+@objc(FppFaceAttributes)
+@objcMembers public final class Attributes: NSObject, Codable {
+    @objc(FppFaceAttributesThreshold)
+    @objcMembers public final class Threshold: NSObject, Codable {
         public let threshold: Float
         public let value: Float
     }
 
-    public struct EyeStatusInfo: Codable, Hashable {
+    @objc(FppFaceAttributesEyeStatusInfo)
+    @objcMembers public final class EyeStatusInfo: NSObject, Codable {
         /// 眼睛被遮挡的置信度
         public let occlusion: Float
         /// 佩戴普通眼镜且睁眼的置信度
@@ -139,20 +141,23 @@ public struct Attributes: Codable, Hashable {
         public let darkGlasses: Float
     }
 
-    public struct Age: Codable, Hashable {
+    @objc(FppFaceAttributessAge)
+    @objcMembers public final class Age: NSObject, Codable {
         public let value: Int
     }
     /// 年龄分析结果。返回值为一个非负整数。
     public let age: Age?
 
-    public struct Beauty: Codable, Hashable {
+    @objc(FppFaceAttributesBeauty)
+    @objcMembers public final class Beauty: NSObject, Codable {
         public let femaleScore: Float
         public let maleScore: Float
     }
     /// 颜值识别结果。返回值包含以下两个字段。每个字段的值是一个浮点数，范围 [0,100]，小数点后 3 位有效数字。
     public let beauty: Beauty?
 
-    public struct Blur: Codable, Hashable {
+    @objc(FppFaceAttributesBlur)
+    @objcMembers public final class Blur: NSObject, Codable {
         public let blurness: Threshold
         public let gaussianblur: Threshold
         public let motionblur: Threshold
@@ -160,7 +165,8 @@ public struct Attributes: Codable, Hashable {
     /// 人脸模糊分析结果
     public let blur: Blur?
 
-    public struct Emotion: Codable, Hashable {
+    @objc(FppFaceAttributesEmotion)
+    @objcMembers public final class Emotion: NSObject, Codable {
         public let anger: Float
         public let disgust: Float
         public let fear: Float
@@ -172,7 +178,8 @@ public struct Attributes: Codable, Hashable {
     /// 情绪识别结果。返回值包含以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let emotion: Emotion?
 
-    public struct EyeStatus: Codable, Hashable {
+    @objc(FppFaceAttributesEyeStatus)
+    @objcMembers public final class EyeStatus: NSObject, Codable {
         public let leftEyeStatus: EyeStatusInfo
         public let rightEyeStatus: EyeStatusInfo
     }
@@ -184,7 +191,8 @@ public struct Attributes: Codable, Hashable {
     /// 人脸姿势分析结果
     public let headpose: FacialHeadPose?
 
-    public struct SkinStatus: Codable, Hashable {
+    @objc(FppFaceAttributesSkinStatus)
+    @objcMembers public final class SkinStatus: NSObject, Codable {
         /// 健康
         public let health: Float
         /// 色斑
@@ -198,7 +206,8 @@ public struct Attributes: Codable, Hashable {
     /// 面部特征识别结果，包括以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字
     public let skinstatus: SkinStatus?
 
-    public struct EyeGazeInfo: Codable, Hashable {
+    @objc(FppFaceAttributesEyeGazeInfo)
+    @objcMembers public final class EyeGazeInfo: NSObject, Codable {
         /// 眼球中心位置的 X 轴坐标
         public let positionXCoordinate: Float
         /// 眼球中心位置的 Y 轴坐标
@@ -211,7 +220,8 @@ public struct Attributes: Codable, Hashable {
         public let vectorZComponent: Float
     }
 
-    public struct EyeGaze: Codable, Hashable {
+    @objc(FppFaceAttributesEyeGaze)
+    @objcMembers public final class EyeGaze: NSObject, Codable {
         /// 左眼的位置与视线状态
         public let leftEyeGaze: EyeGazeInfo
         /// 右眼的位置与视线状态
@@ -221,7 +231,8 @@ public struct Attributes: Codable, Hashable {
     /// 眼球位置与视线方向信息
     public let eyegaze: EyeGaze?
 
-    public struct MouthStatus: Codable, Hashable {
+    @objc(FppFaceAttributesMouthStatus)
+    @objcMembers public final class MouthStatus: NSObject, Codable {
         /// 嘴部被医用口罩或呼吸面罩遮挡的置信度
         public let surgicalMaskOrRespirator: Float
         /// 嘴部被其他物体遮挡的置信度
@@ -269,7 +280,8 @@ public struct Attributes: Codable, Hashable {
     }
 }
 
-public struct FaceppPoint: Codable, Hashable {
+@objc(FppPoint)
+@objcMembers public final class FaceppPoint: NSObject, Codable {
     public let x: Float
     public let y: Float
 
@@ -279,7 +291,8 @@ public struct FaceppPoint: Codable, Hashable {
     }
 }
 
-public struct LandMark: Codable, Hashable {
+@objc(FppFaceDetectLandMark)
+@objcMembers public final class LandMark: NSObject, Codable {
     // MARK: - 83个特征点：https://console.faceplusplus.com.cn/documents/5671270
     public let contourChin: FaceppPoint
     public let contourLeft1: FaceppPoint
@@ -402,14 +415,16 @@ public struct LandMark: Codable, Hashable {
     public let mouthUupperLipRightContour4: FaceppPoint?
 }
 
-public struct Face: Codable, Hashable {
+@objc(FppFace)
+@objcMembers public final class Face: NSObject, Codable {
     public let faceToken: String
     public let faceRectangle: FaceppRectangle
     public let attributes: Attributes?
     public let landmark: LandMark?
 }
 
-public struct FaceDetectResponse: FaceppResponseProtocol, Hashable {
+@objc(FppFaceDetectResponse)
+@objcMembers public class FaceDetectResponse: NSObject, FaceppResponseProtocol {
     public let requestId: String?
     public let imageId: String?
     public let timeUsed: Int?

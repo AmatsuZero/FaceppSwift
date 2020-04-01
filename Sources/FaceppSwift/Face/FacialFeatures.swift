@@ -37,7 +37,8 @@ import Foundation
     }
 }
 
-public struct FacialFeaturesResponse: FaceppResponseProtocol {
+@objc(FppFacialFeaturesResponse)
+@objcMembers public final class FacialFeaturesResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -59,7 +60,8 @@ public struct FacialFeaturesResponse: FaceppResponseProtocol {
 }
 
 /// 三庭
-public struct Threeparts: Codable, Hashable {
+@objc(FppThreeparts)
+@objcMembers public final class Threeparts: NSObject, Codable {
     /// 返回三庭比例，保留至小数点后两位，若为0，则返回null
     public let partsRation: String?
 
@@ -72,13 +74,18 @@ public struct Threeparts: Codable, Hashable {
         case faceupShort = "faceup_short"
     }
 
-    public struct OnePart: Codable, Hashable {
+    @objc(FppThreepartsOnePart)
+    @objcMembers public final class OnePart: NSObject, Codable {
         /// 上庭长度（若为0或无法判断，则返回null）
         public let faceupLength: Float?
         /// 上庭占比（若为0或无法判断，则返回null）
         public let faceupRatio: Float?
         /// 上庭判断结果（若为0或无法判断，则返回null）
-        public let faceupResult: FaceupResult?
+        @nonobjc public let faceupResult: FaceupResult?
+        /// 上庭判断结果（若为0或无法判断，则返回null）
+        public var faceupResultString: String? {
+            return faceupResult?.rawValue
+        }
     }
     /// 返回上庭分析结果，距离单位为mm，保留至小数点后两位
     public let onePart: OnePart
@@ -92,14 +99,18 @@ public struct Threeparts: Codable, Hashable {
         case facemidShort = "facemid_short"
     }
 
-    public struct TwoPart: Codable, Hashable {
+    @objc(FppFppThreepartsTwoPart)
+    @objcMembers public final class TwoPart: NSObject, Codable {
         /// 中庭长度（若为0或无法判断，则返回null）
         public let facemidLength: Float?
         /// 中庭占比（若为0或无法判断，则返回null）
         public let facemidRatio: Float?
-
         /// 中庭判断结果（若为0或无法判断，则返回null）
         public let facemidResult: FacemidResult?
+         /// 中庭判断结果（若为0或无法判断，则返回null）
+        public var facemidResultString: String? {
+            return facemidResult?.rawValue
+        }
     }
     /// 返回中庭分析结果，包括以下属性，距离单位为mm，保留至小数点后两位
     public let twoPart: TwoPart?
@@ -113,18 +124,23 @@ public struct Threeparts: Codable, Hashable {
         case facedownShort = "facedown_short"
     }
 
-    public struct ThreePart: Codable, Hashable {
+    @objc(FppFppThreepartsThreePart)
+    @objcMembers public final class ThreePart: NSObject, Codable {
         /// 下庭长度（若为0或无法判断，则返回null）
         public let facedownLength: Float?
         /// 下庭占比（若为0或无法判断，则返回null）
         public let facedownRatio: Float?
-
         /// 下庭判断结果
         public let facedownResult: FacedownResult?
+        /// 下庭判断结果
+        public var facedownResultString: String? {
+            return facedownResult?.rawValue
+        }
     }
 }
 
-public struct FiveEyes: Codable, Hashable {
+@objc(FppFiveEyes)
+@objcMembers public final class FiveEyes: NSObject, Codable {
     /// 返回五眼比例，保留至小数点后两位，若出现0，则返回null
     public let eyesRatio: String?
 
@@ -137,13 +153,18 @@ public struct FiveEyes: Codable, Hashable {
         case righteyeEmptyLong = "righteye_empty_long"
     }
 
-    public struct OneEye: Codable, Hashable {
+    @objc(FppFiveEyesOneEye)
+    @objcMembers public final class OneEye: NSObject, Codable {
         /// 右外眼角颧弓留白距离（若为0或无法判断，则返回null）
         public let righteyeEmptyLength: Float?
         /// 右外眼角颧弓留白占比（若为0或无法判断，则返回null）
         public let righteyeEmptyRatio: Float?
         /// 五眼右侧判断结果
-        public let righteyeEmptyResult: RighteyeEmptyResult?
+        @nonobjc public let righteyeEmptyResult: RighteyeEmptyResult?
+        /// 五眼右侧判断结果
+        public var righteyeEmptyResultString: String? {
+            righteyeEmptyResult?.rawValue
+        }
     }
     /// 返回右眼宽度分析结果，距离单位为mm，保留至小数点后两位，若为0，则返回null
     public let righteye: Float?
@@ -157,13 +178,18 @@ public struct FiveEyes: Codable, Hashable {
         case eyeinLong = "eyein_long"
     }
 
-    public struct ThreeEye: Codable, Hashable {
+    @objc(FppFiveEyesThreeEye)
+    @objcMembers public final class ThreeEye: NSObject, Codable {
         /// 内眼角间距（若为0或无法判断，则返回null）
         public let eyeinLength: Float?
         /// 内眼角间距占比（若为0或无法判断，则返回null）
         public let eyeinRatio: Float?
         /// 内眼角间距判断结果（若为0或无法判断，则返回null）
         public let eyeinResult: EyeinResult?
+        /// 内眼角间距判断结果（若为0或无法判断，则返回null）
+        public var eyeinResultString: String? {
+            eyeinResult?.rawValue
+        }
     }
     /// 返回左眼宽度分析结果，距离单位为mm，保留至小数点后两位，若为0，则返回null
     public let lefteye: Float?
@@ -177,7 +203,8 @@ public struct FiveEyes: Codable, Hashable {
         case lefteyeEmptyLong = "lefteye_empty_long"
     }
 
-    public struct FiveEye: Codable, Hashable {
+    @objc(FppFiveEyesFiveEye)
+    @objcMembers public final class FiveEye: NSObject, Codable {
         /// 左外眼角颧弓留白 （若为0或无法判断，则返回null）
         public let lefteyeEmptyLength: Float?
         /// 左外眼角颧弓留白占比（若为0或无法判断，则返回null）
@@ -187,7 +214,8 @@ public struct FiveEyes: Codable, Hashable {
     }
 }
 
-public struct FacialFeaturesFace: Codable, Hashable {
+@objc(FppFacialFeaturesFace)
+@objcMembers public final class FacialFeaturesFace: NSObject, Codable {
     /// 颞部宽度（若为0则返回null）
     public let tempusLength: Float?
     /// 颧骨宽度（若为0则返回null）
@@ -219,9 +247,14 @@ public struct FacialFeaturesFace: Codable, Hashable {
     }
     /// 脸型判断结果（若无法判断则返回null）
     public let faceType: FaceType?
+    /// 脸型判断结果（若无法判断则返回null）
+    public var faceTypeString: String? {
+        faceType?.rawValue
+    }
 }
 
-public struct FacialFeaturesJaw: Codable, Hashable {
+@objc(FppFacialFeaturesJaw)
+@objcMembers public final class FacialFeaturesJaw: NSObject, Codable {
     /// 下巴宽度（若为0或者无法判断，则返回null）
     public let jawWidth: Float?
     /// 下巴长度（若为0或者无法判断，则返回null）
@@ -239,9 +272,14 @@ public struct FacialFeaturesJaw: Codable, Hashable {
     }
     /// 下巴判断结果（若为0或者无法判断，则返回null）
     public let jawType: JawType?
+    /// 下巴判断结果（若为0或者无法判断，则返回null）
+    public var jawTypeString: String? {
+        jawType?.rawValue
+    }
 }
 
-public struct FacialFeaturesEyebrow: Codable, Hashable {
+@objc(FppFacialFeaturesEyebrow)
+@objcMembers public final class FacialFeaturesEyebrow: NSObject, Codable {
     /// 眉毛宽度（若为0则返回null）
     public let browWidth: Float?
     /// 眉毛高度（若为0则返回null）
@@ -271,9 +309,14 @@ public struct FacialFeaturesEyebrow: Codable, Hashable {
     }
     /// 眉型判断结果（若无法判断则返回null）
     public let eyebrowType: EyebrowType?
+    /// 眉型判断结果（若无法判断则返回null）
+    public var EyebrowTypeString: String? {
+        eyebrowType?.rawValue
+    }
 }
 
-public struct FacialFeaturesEyes: Codable, Hashable {
+@objc(FppFacialFeaturesEyes)
+@objcMembers public final class FacialFeaturesEyes: NSObject, Codable {
     /// 眼睛宽度（若为0或无法判断，则返回null）
     public let eyeWidth: Float?
     /// 眼睛高度（若为0或无法判断，则返回null）
@@ -295,9 +338,14 @@ public struct FacialFeaturesEyes: Codable, Hashable {
     }
     /// 眼型判断结果（若为0或无法判断，则返回null）
     public let eyesType: EyesType?
+    /// 眼型判断结果（若为0或无法判断，则返回null）
+    public var eyesTypeString: String? {
+        eyesType?.rawValue
+    }
 }
 
-public struct FacialFeaturesNose: Codable, Hashable {
+@objc(FppFacialFeaturesNose)
+@objcMembers public final class FacialFeaturesNose: NSObject, Codable {
     /// 鼻翼宽度（若为0或无法判断，则返回null）
     public let noseWidth: Float?
 
@@ -311,9 +359,14 @@ public struct FacialFeaturesNose: Codable, Hashable {
     }
     /// 鼻翼判断结果（若为0或无法判断，则返回null）
     public let noseType: NoseType?
+    /// 鼻翼判断结果（若为0或无法判断，则返回null）
+    public var noseString: String? {
+        noseType?.rawValue
+    }
 }
 
-public struct FacialFeaturesMouth: Codable, Hashable {
+@objc(FppFacialFeaturesMouth)
+@objcMembers public final class FacialFeaturesMouth: NSObject, Codable {
     /// 嘴巴高度（若为0或无法判断，则返回null）
     public let mouthHeight: Float?
     /// 嘴巴宽度（若为0或无法判断，则返回null）
@@ -337,9 +390,14 @@ public struct FacialFeaturesMouth: Codable, Hashable {
     }
     /// 唇型判断结果（若为0或无法判断，则返回null）
     public let mouthType: MouthType?
+    /// 唇型判断结果（若为0或无法判断，则返回null）
+    public var mouthTypeString: String? {
+        mouthType?.rawValue
+    }
 }
 
-public struct FacialFeaturesResults: Codable, Hashable {
+@objc(FppFacialFeaturesResults)
+@objcMembers public final class FacialFeaturesResults: NSObject, Codable {
     /// 三庭
     public let threeParts: Threeparts
     /// 五眼

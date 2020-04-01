@@ -110,7 +110,8 @@ public final class FaceAlbum: NSObject, Codable, UseFaceppClientProtocol {
     }
 }
 
-public struct FaceAlbumBaseReeponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumBaseReeponse)
+@objcMembers public final class FaceAlbumBaseReeponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -228,7 +229,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumFindCandidateResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumFindCandidateResponse)
+@objcMembers public final class FaceAlbumFindCandidateResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -238,7 +240,8 @@ public struct FaceAlbumFindCandidateResponse: FaceppResponseProtocol {
     /// 创建的 FaceAlbum 的标识。
     public let facealbumToken: String?
 
-    public struct CandidateGroup: Codable, Hashable {
+    @objc(FppCandidateGroup)
+    @objcMembers public class CandidateGroup: NSObject, Codable {
         public let groupId: String
         /// 置信度
         public let similarity: Float
@@ -316,7 +319,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumSearchImageResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumSearchImageResponse)
+@objcMembers public final class FaceAlbumSearchImageResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -397,7 +401,8 @@ public class FaceAlbumSearchImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     }
 }
 
-public struct FaceAlbumSearchImageTaskQueryResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumSearchImageTaskQueryResponse)
+@objcMembers public final class FaceAlbumSearchImageTaskQueryResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -417,13 +422,14 @@ public struct FaceAlbumSearchImageTaskQueryResponse: FaceppResponseProtocol {
         case isCompleted = "status"
     }
 
-    public struct SearchResult: Codable, Hashable {
+    @objc(FppSearchResult)
+    @objcMembers public class SearchResult: NSObject, Codable {
         /// 该face在提供图片中的位置
         public let faceRectangle: FaceppRectangle
         /// 相册中拥有该相同face的相片image_id的String, 多个用逗号分隔
         public let imageIdSet: Set<String>
 
-        public init(from decoder: Decoder) throws {
+        required public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             faceRectangle = try container.decode(FaceppRectangle.self, forKey: .faceRectangle)
             let tokens = try container.decode(String.self, forKey: .imageIdSet).components(separatedBy: ",")
@@ -546,7 +552,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumUpdateFaceResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumUpdateFaceResponse)
+@objcMembers public final class FaceAlbumUpdateFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -556,7 +563,8 @@ public struct FaceAlbumUpdateFaceResponse: FaceppResponseProtocol {
     /// 分组修改成功的face_tokens
     public let faceTokensSuccess: [String]?
 
-    public struct FailureDetail: Codable, Hashable {
+    @objc(FppFaceAlbumUpdateFailureDetail)
+    @objcMembers public final class FailureDetail: NSObject, Codable {
         /// 人脸标识
         public let faceToken: String
         /// 不能被更新的原因，包括 INVALID_FACE_TOKEN 人脸标识不存在
@@ -644,6 +652,7 @@ public extension FaceAlbum {
     }
 }
 
+@objc(FppFaceAlbumUngroupedReason)
 public enum FaceAlbumUngroupedReason: Int, Codable {
     /// 人脸图像质量过低
     case qualityTooLow = 0
@@ -659,7 +668,8 @@ public enum FaceAlbumUngroupedReason: Int, Codable {
     case otherReason
 }
 
-public struct FaceAblbumGetFaceDetailResponse: FaceppResponseProtocol {
+@objc(FppFaceAblbumGetFaceDetailResponse)
+@objcMembers public final class FaceAblbumGetFaceDetailResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -725,7 +735,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumGetImageDetailResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumGetImageDetailResponse)
+@objcMembers public final class FaceAlbumGetImageDetailResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -839,7 +850,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAblumGetAllResponse: FaceppResponseProtocol {
+@objc(FppFaceAblumGetAllResponse)
+@objcMembers public class FaceAblumGetAllResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -884,7 +896,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumFace: Codable, Hashable {
+@objc(FppFaceAlbumFace)
+@objcMembers public final class FaceAlbumFace: NSObject, Codable {
     public let faceToken: String
     public let groupId: String?
     public let imageId: String?
@@ -893,7 +906,8 @@ public struct FaceAlbumFace: Codable, Hashable {
     public let timeUsed: Int?
 }
 
-public struct FaceAlbumGetAlbumDetailResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumGetAlbumDetailResponse)
+@objcMembers public final class FaceAlbumGetAlbumDetailResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -958,7 +972,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumAddImageResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumAddImageResponse)
+@objcMembers public final class FaceAlbumAddImageResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -1025,7 +1040,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumAddImageAsyncResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumAddImageAsyncResponse)
+@objcMembers public final class FaceAlbumAddImageAsyncResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -1070,7 +1086,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumAddImageTaskQueryResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumAddImageTaskQueryResponse)
+@objcMembers public final class FaceAlbumAddImageTaskQueryResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -1086,7 +1103,8 @@ public struct FaceAlbumAddImageTaskQueryResponse: FaceppResponseProtocol {
     /// 被检测的图片在系统中的标识
     public let imageId: String?
 
-    public struct Face: Codable, Hashable {
+    @objc(FppFaceAlbumAddImageTaskQueryFace)
+    @objcMembers public final class Face: NSObject, Codable {
         public let faceToken: String
         public let faceRectangle: FaceppRectangle
     }
@@ -1208,7 +1226,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumDeleteFaceResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumDeleteFaceResponse)
+@objcMembers public final class FaceAlbumDeleteFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -1222,7 +1241,8 @@ public struct FaceAlbumDeleteFaceResponse: FaceppResponseProtocol {
      */
     public let faceRemovedDetail: [String]?
 
-    public struct Reason: Codable, Hashable {
+    @objc(FppFaceAlbumDeleteFaceReason)
+    @objcMembers public final class Reason: NSObject, Codable {
         /// 人脸标识
         public let faceToken: String
         /// 不能被移除的原因
@@ -1304,7 +1324,8 @@ public extension FaceAlbum {
     }
 }
 
-public struct FaceAlbumGroupFaceResponse: FaceppResponseProtocol {
+@objc(FppFaceAlbumGroupFaceResponse)
+@objcMembers public final class FaceAlbumGroupFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -1344,7 +1365,8 @@ public class FaceAlbumGroupFaceTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     }
 }
 
-public struct FaceAlbumGroupFaceTaskQueryResponse: FaceppResponseProtocol, Hashable {
+@objc(FppFaceAlbumGroupFaceTaskQueryResponse)
+@objcMembers public final class FaceAlbumGroupFaceTaskQueryResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -1360,7 +1382,8 @@ public struct FaceAlbumGroupFaceTaskQueryResponse: FaceppResponseProtocol, Hasha
     /// FaceAlbum 标识
     public let facealbumToken: String?
 
-    public struct GroupResult: Codable, Hashable {
+    @objc(FppFaceAlbumGroupResult)
+    @objcMembers public final class GroupResult: NSObject, Codable {
         /// 分组信息
         public let groupId: String
         /// 人脸的标识

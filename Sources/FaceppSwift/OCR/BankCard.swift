@@ -14,7 +14,8 @@ public class OCRBankCardV1Option: CardppV1Requst {
     }
 }
 
-public struct OCRBankCardResponse: FaceppResponseProtocol {
+@objc(FppBankCardResponse)
+@objcMembers public final class OCRBankCardResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -28,8 +29,8 @@ public struct OCRBankCardResponse: FaceppResponseProtocol {
         case union, master, visa, jcb
     }
 
-    public struct Card: Codable, Hashable {
-
+    @objc(FppBankCard)
+    public final class Card: NSObject, Codable {
         /// 银行卡卡片四个角的像素点坐标
         public let bound: FaceppBound
         /**

@@ -88,7 +88,8 @@ public extension Set where Element == ThousandLandMarkOption.ReturnLandMark {
     }
 }
 
-public struct ThousandLandmarkResponse: FaceppResponseProtocol {
+@objc(FppThousandLandmarkResponse)
+@objcMembers public final class ThousandLandmarkResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -96,7 +97,8 @@ public struct ThousandLandmarkResponse: FaceppResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
 
-    public struct Face: Codable, Hashable {
+    @objc(FppThousandLandmarkFace)
+    @objcMembers public final class Face: NSObject, Codable {
         /// 人脸矩形框的位置
         public let faceRectangle: FaceppRectangle
         /// 人脸五官及轮廓的关键点坐标数组。
@@ -106,9 +108,11 @@ public struct ThousandLandmarkResponse: FaceppResponseProtocol {
     public let face: Face?
 }
 
-public struct DenseLandmark: Codable, Hashable {
+@objc(FppDenseLandmark)
+public final class DenseLandmark: NSObject, Codable {
     // MARK: - 面部轮廓关键点集合。返回值为：
-    public struct Face: Codable, Hashable {
+    @objc(FppDenseLandmarkFace)
+    @objcMembers public final class Face: NSObject, Codable {
         // MARK: - 面部上半部分轮廓关键点，从右耳附近起始到左耳附近终，按逆时针顺序检测到的位置序列。
         public let faceHairline0: FaceppPoint
         public let faceHairline1: FaceppPoint
@@ -389,7 +393,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 面部轮廓关键点集合
     public let face: Face?
     // MARK: - 从左眉左端中心位置起始，按顺时针顺序检测到的左眉关键点位置序列。
-    public struct LeftEyebrow: Codable, Hashable {
+    @objc(FppLeftEyebrow)
+    @objcMembers public final class LeftEyebrow: NSObject, Codable {
         public let leftEyebrow0: FaceppPoint
         public let leftEyebrow1: FaceppPoint
         public let leftEyebrow2: FaceppPoint
@@ -458,7 +463,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 左眉毛关键点集合
     public let leftEyebrow: LeftEyebrow?
     // MAKR: - 从右眉右端中心位置起始，按逆时针顺序检测到的右眉关键点位置序列。
-    public struct RightEyebrow: Codable, Hashable {
+    @objc(FppRightEyebrow)
+    @objcMembers public final class RightEyebrow: NSObject, Codable {
         public let rightEyebrow0: FaceppPoint
         public let rightEyebrow1: FaceppPoint
         public let rightEyebrow2: FaceppPoint
@@ -527,7 +533,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 右眉毛关键点集合
     public let rightEyebrow: RightEyebrow?
 
-    public struct LeftEye: Codable, Hashable {
+    @objc(FppLeftEye)
+    @objcMembers public final class LeftEye: NSObject, Codable {
         // MARK: - 从左眼左端中心位置起始，按顺时针顺序检测到的左眼关键点位置序列。
         public let leftEye0: FaceppPoint
         public let leftEye1: FaceppPoint
@@ -600,7 +607,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 左眼内圈关键点集合
     public let leftEye: LeftEye?
 
-    public struct LeftEyeEyelid: Codable, Hashable {
+    @objc(FppLeftEyeEyelid)
+    @objcMembers public final class LeftEyeEyelid: NSObject, Codable {
         // MARK: - 从左眼外眼角位置起始，按顺时针顺序检测到的左眼外圈关键点位置序列。
         public let leftEyeEyelid0: FaceppPoint
         public let leftEyeEyelid1: FaceppPoint
@@ -670,7 +678,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 左眼外圈关键点集合
     public let leftEyeEyelid: LeftEyeEyelid?
 
-    public struct RightEye: Codable, Hashable {
+    @objc(FppRightEye)
+    @objcMembers public final class RightEye: NSObject, Codable {
         // MARK: - 从右眼右端中心位置起始，按逆时针顺序检测到的右眼关键点位置序列
         public let rightEye0: FaceppPoint
         public let rightEye1: FaceppPoint
@@ -743,7 +752,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 右眼内圈关键点集合
     public let rightEye: RightEye?
 
-    public struct RightEyeEyelid: Codable, Hashable {
+    @objc(FppRightEyeEyelid)
+    @objcMembers public final class RightEyeEyelid: NSObject, Codable {
         // MARK: - 从右眼外眼角位置起始，按逆时针顺序检测到的左眼外圈关键点位置序列。
         public let rightEyeEyelid0: FaceppPoint
         public let rightEyeEyelid1: FaceppPoint
@@ -813,7 +823,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 右眼外圈关键点集合
     public let rightEyeEyelid: RightEyeEyelid?
 
-    public struct Nose: Codable, Hashable {
+    @objc(FppNose)
+    @objcMembers public final class Nose: NSObject, Codable {
         // MARK: - 从鼻子上部左端位置起始到鼻尖，顺序检测到的鼻子关键点位置序列。
         public let noseLeft0: FaceppPoint
         public let noseLeft1: FaceppPoint
@@ -1011,7 +1022,8 @@ public struct DenseLandmark: Codable, Hashable {
     /// 鼻子关键点集合
     public let nose: Nose?
 
-    public struct Mouth {
+    @objc(FppMouth)
+    @objcMembers public final class Mouth: NSObject, Codable {
         // MARK: - 上嘴唇的上边缘。从左边嘴角开始，从左到右检测到的上嘴唇上边缘关键点位置序列。
         public let upperLip0: FaceppPoint
         public let upperLip1: FaceppPoint

@@ -20,14 +20,16 @@ public class SkeletonDetectOption: FaceppBaseRequest {
     }
 }
 
-public struct SkeletonDetectResponse: FaceppResponseProtocol {
+@objc(FppSkeletonDetectResponse)
+@objcMembers public final class SkeletonDetectResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
     /// 被检测的图片在系统中的标识
     public let imageId: String?
 
-    public struct LandMark: Codable, Hashable {
+    @objc(FppSkeletonDetectLandMark)
+    @objcMembers public final class LandMark: NSObject, Codable {
         /// 头部
         public let head: FaceppPoint
         /// 脖子
@@ -58,7 +60,8 @@ public struct SkeletonDetectResponse: FaceppResponseProtocol {
         public let rightFoot: FaceppPoint
     }
 
-    public struct Skeleton: Codable, Hashable {
+    @objc(FppSkeleton)
+    @objcMembers public class Skeleton: NSObject, Codable {
         /// 人体矩形框的位置，包括以下属性。
         public let bodyRectangle: FaceppRectangle
         /// 包含14个骨骼关键点的对象类型

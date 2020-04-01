@@ -44,7 +44,8 @@ import Foundation
     }
 }
 
-public struct OCRIDCard: Codable, Hashable {
+@objc(FppIDCard)
+public final class OCRIDCard: NSObject, Codable {
     /// 证件类型。
     public let type: OCRType
     /// 住址
@@ -57,7 +58,11 @@ public struct OCRIDCard: Codable, Hashable {
         case female = "女"
     }
     /// 性别
-    public let gender: Gender?
+    @nonobjc public let gender: Gender?
+    /// 性别 （objc）
+    public var genderString: String? {
+        return gender?.rawValue
+    }
     /// 身份证号
     public let idCardNumber: String?
     /// 姓名
@@ -72,7 +77,12 @@ public struct OCRIDCard: Codable, Hashable {
         case back
     }
     /// 表示身份证的国徽面或人像面
-    public let side: Side
+    @nonobjc public let side: Side
+    /// 表示身份证的国徽面或人像面
+    public var sideString: String {
+        return side.rawValue
+    }
+
     /// 签发机关
     public let issuedBy: String?
     /**
@@ -80,7 +90,8 @@ public struct OCRIDCard: Codable, Hashable {
      */
     public let validDate: [Date?]?
 
-    public struct Legality: Codable, Hashable {
+    @objc(FppIDCardLegality)
+    @objcMembers public final class Legality: NSObject, Codable {
         /// 正式身份证照片
         public let idPhoto: Float
         /// 临时身份证照片
@@ -139,7 +150,8 @@ extension OCRIDCard.Legality {
     }
 }
 
-public struct OCRIDCardResponse: FaceppResponseProtocol {
+@objc(FppIDCardResponse)
+@objcMembers public final class OCRIDCardResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。

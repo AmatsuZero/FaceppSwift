@@ -87,7 +87,8 @@ import FoundationNetworking
     }
 }
 
-public struct SearchResponse: FaceppResponseProtocol, Hashable {
+@objc(FppSearchResponse)
+@objcMembers public final class SearchResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -121,7 +122,8 @@ public struct SearchResponse: FaceppResponseProtocol, Hashable {
      */
     public let faces: [Face]?
 
-    public struct Result: Codable, Hashable {
+    @objc(FppSearchResponseResult)
+    @objcMembers public final class Result: NSObject, Codable {
         /// 从 FaceSet 中搜索出的一个人脸标识 face_token。
         public let faceToken: String
         /// 比对结果置信度，范围 [0,100]，小数点后3位有效数字，数字越大表示两个人脸越可能是同一个人。

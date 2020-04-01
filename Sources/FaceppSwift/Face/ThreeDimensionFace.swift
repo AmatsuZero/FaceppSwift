@@ -183,7 +183,8 @@ import Foundation
     }
 }
 
-public struct ThreeDimensionFaceResponse: FaceppResponseProtocol {
+@objc(FppThreeDimensionFaceResponse)
+@objcMembers public final class ThreeDimensionFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。

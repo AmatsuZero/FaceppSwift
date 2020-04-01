@@ -16,7 +16,8 @@ public class ImageppRecognizeTextOption: FaceppBaseRequest {
     }
 }
 
-public struct ImagepprecognizeTextResponse: FaceppResponseProtocol {
+@objc(FppRecognizeTextResponse)
+@objcMembers public final class ImagepprecognizeTextResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -37,9 +38,15 @@ public struct ImagepprecognizeTextResponse: FaceppResponseProtocol {
         case character
     }
 
-    public struct Result: Codable, Hashable {
+    @objc(FppTextRecognizeResult)
+    @objcMembers public final class Result: NSObject, Codable {
         /// data对象的类型
         public let type: DataType
+
+        public var typeString: String {
+            return type.rawValue
+        }
+
         /// 识别出的文字，以UTF-8格式编码
         public let value: String
         /// 文字在图片中的坐标信息，是一个数组，包含文字的多个坐标点信息

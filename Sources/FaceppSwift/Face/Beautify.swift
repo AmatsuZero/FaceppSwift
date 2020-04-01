@@ -270,7 +270,8 @@ public class BeautifyV2Option: BeautifyV1Option {
     }
 }
 
-public struct BeautifyResponse: FaceppResponseProtocol {
+@objc(FppBeautifyResponse)
+@objcMembers public final class BeautifyResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     /// 当发生错误时才返回。
     public var errorMessage: String?

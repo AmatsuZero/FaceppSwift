@@ -45,12 +45,14 @@ import Foundation
     }
 }
 
-public struct OCRTemplateResponse: FaceppResponseProtocol {
+@objc(FppTemplateResponse)
+@objcMembers public final class OCRTemplateResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
-    public struct Value: Codable, Hashable {
+    @objc(FppTemplateResponseValue)
+    @objcMembers public final class Value: NSObject, Codable {
         /// 创建模板时定义的识别域名
         public let text: [String]
         /**
@@ -62,7 +64,8 @@ public struct OCRTemplateResponse: FaceppResponseProtocol {
         public let position: [FaceppPoint]?
     }
 
-    public struct Result: Codable, Hashable {
+    @objc(FppTemplateResponseResult)
+    @objcMembers public final class Result: NSObject, Codable {
         public let key: String
         public let value: Value
     }

@@ -88,16 +88,19 @@ public class OCRDriverLicenseV1Option: CardppV1Requst {
     }
 }
 
-public struct DriverLicenseStringModel: Codable, Hashable {
+@objc(FppDriverLicenseStringModel)
+public final class DriverLicenseStringModel: NSObject, Codable {
     public let content: String
     public let confidence: Float?
 }
 
-public struct OCRDriverLicenseMain: Codable, Hashable {
+@objc(FppDriverLicenseMain)
+@objcMembers public final class OCRDriverLicenseMain: NSObject, Codable {
     /// 返回驾驶证正本置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
     public let confidence: Float?
 
-    public struct Version: Codable, Hashable {
+    @objc(FppDriverLicenseMainVersion)
+    @objcMembers public class Version: NSObject, Codable {
         /// 表示驾驶证正本版本，int型，返回 2，表示是2013版本驾驶证；返回 1，表示是2008或更早版本驾驶证
         public let content: OCRDriverLicenseV1Response.Version
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
@@ -114,7 +117,8 @@ public struct OCRDriverLicenseMain: Codable, Hashable {
      */
     public let address: DriverLicenseStringModel
 
-    public struct DateModel: Codable, Hashable {
+    @objc(FppDriverLicenseMainDateModel)
+    @objcMembers public final class DateModel: NSObject, Codable {
         public let content: Date?
         /// 表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回
         public let confidence: Float?
@@ -133,7 +137,8 @@ public struct OCRDriverLicenseMain: Codable, Hashable {
     /// 生日及其置信度
     public let birthday: DateModel
 
-    public struct Gender: Codable, Hashable {
+    @objc(FppDriverLicenseMainGender)
+    @objcMembers public final class Gender: NSObject, Codable {
         /// 表示性别
         public let content: OCRDriverLicenseV1Response.Gender
         public let confidence: Float?
@@ -155,7 +160,8 @@ public struct OCRDriverLicenseMain: Codable, Hashable {
      */
     public let name: DriverLicenseStringModel
 
-    public struct DriverLicenseClass: Codable, Hashable {
+    @objc(FppDriverLicenseClass)
+    @objcMembers public final class DriverLicenseClass: NSObject, Codable {
         public let content: OCRDriverLicenseV1Response.Class
         public let confidence: Float?
     }
@@ -165,7 +171,11 @@ public struct OCRDriverLicenseMain: Codable, Hashable {
      content：准驾车型，string型
      confidence：表示置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
      */
-    public let `class`: DriverLicenseClass
+    @nonobjc public let `class`: DriverLicenseClass
+
+    public var classModel: DriverLicenseClass {
+        return self.class
+    }
     /**
      国籍及置信度，返回字段分为以下两部分：
      
@@ -202,7 +212,8 @@ public struct OCRDriverLicenseMain: Codable, Hashable {
      */
     public let validFor: DateModel?
 
-    public struct ValidDate: Codable, Hashable {
+    @objc(FppDriverLicenseMainValidDate)
+    @objcMembers public final class ValidDate: NSObject, Codable {
         public let content: [Date?]
         public let confidence: Float?
 
@@ -228,7 +239,8 @@ public struct OCRDriverLicenseMain: Codable, Hashable {
     public let validDate: ValidDate?
 }
 
-public struct OCRDriverLicenseSecond: Codable, Hashable {
+@objc(FppDriverLicenseSecond)
+@objcMembers public final class OCRDriverLicenseSecond: NSObject, Codable {
     /// 返回驾驶证正本置信度，值为一个 [0,100] 的浮点数，小数点后 3 位有效数字，仅正式用户设置return_score值为1时返回。
     public let confidence: Float?
     /**
@@ -247,7 +259,8 @@ public struct OCRDriverLicenseSecond: Codable, Hashable {
     public let fileNumber: DriverLicenseStringModel
 }
 
-public struct OCRDriverLicenseV2Response: FaceppResponseProtocol {
+@objc(FppDriverLicenseV2Response)
+@objcMembers public final class OCRDriverLicenseV2Response: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
@@ -272,11 +285,13 @@ public struct OCRDriverLicenseV2Response: FaceppResponseProtocol {
  
  Wiki: https://console.faceplusplus.com.cn/documents/5671704
  */
-public struct OCRDriverLicenseV1Response: FaceppResponseProtocol {
+@objc(FppDriverLicenseV1Response)
+@objcMembers public final class OCRDriverLicenseV1Response: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
+    @objc(FppDriverLicenseVersion)
     public enum Version: Int, Codable {
         /// 2008或更早版本驾驶证
         case old = 1
@@ -297,7 +312,8 @@ public struct OCRDriverLicenseV1Response: FaceppResponseProtocol {
         case front, back
     }
 
-    public struct Card: Codable, Hashable {
+    @objc(FppDriverLicenseCard)
+    @objcMembers public final class Card: NSObject, Codable {
         /// 证件类型。
         public let type: OCRType
 

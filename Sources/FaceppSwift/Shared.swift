@@ -104,7 +104,7 @@ let kImageppBetaURL: URL? = {
 
 }()
 
-public protocol FaceppResponseBaseProtocol {
+public protocol FaceppResponseBaseProtocol: NSObjectProtocol {
 
     // 用于区分每一次请求的唯一的字符串。
 
@@ -201,79 +201,49 @@ func kBodyDataWithParams(params: Params, fileData: [Params]) -> Data {
     var bodyData = Data()
 
     params.forEach { (key: String, obj: Any) in
-
         bodyData += Data.boundaryData
-
         if let data = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8) {
-
             bodyData += data
-
         }
 
         if let data = "\(obj)\r\n".data(using: .utf8) {
-
             bodyData += data
-
         }
-
     }
 
     fileData.forEach { dic in
-
         if let fieldName = dic["fieldName"] as? String,
-
             let fileData = dic["data"] as? Data,
-
             let fileType = dic["fileType"] as? String {
-
             bodyData += Data.boundaryData
-
             if let data = "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fieldName)\"\r\n"
-
                 .data(using: .utf8) {
-
                 bodyData += data
-
             }
 
             if let data = "Content-Type: \(fileType)\r\n\r\n".data(using: .utf8) {
-
                 bodyData += data
-
             }
 
             bodyData += fileData
-
             if let data = "\r\n".data(using: .utf8) {
-
                 bodyData += data
-
             }
-
         }
-
     }
 
     if let data = "--boundary--\r\n".data(using: .utf8) {
-
         bodyData += data
-
     }
-
     return bodyData
-
 }
 
 protocol Option: RawRepresentable, Hashable, CaseIterable {}
 
 extension Data {
-
     static var boundaryData: Data {
-
         return "--boundary\r\n".data(using: .utf8)!
-
     }
-
 }
 
 #if !os(Linux)
@@ -281,7 +251,6 @@ extension Data {
 extension DispatchQueue {
 
     private static var _onceTracker = [String]()
-
     /**
      
      Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
@@ -297,21 +266,14 @@ extension DispatchQueue {
      */
 
     class func once(token: String = UUID().uuidString, block: () -> Void) {
-
         objc_sync_enter(self); defer { objc_sync_exit(self) }
-
         if _onceTracker.contains(token) {
-
             return
-
         }
 
         _onceTracker.append(token)
-
         block()
-
     }
-
 }
 
 #endif
@@ -319,359 +281,217 @@ extension DispatchQueue {
 extension Set where Element: Option {
 
     var rawValue: Int {
-
         var rawValue = 0
-
         for (index, element) in Element.allCases.enumerated() {
-
             if self.contains(element) {
-
                 rawValue |= (1 << index)
-
             }
-
         }
-
         return rawValue
-
     }
-
 }
 
 public enum FaceppRequestError: CustomNSError, LocalizedError {
 
     public enum ArgumentsError {
-
         case fileTooLarge(size: Double, path: URL)
-
         case missingArguments
-
         case invalidArguments(desc: String)
-
     }
 
     case notInit
-
     case argumentsError(ArgumentsError)
-
     case faceppError(reason: String)
-
     case parseError(error: Error, originalData: Data?)
-
     public static var errorDomain: String {
-
         return "com.daubert.faceapp"
-
     }
 
     public var errorDescription: String? {
 
         switch self {
-
         case .notInit:
-
             return "没有初始化"
-
         case .argumentsError(let err):
-
             switch err {
-
             case .missingArguments:
-
                 return "缺少参数"
-
             case .invalidArguments(let desc):
-
                 return desc
-
             case .fileTooLarge(let size, let path):
-
                 return "文件\(path)超过\(size)MB"
-
             }
 
         case .faceppError(let reason):
-
             return "服务器错误：\(reason)"
-
         case .parseError(let error, _):
-
             return "数据解析失败: \(error)"
-
         }
-
     }
 
     public var failureReason: String? {
 
         switch self {
-
         case .notInit:
-
             return "没有初始化"
-
         case .argumentsError:
-
             return "参数检查失败"
-
         case .faceppError(let reason):
-
             return reason
-
         case .parseError(let error, _):
-
             return "数据解析失败: \(error.localizedDescription)"
-
         }
-
     }
 
     public var helpAnchor: String? {
-
         switch self {
-
         case .notInit: return "请重新调用初始化方法"
-
         case .argumentsError: return "请根据文档检查入参"
-
         case .faceppError(let reason): return "请根据 Wiki 排查失败原因：\(reason)"
-
         case .parseError:
-
             return "数据解析失败，可能是数据结构发生了变化，请尝试用originalData进行解析"
-
         }
-
     }
 
     public var errorCode: Int {
-
         switch self {
-
         case .notInit: return -100001
-
         case .argumentsError: return -100002
-
         case .faceppError: return -100003
-
         case .parseError: return -100004
-
         }
-
     }
 
     public var errorUserInfo: [String: Any] {
-
         return [
-
             NSLocalizedDescriptionKey: errorDescription ?? "Unknown"
-
         ]
-
     }
-
 }
 
 extension Dictionary {
 
     func percentEncoded() -> Data? {
-
         return map { key, value in
-
             let escapedKey = "\(key)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
-
             let escapedValue = "\(value)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
-
             return escapedKey + "=" + escapedValue
-
         }
-
         .joined(separator: "&")
-
         .data(using: .utf8)
-
     }
 
 }
 
 extension CharacterSet {
-
     static let urlQueryValueAllowed: CharacterSet = {
-
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
-
         let subDelimitersToEncode = "!$&'()*+,;="
-
         var allowed = CharacterSet.urlQueryAllowed
-
         allowed.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
-
         return allowed
-
     }()
-
 }
 
 extension URLRequest {
-
     static func postRequest(url: URL, body: Params, filesData: [Params] = []) -> (URLRequest?, Data?) {
-
         var request = URLRequest(url: url)
-
         request.httpMethod = "POST"
-
         request.setValue("multipart/form-data; boundary=boundary", forHTTPHeaderField: "Content-Type")
-
         return (request, kBodyDataWithParams(params: body, fileData: filesData))
-
     }
-
 }
 
-public struct FacialThreshHolds: Codable, Hashable {
-
+@objc(FppFacialThreshHolds)
+@objcMembers public final class FacialThreshHolds: NSObject, Codable {
     /// 误识率为千分之一的置信度阈值
-
     public let lowPrecision: Float
-
     /// 误识率为万分之一的置信度阈值
-
     public let middlePrecision: Float
-
     /// 误识率为十万分之一的置信度阈值
-
     public let hightPrecision: Float
 
     private enum CodingKeys: String, CodingKey {
-
         case lowPrecision = "1e-3"
-
         case middlePrecision = "1e-4"
-
         case hightPrecision = "1e-5"
-
     }
-
 }
 
-public struct FacialHeadPose: Codable, Hashable {
-
+@objc(FppFacialHeadPose)
+@objcMembers public final class FacialHeadPose: NSObject, Codable {
     /// 抬头
-
     public let pitchAngle: Double
-
     /// 旋转（平面旋转）
-
     public let rollAngle: Double
-
     /// 摇头
-
     public let yawAngle: Double
-
 }
 
+@objc(FppOCRType)
 public enum OCRType: Int, Codable {
-
     /// 身份证
-
     case idCard = 1
-
     /// 驾驶证
-
     case driverLicense
-
     /// 行驶证
-
     case vehicleLicense
-
 }
 
 protocol UseFaceppClientProtocol {
-
     static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
 
                                                  completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask?
 
     func request() -> URLSessionTask?
-
 }
 
 extension UseFaceppClientProtocol {
 
     func request() -> URLSessionTask? {
-
         return nil
-
     }
 
     static func parse<R: FaceppResponseProtocol>(option: RequestProtocol,
-
                                                  completionHandler: @escaping (Error?, R?) -> Void) -> URLSessionTask? {
-
         guard let client = FaceppClient.shared else {
 
             completionHandler(FaceppRequestError.notInit, nil)
-
             return nil
-
         }
-
         return client.parse(option: option, completionHandler: completionHandler)
-
     }
-
 }
 
 extension URL {
-
     func fileSizeNotExceed(mb: Double) throws -> Bool {
-
         guard let fileSize = try resourceValues(forKeys: [.fileSizeKey]).fileSize else {
-
             return false
-
         }
-
         return (Double(fileSize) / 1024 / 1024) <= mb
-
     }
 
 }
 
-public struct FaceppBound: Codable, Hashable {
-
+@objc(FppBound)
+@objcMembers public final class FaceppBound: NSObject, Codable {
     /// 右上角的像素点坐标
-
     public let rightTop: FaceppPoint
-
     /// 左上角的像素点坐标
-
     public let leftTop: FaceppPoint
-
     /// 右下角的像素点坐标
-
     public let rightBottom: FaceppPoint
-
     /// 左下角的像素点坐标
-
     public let leftBottom: FaceppPoint
-
 }
 
 public extension FaceppBound {
-
-    func asFaceppRectangle() -> FaceppRectangle {
-
+    @objc func asFaceppRectangle() -> FaceppRectangle {
         return FaceppRectangle(top: Int(leftTop.y),
-
                                left: Int(leftTop.x),
-
                                width: Int(abs(rightTop.x - leftTop.x)) ,
-
                                height: Int(abs(rightBottom.y - rightTop.y)))
-
     }
-
 }
 
 let kInvalidUserDataCharacters = Set("^@,&=*'\"")

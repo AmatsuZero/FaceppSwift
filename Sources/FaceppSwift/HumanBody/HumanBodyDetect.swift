@@ -62,19 +62,22 @@ extension Set where Element == HumanBodyDetectOption.ReturnAttributes {
     }
 }
 
-public struct HumanBodyDetectResponse: FaceppResponseProtocol {
+@objc(FppBodyDetectResponse)
+@objcMembers public final class HumanBodyDetectResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?
     public var errorMessage: String?
     public var timeUsed: Int?
 
-    public struct Gender: Codable, Hashable {
+    @objc(FppBodyDetectGender)
+    @objcMembers public final class Gender: NSObject, Codable {
         /// 性别为男性的置信度
         public let male: Float
         /// 性别为女性的置信度
         public let female: Float
     }
 
-    public struct RGBColor: Codable, Hashable {
+    @objc(FppRGBColor)
+    @objcMembers public final class RGBColor: NSObject, Codable {
         public let r: Float
         public let g: Float
         public let b: Float
@@ -85,21 +88,28 @@ public struct HumanBodyDetectResponse: FaceppResponseProtocol {
         case magenta, cyan, gray, purple, orange
     }
 
-    public struct UpperBodyCloth: Codable, Hashable {
+    @objc(FppUpperBodyCloth)
+    @objcMembers public final class UpperBodyCloth: NSObject, Codable {
         /// 上身衣物颜色，值为下方颜色列表中与上身衣物颜色最接近的颜色值
-        public let upperBodyClothColor: Color
+        @nonobjc public let upperBodyClothColor: Color
+        /// 上身衣物颜色，值为下方颜色列表中与上身衣物颜色最接近的颜色值
+        public var upperBodyClothColorString: String {
+            return upperBodyClothColor.rawValue
+        }
         /// 上身衣物颜色 RGB 值
         public let upperBodyClothColorRgb: RGBColor
     }
 
-    public struct LowerBodyCloth: Codable, Hashable {
+    @objc(FppLowerBodyCloth)
+    @objcMembers public final class LowerBodyCloth: NSObject, Codable {
         /// 下身衣物颜色，值为下方颜色列表中与下身衣物颜色最接近的颜色值
         public let lowerBodyClothColor: Color
         /// 下身衣物颜色 RGB 值
         public let lowerBodyClothColorRgb: RGBColor
     }
 
-    public struct Attributes: Codable, Hashable {
+    @objc(FppBodyDetectAttributes)
+    @objcMembers public final class Attributes: NSObject, Codable {
         /// 性别分析结果，返回值包含以下字段。每个字段的值都是一个浮点数，范围 [0,100]，小数点后 3 位有效数字。字段值的总和等于 100。
         public let gender: Gender?
         /// 上身分析结果
@@ -108,7 +118,8 @@ public struct HumanBodyDetectResponse: FaceppResponseProtocol {
         public let lowerBodyCloth: LowerBodyCloth?
     }
 
-    public struct HumanBody: Codable, Hashable {
+    @objc(FppBodyDetectBody)
+    @objcMembers public final class HumanBody: NSObject, Codable {
         /// 人体检测的置信度，范围 [0,100]，小数点后3位有效数字，数字越大表示检测到的对象为人体的置信度越大
         public let confidence: Float
         /// 人体矩形框的位置
@@ -127,11 +138,12 @@ public struct HumanBodyDetectResponse: FaceppResponseProtocol {
 }
 
 public extension HumanBodyDetectResponse.Attributes {
-    enum Sex {
-        case male, female, unknown
+    @objc(FppHumanBodyDetectSex)
+    enum Sex: Int {
+        case male = 0, female, unknown
     }
 
-    var mostLikelySex: Sex {
+    @objc var mostLikelySex: Sex {
         guard let gender = self.gender else {
             return .unknown
         }

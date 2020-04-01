@@ -42,7 +42,8 @@ import Foundation
     }
 }
 
-public struct HumanBodyGestureResponse: FaceppResponseProtocol, Hashable {
+@objc(FppGestureResponse)
+@objcMembers public final class HumanBodyGestureResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -53,7 +54,8 @@ public struct HumanBodyGestureResponse: FaceppResponseProtocol, Hashable {
     public let imageId: String?
 
     /// 手势，参考Wiki：https://console.faceplusplus.com.cn/documents/10065685
-    public struct Gesture: Codable, Hashable {
+    @objc(FppGesture)
+    @objcMembers public final class Gesture: NSObject, Codable {
         /// 未定义手势
         public let unknown: Float
         /// 比心 A
@@ -96,7 +98,8 @@ public struct HumanBodyGestureResponse: FaceppResponseProtocol, Hashable {
         public let thanks: Float
     }
 
-    public struct Hands: Codable, Hashable {
+    @objc(FppGestureHands)
+    @objcMembers public final class Hands: NSObject, Codable {
         /// 手部矩形框，坐标数字为整数，代表像素点坐标
         public let handRectangle: FaceppRectangle
         /// 手势识别结果，包括以下字段。每个字段的值是一个浮点数，范围 [0,100]，小数点后3位有效数字，总和等于100。

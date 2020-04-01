@@ -18,7 +18,8 @@ public class ImageppLicensePlateOption: FaceppBaseRequest {
     }
 }
 
-public struct ImageppLicensePlateResponse: FaceppResponseProtocol {
+@objc(FppLicensePlateRespons)
+@objcMembers public final class ImageppLicensePlateResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在
@@ -28,6 +29,7 @@ public struct ImageppLicensePlateResponse: FaceppResponseProtocol {
     /// 被检测的图片在系统中的标识
     public let imageId: String?
 
+    @objc(FppLicensePlateColor)
     public enum Color: Int, Codable {
         case blue = 0, yellow, black, white, green
         /// 小型新能源
@@ -40,7 +42,8 @@ public struct ImageppLicensePlateResponse: FaceppResponseProtocol {
         case invalid
     }
 
-    public struct Result: Codable, Hashable {
+    @objc(FppLicensePlateResult)
+    @objcMembers public final class Result: NSObject, Codable {
         /// 车牌四个角的像素点坐标
         public let bound: FaceppBound
         /// 识别出的车牌底色

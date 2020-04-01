@@ -167,7 +167,8 @@ import Foundation
     }
 }
 
-public struct ImageppMergeFaceResponse: FaceppResponseProtocol {
+@objc(FppMergeFaceResponse)
+@objcMembers public final class ImageppMergeFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
     public var requestId: String?
     /// 当发生错误时才返回。

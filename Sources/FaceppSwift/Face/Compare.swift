@@ -175,7 +175,8 @@ import Foundation
     }
 }
 
-public struct CompareResponse: FaceppResponseProtocol {
+@objc(FppCompareResponse)
+@objcMembers public final class CompareResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public let requestId: String?
     /**

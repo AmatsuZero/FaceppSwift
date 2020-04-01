@@ -124,7 +124,8 @@ let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
     }
 }
 
-public struct FaceSetsGetResponse: FaceppResponseProtocol {
+@objc(FppFaceSetsGetResponse)
+@objcMembers public final class FaceSetsGetResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public let requestId: String?
     /**
@@ -265,7 +266,8 @@ public extension FaceSet {
     }
 }
 
-public struct FacesetDeleteResponse: FaceppResponseProtocol {
+@objc(FppFacesetDeleteResponse)
+@objcMembers public final class FacesetDeleteResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// FaceSet的标识
@@ -335,7 +337,8 @@ public extension FaceSet {
     }
 }
 
-public struct FacesetGetDetailResponse: FaceppResponseProtocol {
+@objc(FppFacesetGetDetailResponse)
+@objcMembers public final class FacesetGetDetailResponse: NSObject, FaceppResponseProtocol {
     // 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// FaceSet的标识
@@ -461,7 +464,8 @@ public extension FaceSet {
     }
 }
 
-public struct FaceSetUpdateResponse: FaceppResponseProtocol {
+@objc(FppFaceSetUpdateResponse)
+@objcMembers public final class FaceSetUpdateResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -545,14 +549,16 @@ public extension FaceSet {
     }
 }
 
-public struct FaceSetOpFailureDetail: Codable, Hashable {
+@objc(FppFaceSetOpFailureDetail)
+@objcMembers public final class FaceSetOpFailureDetail: NSObject, Codable {
     /// 人脸标识
     public let faceToken: String
     /// 操作失败的原因
     public let reason: String
 }
 
-public struct FaceSetRemoveResponse: FaceppResponseProtocol, Hashable {
+@objc(FppFaceSetRemoveResponse)
+@objcMembers public final class FaceSetRemoveResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。除非发生404（API_NOT_FOUND ) 或403 （AUTHORIZATION_ERROR）错误，此字段必定返回。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -646,7 +652,8 @@ public extension FaceSet {
     }
 }
 
-public struct FaceSetAddFaceResponse: FaceppResponseProtocol, Hashable {
+@objc(FppFaceSetAddFaceResponse)
+@objcMembers public final class FaceSetAddFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，否则此字段不存在。具体返回内容见后续错误信息章节。
@@ -789,7 +796,8 @@ public extension FaceSet {
     }
 }
 
-public struct FaceSetCreateResponse: FaceppResponseProtocol, Hashable {
+@objc(FppFaceSetCreateResponse)
+@objcMembers public final class FaceSetCreateResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。除非发生404（API_NOT_FOUND ) 或403 （AUTHORIZATION_ERROR）错误，此字段必定返回。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -889,7 +897,8 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
     }
 }
 
-public struct FaceSetTaskQueryResponse: FaceppResponseProtocol {
+@objc(FppFaceSetTaskQueryResponse)
+@objcMembers public final class FaceSetTaskQueryResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -945,7 +954,8 @@ public class FaceSetAsyncAddFaceOption: FaceSetAddFaceOption {
     }
 }
 
-public struct FaceSetAsyncOperationResponse: FaceppResponseProtocol {
+@objc(FppFaceSetAsyncOperationResponse)
+@objcMembers public final class FaceSetAsyncOperationResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。

@@ -15,7 +15,8 @@ public class ImageppDetectScenceAndObjectOption: FaceppBaseRequest {
     }
 }
 
-public struct ImageppDetectScenceAndObjectResponse: FaceppResponseProtocol {
+@objc(FppDetectScenceAndObjectResponse)
+@objcMembers public final class ImageppDetectScenceAndObjectResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
     public var requestId: String?
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
@@ -23,7 +24,8 @@ public struct ImageppDetectScenceAndObjectResponse: FaceppResponseProtocol {
     /// 整个请求所花费的时间，单位为毫秒。
     public var timeUsed: Int?
 
-    public struct Value: Codable, Hashable {
+    @objc(FppDetectScenceAndObjectValue)
+    @objcMembers public final class Value: NSObject, Codable {
         /// 名称
         public let value: String
         /// 置信度，是一个浮点数，范围[0,100]，小数点后3位有效数字
