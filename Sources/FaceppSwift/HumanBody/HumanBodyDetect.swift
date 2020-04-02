@@ -145,8 +145,16 @@ extension HumanBodyDetectOption: FppDataRequestProtocol {
 
 public extension HumanBodyDetectResponse.Attributes {
     @objc(FppHumanBodyDetectSex)
-    enum Sex: Int {
+    enum Sex: Int, CustomDebugStringConvertible {
         case male = 0, female, unknown
+        
+        public var debugDescription: String {
+            switch self {
+            case .female: return "female"
+            case .male: return "male"
+            case .unknown: return "unknown"
+            }
+        }
     }
 
     @objc var mostLikelySex: Sex {
