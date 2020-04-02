@@ -39,7 +39,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testCompare() {
         let exp = XCTestExpectation(description: "compare")
-        var opt = CompareOption()
+        let opt = CompareOption()
         opt.imageURL1 = URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/440px-Lenna_%28test_image%29.png")
         opt.imageURL2 = URL(string: "https://bellard.org/bpg/lena5.jpg")
         
@@ -110,7 +110,7 @@ final class FaceppSwiftTests: XCTestCase {
         XCTAssertNotNil(threeDImageFile2)
         XCTAssertNotNil(threeDImageFile3)
         let exp = XCTestExpectation(description: "3D Face")
-        var opt = ThreeDimensionFaceOption()
+        let opt = ThreeDimensionFaceOption()
         opt.imageFile1 = URL(fileURLWithPath: threeDImageFile1!)
         opt.imageFile2 = URL(fileURLWithPath: threeDImageFile2!)
         opt.imageFile3 = URL(fileURLWithPath: threeDImageFile3!)
@@ -560,7 +560,7 @@ final class FaceppSwiftTests: XCTestCase {
     
     func testFaceAnalyze() {
         let exp = XCTestExpectation(description: "获取人脸的关联信息")
-        var opt = FaceAnalyzeOption(tokens: ["bfe72b1a722adfb3cc2ba3faa9bc61f2"])
+        let opt = FaceAnalyzeOption(tokens: ["bfe72b1a722adfb3cc2ba3faa9bc61f2"])
         opt.returnLandmark = .all
         Facepp.Face.analyze(option: opt) { error, resp in
             if let err = error {

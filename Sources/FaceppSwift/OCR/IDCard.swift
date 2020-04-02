@@ -150,6 +150,12 @@ extension OCRIDCard.Legality {
     }
 }
 
+extension OCRIDCardOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRIDCardResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppIDCardResponse)
 @objcMembers public final class OCRIDCardResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。

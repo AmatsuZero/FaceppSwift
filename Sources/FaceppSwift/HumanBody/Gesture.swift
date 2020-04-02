@@ -42,6 +42,12 @@ import Foundation
     }
 }
 
+extension HumanBodyGestureOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, HumanBodyGestureResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppGestureResponse)
 @objcMembers public final class HumanBodyGestureResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。

@@ -110,6 +110,12 @@ public final class FaceAlbum: NSObject, Codable, UseFaceppClientProtocol {
     }
 }
 
+extension CreateFaceAlbumOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAlbumBaseReeponse)
 @objcMembers public final class FaceAlbumBaseReeponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -152,6 +158,12 @@ public extension FaceAlbum {
         var (params, _) = try super.params()
         params["check_empty"] = checkEmpty ? 1 : 0
         return (params, nil)
+    }
+}
+
+extension FaceAlbumDeleteOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumBaseReeponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 
@@ -226,6 +238,12 @@ public extension FaceAlbum {
         var (params, _) = try super.params()
         params["group_id"] = groupId
         return (params, nil)
+    }
+}
+
+extension FaceAlbumFindCandidateOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumFindCandidateResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 
@@ -319,6 +337,12 @@ public extension FaceAlbum {
     }
 }
 
+extension FaceAlbumSearchImageOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumSearchImageResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAlbumSearchImageResponse)
 @objcMembers public final class FaceAlbumSearchImageResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -398,6 +422,12 @@ public extension FaceAlbum {
 public class FaceAlbumSearchImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("searchimagetaskquery")
+    }
+}
+
+extension FaceAlbumSearchImageTaskQueryOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumSearchImageTaskQueryResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 
@@ -552,6 +582,12 @@ public extension FaceAlbum {
     }
 }
 
+extension FaceAlbumUpdateFaceOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumUpdateFaceResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAlbumUpdateFaceResponse)
 @objcMembers public final class FaceAlbumUpdateFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -690,6 +726,12 @@ public enum FaceAlbumUngroupedReason: Int, Codable {
     public let ungroupedReason: FaceAlbumUngroupedReason?
 }
 
+extension FaceAblbumGetFaceDetailOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAblbumGetFaceDetailResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 public extension FaceAlbum {
     @discardableResult
     static func getFaceDetail(option: FaceAblbumGetFaceDetailOption,
@@ -732,6 +774,12 @@ public extension FaceAlbum {
         var (params, _) = try super.params()
         params["image_id"] = imageId
         return (params, nil)
+    }
+}
+
+extension FaceAlbumGetImageDetailOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGetImageDetailResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 
@@ -850,6 +898,12 @@ public extension FaceAlbum {
     }
 }
 
+extension FaceAblumGetAllOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAblumGetAllResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAblumGetAllResponse)
 @objcMembers public class FaceAblumGetAllResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -926,6 +980,12 @@ public extension FaceAlbum {
     public let nextToken: String?
 }
 
+extension FaceAlbumGetAlbumDetailOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGetAlbumDetailResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 public extension FaceAlbum {
     @discardableResult
     static func getAlbumDetail(option: FaceAlbumGetAlbumDetailOption,
@@ -972,6 +1032,12 @@ public extension FaceAlbum {
     }
 }
 
+extension FaceAlbumAddImageOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumAddImageResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAlbumAddImageResponse)
 @objcMembers public final class FaceAlbumAddImageResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -1010,23 +1076,32 @@ public extension FaceAlbum {
 }
 
 @objc(FppFaceAlbumAddImageAsyncOption)
-@objcMembers public class FaceAlbumAddImageAsyncOption: FaceAlbumAddImageOption {
+@objcMembers public class FaceAlbumAddImageAsyncOption: FaceppBaseRequest {
     /**
      一个URL。API任务完成后会调用该url，通知用户任务完成。
      注：任务完成后，会向传入的 callback_url 发送一个 GET 请求，将 task_id 作为 querystring 中的 task_id 参数传递给用户，
      例：http://cburl?task_id=xxxxxxx
      */
     public var callbackURL: URL?
+    
+     /// FaceAlbum标识
+    public var facealbumToken: String
 
-    public required init(params: [String: Any]) {
+    public init(facealbumToken: String) {
+        self.facealbumToken = facealbumToken
+        super.init()
+    }
+
+    required public init(params: [String: Any]) {
+        if let token = params["facealbum_token"] as? String {
+            facealbumToken = token
+        } else {
+            facealbumToken = ""
+        }
         if let value = params["callback_url"] as? String {
             callbackURL = URL(string: value)
         }
         super.init(params: params)
-    }
-
-    public override init(facealbumToken: String) {
-        super.init(facealbumToken: facealbumToken)
     }
 
     override var requsetURL: URL? {
@@ -1035,8 +1110,15 @@ public extension FaceAlbum {
 
     override func params() throws -> (Params, [Params]?) {
         var (params, files) = try super.params()
+        params["facealbum_token"] = facealbumToken
         params["callback_url"] = callbackURL
         return (params, files)
+    }
+}
+
+extension FaceAlbumAddImageAsyncOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumAddImageAsyncResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 
@@ -1083,6 +1165,12 @@ public extension FaceAlbum {
 @objcMembers public class FaceAlbumAddImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("addimagetaskquery")
+    }
+}
+
+extension FaceAlbumAddImageTaskQueryOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumAddImageTaskQueryResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 
@@ -1226,6 +1314,12 @@ public extension FaceAlbum {
     }
 }
 
+extension FaceAlbumDeleteFaceOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumDeleteFaceResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAlbumDeleteFaceResponse)
 @objcMembers public final class FaceAlbumDeleteFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -1324,6 +1418,12 @@ public extension FaceAlbum {
     }
 }
 
+extension FaceAlbumGroupFaceOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGroupFaceResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceAlbumGroupFaceResponse)
 @objcMembers public final class FaceAlbumGroupFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -1362,6 +1462,12 @@ public extension FaceAlbum {
 public class FaceAlbumGroupFaceTaskQueryOption: FaceAlbumTaskQueryBaseOption {
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("groupfacetaskquery")
+    }
+}
+
+extension FaceAlbumGroupFaceTaskQueryOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGroupFaceTaskQueryResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 

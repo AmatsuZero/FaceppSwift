@@ -15,6 +15,12 @@ public class OCRDriverLicenseV1Option: CardppV1Requst {
     }
 }
 
+extension OCRDriverLicenseV1Option: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRDriverLicenseV1Response?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 /**
   检测和识别中华人民共和国机动车驾驶证（以下称“驾照”）图像，并转化为结构化的文字信息。
  只可识别驾照正本(main sheet)正面和副本(second sheet)正面，一张照片最多可识别一个正本正面和一个副本正面。
@@ -259,6 +265,12 @@ public final class DriverLicenseStringModel: NSObject, Codable {
     public let fileNumber: DriverLicenseStringModel
 }
 
+extension OCRDriverLicenseV2Option: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRDriverLicenseV2Response?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppDriverLicenseV2Response)
 @objcMembers public final class OCRDriverLicenseV2Response: NSObject, FaceppResponseProtocol {
     public var requestId: String?
@@ -323,17 +335,22 @@ public final class DriverLicenseStringModel: NSObject, Codable {
         public let address: String
         /// 生日，格式为YYYY-MM-DD
         public let birthday: Date?
-
         /// 性别（男/女）
         public let gender: Gender
+         /// 性别（男/女）
+        public var genderString: String {
+            return gender.rawValue
+        }
         /// 驾驶证号
         public let licenseNumber: String
         /// 姓名
         public let name: String
-
         /// 准驾车型
         public let `class`: Class?
-
+         /// 准驾车型
+        @objc public var classString: String? {
+            return self.class?.rawValue
+        }
         /// 表示驾驶证的正面或者反面。该字段目前只会返回“front”，表示是正面
         public let side: Side
         /// 国籍

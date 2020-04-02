@@ -14,6 +14,12 @@ public class OCRVehicleLicenseOption: CardppV1Requst {
     }
 }
 
+extension OCRVehicleLicenseOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRVehicleLicenseResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppVehicleLicenseResponse)
 @objcMembers public final class OCRVehicleLicenseResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?

@@ -16,6 +16,12 @@ public class ImageppRecognizeTextOption: FaceppBaseRequest {
     }
 }
 
+extension ImageppRecognizeTextOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, ImagepprecognizeTextResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppRecognizeTextResponse)
 @objcMembers public final class ImagepprecognizeTextResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。

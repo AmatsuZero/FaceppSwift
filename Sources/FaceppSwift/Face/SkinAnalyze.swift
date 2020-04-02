@@ -54,6 +54,12 @@ public class SkinAnalyzeOption: FaceppBaseRequest {
     }
 }
 
+extension SkinAnalyzeOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, SkinAnalyzeResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppSkinAnalyzeResponse)
 @objcMembers public final class SkinAnalyzeResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串
@@ -166,6 +172,12 @@ extension SkinAnalyzeSkinType.SkinTypeResult {
 public class SkinAnalyzeAdvancedOption: FaceppBaseRequest {
     override var requsetURL: URL? {
         return kFaceappV1URL?.appendingPathComponent("skinanalyze_advanced")
+    }
+}
+
+extension SkinAnalyzeAdvancedOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, SkinAnalyzeAdvancedResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 

@@ -55,6 +55,18 @@ public class HumanBodySegmentV1Option: FaceppBaseRequest {
     }
 }
 
+extension HumanBodySegmentV1Option: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, HumanBodySegmentResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
+extension HumanBodySegmentV2Option: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, HumanBodySegmentResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppBodySegmentResponse)
 @objcMembers public final class HumanBodySegmentResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。

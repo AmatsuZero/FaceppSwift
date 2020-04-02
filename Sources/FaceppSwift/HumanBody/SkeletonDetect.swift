@@ -20,6 +20,12 @@ public class SkeletonDetectOption: FaceppBaseRequest {
     }
 }
 
+extension SkeletonDetectOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, SkeletonDetectResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppSkeletonDetectResponse)
 @objcMembers public final class SkeletonDetectResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?

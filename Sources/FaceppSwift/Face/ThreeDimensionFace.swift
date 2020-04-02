@@ -183,6 +183,12 @@ import Foundation
     }
 }
 
+extension ThreeDimensionFaceOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, ThreeDimensionFaceResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppThreeDimensionFaceResponse)
 @objcMembers public final class ThreeDimensionFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串

@@ -91,6 +91,12 @@ import Foundation
     public let faceToken: String?
 }
 
+extension FaceSetUserIdOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceSetUserIdResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFaceGetDetailOption)
 @objcMembers public final class FaceGetDetailOption: NSObject, RequestProtocol {
     public var timeoutInterval: TimeInterval = 60
@@ -153,6 +159,12 @@ import Foundation
     public let faceRectangle: FaceppRectangle?
     /// 包含该face_token的FaceSet数组
     public let facesets: [FaceSet]?
+}
+
+extension FaceGetDetailOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceGetDetailResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
 }
 
 @objc(FppFaceAnalyzeOption)
@@ -266,4 +278,10 @@ import Foundation
     public var timeUsed: Int?
     /// 经过分析的人脸数组
     public let faces: [Face]?
+}
+
+extension FaceAnalyzeOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FaceAnalyzeResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
 }

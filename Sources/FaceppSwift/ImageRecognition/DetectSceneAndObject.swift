@@ -15,6 +15,12 @@ public class ImageppDetectScenceAndObjectOption: FaceppBaseRequest {
     }
 }
 
+extension ImageppDetectScenceAndObjectOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, ImageppDetectScenceAndObjectResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppDetectScenceAndObjectResponse)
 @objcMembers public final class ImageppDetectScenceAndObjectResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。

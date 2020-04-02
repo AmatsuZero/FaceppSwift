@@ -43,7 +43,6 @@ public class FaceppClient: NSObject {
         self.apiKey = key
         self.apiSecret = secret
         super.init()
-
     }
 }
 
@@ -347,4 +346,9 @@ extension PropertyLoopable {
         }
         return result
     }
+}
+
+public protocol FppDataRequestProtocol: NSObjectProtocol {
+    associatedtype ResponseType: FaceppResponseBaseProtocol
+    func request(completionHandler: @escaping (Error?, ResponseType?) -> Void) -> URLSessionTask?
 }

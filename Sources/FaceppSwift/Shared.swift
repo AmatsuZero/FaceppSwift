@@ -1,197 +1,125 @@
 //
-
 //  Shared.swift
-
 //  facepp
-
 //
-
 //  Created by 姜振华 on 2020/2/3.
-
 //
 
 import Foundation
 
 #if os(Linux)
-
 import FoundationNetworking
-
 #endif
 
 let kBaseURL = URL(string: "https://api-cn.faceplusplus.com")
 
 let kBaseFaceppURL: URL? = {
-
     return kBaseURL?.appendingPathComponent("facepp")
-
 }()
 
 let kBaseCardppURL: URL? = {
-
     return kBaseURL?.appendingPathComponent("cardpp")
-
 }()
 
 let kFaceappV1URL: URL? = {
-
     return kBaseFaceppURL?.appendingPathComponent("v1")
-
 }()
 
 let kFaceappV2URL: URL? = {
-
     return kBaseFaceppURL?.appendingPathComponent("v2")
-
 }()
 
 let kFaceppV3URL: URL? = {
-
     return kBaseFaceppURL?.appendingPathComponent("v3")
-
 }()
 
 let kCardppV1URL: URL? = {
-
     return kBaseCardppURL?.appendingPathComponent("v1")
-
 }()
 
 let kCardppV2URL: URL? = {
-
     return kBaseCardppURL?.appendingPathComponent("v2")
-
 }()
 
 let kCardppBetaURL: URL? = {
-
     return kBaseCardppURL?.appendingPathComponent("beta")
-
 }()
 
 let kHumanBodyBaseURL: URL? = {
-
     return kBaseURL?.appendingPathComponent("humanbodypp")
-
 }()
 
 let kHumanBodyV1URL: URL? = {
-
     return kHumanBodyBaseURL?.appendingPathComponent("v1")
-
 }()
 
 let kHumanBodyV2URL: URL? = {
-
     return kHumanBodyBaseURL?.appendingPathComponent("v2")
-
 }()
 
 let kImageppBaseURL: URL? = {
-
     return kBaseURL?.appendingPathComponent("imagepp")
-
 }()
 
 let kImageppV1URL: URL? = {
-
     return kImageppBaseURL?.appendingPathComponent("v1")
-
 }()
 
 let kImageppBetaURL: URL? = {
-
     return kImageppBaseURL?.appendingPathComponent("beta")
-
 }()
 
 public protocol FaceppResponseBaseProtocol: NSObjectProtocol {
-
     // 用于区分每一次请求的唯一的字符串。
-
     var requestId: String? { get }
-
     /// 当请求失败时才会返回此字符串，具体返回内容见后续错误信息章节。否则此字段不存在。
-
     var errorMessage: String? { get }
-
     /// 整个请求所花费的时间，单位为毫秒。
-
     var timeUsed: Int? { get }
-
 }
 
 public protocol FaceppResponseProtocol: FaceppResponseBaseProtocol, Codable, Hashable {
-
     /// Decoder
-
     static func getDecoder() -> JSONDecoder
-
     /// Encoder
-
     static func getEncoder() -> JSONEncoder
-
 }
 
 public extension FaceppResponseProtocol {
 
     static func getEncoder() -> JSONEncoder {
-
         let encoder = JSONEncoder()
-
         encoder.outputFormatting = .prettyPrinted
-
         return encoder
-
     }
 
     static func getDecoder() -> JSONDecoder {
-
         return FaceppClient.getDecoder()
-
     }
 
     /// 归档
-
     /// - Parameters:
-
     ///   - resp: 要保存的对象
-
     ///   - url: 保存路径
-
     static func archive(_ resp: Self, at url: URL) throws {
-
         let encoder = getEncoder()
-
         let data = try encoder.encode(resp)
-
         try data.write(to: url)
-
     }
 
     /// 归档
-
     /// - Parameter url: 保存路径
-
     func archive(at url: URL) throws {
-
         try Self.archive(self, at: url)
-
     }
 
     /// 解档
-
     /// - Parameter url: 归档文件路径
-
     static func unarchinve(at url: URL) throws -> Self {
-
         let data = try Data(contentsOf: url)
-
         let decoder = getDecoder()
-
         return try decoder.decode(Self.self, from: data)
-
     }
-
 }
 
 typealias Params = [String: Any]
@@ -252,25 +180,17 @@ extension DispatchQueue {
 
     private static var _onceTracker = [String]()
     /**
-     
      Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
-     
      only execute the code once even in the presence of multithreaded calls.
-     
-     
-     
      - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
-     
      - parameter block: Block to execute once
      
      */
-
     class func once(token: String = UUID().uuidString, block: () -> Void) {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
         if _onceTracker.contains(token) {
             return
         }
-
         _onceTracker.append(token)
         block()
     }
@@ -279,7 +199,6 @@ extension DispatchQueue {
 #endif
 
 extension Set where Element: Option {
-
     var rawValue: Int {
         var rawValue = 0
         for (index, element) in Element.allCases.enumerated() {
@@ -308,7 +227,6 @@ public enum FaceppRequestError: CustomNSError, LocalizedError {
     }
 
     public var errorDescription: String? {
-
         switch self {
         case .notInit:
             return "没有初始化"

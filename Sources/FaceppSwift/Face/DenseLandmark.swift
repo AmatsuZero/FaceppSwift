@@ -1158,3 +1158,9 @@ public final class DenseLandmark: NSObject, Codable {
         public let lowerLip63: FaceppPoint
     }
 }
+
+extension ThousandLandMarkOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, ThousandLandmarkResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}

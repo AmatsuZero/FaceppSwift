@@ -228,3 +228,9 @@ import Foundation
     /// 当请求失败时才会返回此字符串
     public var errorMessage: String?
 }
+
+extension CompareOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, CompareResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}

@@ -10,7 +10,6 @@ import Foundation
 
 @objc(FppFaceDetectOption)
 @objcMembers public class FaceDetectOption: FaceppBaseRequest {
-
     /// 是否检测并返回人脸关键点。合法值为：
     @objc(FppFaceDetectReturnLandmark)
     public enum ReturnLandmark: Int {
@@ -114,6 +113,12 @@ import Foundation
         params["beauty_score_min"] = beautyScoreMin
         params["beauty_score_max"] = beautyScoreMax
         return (params, files)
+    }
+}
+
+extension FaceDetectOption: FppDataRequestProtocol  {
+    @objc public func request(completionHandler: @escaping (Error?, FaceDetectResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
 

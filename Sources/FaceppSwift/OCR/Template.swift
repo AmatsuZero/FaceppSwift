@@ -45,6 +45,12 @@ import Foundation
     }
 }
 
+extension OCRTemplateOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRTemplateResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppTemplateResponse)
 @objcMembers public final class OCRTemplateResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?

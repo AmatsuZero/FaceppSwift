@@ -37,6 +37,12 @@ import Foundation
     }
 }
 
+extension FacialFeaturesOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, FacialFeaturesResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppFacialFeaturesResponse)
 @objcMembers public final class FacialFeaturesResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串

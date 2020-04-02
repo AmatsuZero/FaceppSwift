@@ -280,3 +280,9 @@ public class BeautifyV2Option: BeautifyV1Option {
     /// 美化后的图片，jpg格式。base64 编码的二进制图片数据。图片尺寸大小与底图一致。
     public let result: String?
 }
+
+extension BeautifyV1Option: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, BeautifyResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}

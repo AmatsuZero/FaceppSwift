@@ -62,6 +62,12 @@ extension Set where Element == HumanBodyDetectOption.ReturnAttributes {
     }
 }
 
+extension HumanBodyDetectOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, HumanBodyDetectResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppBodyDetectResponse)
 @objcMembers public final class HumanBodyDetectResponse: NSObject, FaceppResponseProtocol {
     public var requestId: String?

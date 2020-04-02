@@ -14,6 +14,12 @@ public class OCRBankCardV1Option: CardppV1Requst {
     }
 }
 
+extension OCRBankCardV1Option: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRBankCardResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppBankCardResponse)
 @objcMembers public final class OCRBankCardResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
@@ -61,5 +67,11 @@ public class OCRBankCardV1Option: CardppV1Requst {
 public class OCRBankCardBetaOption: CardppV1Requst {
     override var requsetURL: URL? {
         return kCardppBetaURL?.appendingPathComponent("ocrbankcard")
+    }
+}
+
+extension OCRBankCardBetaOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, OCRBankCardResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }

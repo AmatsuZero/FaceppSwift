@@ -167,6 +167,12 @@ import Foundation
     }
 }
 
+extension ImageppMergeFaceOption: FppDataRequestProtocol {
+    @objc public func request(completionHandler: @escaping (Error?, ImageppMergeFaceResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppMergeFaceResponse)
 @objcMembers public final class ImageppMergeFaceResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串

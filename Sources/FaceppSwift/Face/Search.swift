@@ -87,6 +87,12 @@ import FoundationNetworking
     }
 }
 
+extension SearchOption: FppDataRequestProtocol {
+    public func request(completionHandler: @escaping (Error?, SearchResponse?) -> Void) -> URLSessionTask? {
+        return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
+    }
+}
+
 @objc(FppSearchResponse)
 @objcMembers public final class SearchResponse: NSObject, FaceppResponseProtocol {
     /// 用于区分每一次请求的唯一的字符串。
