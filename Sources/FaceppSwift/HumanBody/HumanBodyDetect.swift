@@ -147,7 +147,7 @@ public extension HumanBodyDetectResponse.Attributes {
     @objc(FppHumanBodyDetectSex)
     enum Sex: Int, CustomDebugStringConvertible {
         case male = 0, female, unknown
-        
+
         public var debugDescription: String {
             switch self {
             case .female: return "female"

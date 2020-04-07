@@ -116,7 +116,7 @@ import Foundation
     }
 }
 
-extension FaceDetectOption: FppDataRequestProtocol  {
+extension FaceDetectOption: FppDataRequestProtocol {
     @objc public func request(completionHandler: @escaping (Error?, FaceDetectResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }

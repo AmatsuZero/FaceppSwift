@@ -19,62 +19,63 @@ final class FppPornhubCommand: ParsableCommand {
         abstract: "生成 Pornhub 风格的 Logo ",
         discussion: "仅限于 macOS 平台"
     )
-    
+
     @Option(name: .shortAndLong, help: "图片输出路径")
     var output: String
-    
+
     @Option(name: .long, help: "第一部分文本")
     var pornText: String
-    
+
     @Option(name:  .long, help: "第二部分文本")
     var hubText: String
-    
+
     enum Theme: String, ExpressibleByArgument {
         case dark, light
     }
-    
+
     @Option(name: .shortAndLong, default: .dark, help: "主题色")
     var theme: Theme
-    
+
     enum Style: String, ExpressibleByArgument {
         case horizontal, vertical
     }
-    
+
     @Option(name: .shortAndLong, default:.horizontal, help: "样式")
     var style: Style
-    
+
     @Option(name: .long, default: 1024, help: "画布宽度")
     var width: Double
-    
+
     @Option(name: .long, default: 768, help: "画布宽度")
     var height: Double
-    
+
     @Option(name: .shortAndLong, default: 117.76, help: "指定字体大小，近当自动调整字体关闭时生效")
     var fontSize: Double
-    
+
     func run() throws {
         guard #available(macOS 10.10, *) else {
             writeError(RuntimeError("仅限于 macOS 使用"))
             return
         }
+        #if os(macOS)
         try draw()?.tiffRepresentation?.write(to: .init(fileURLWithPath: output))
+        #endif
     }
 }
 
 #if os(macOS)
 extension FppPornhubCommand {
-    
     func containerView() -> NSView {
         let view = NSStackView(frame: .init(origin: .zero, size: canvasSize))
         view.wantsLayer = true
         view.layer?.backgroundColor = theme == .dark ? .black : .white
         return view
     }
-    
+
     var canvasSize: CGSize {
         return CGSize(width: width, height: height)
     }
-    
+
     var font: NSFont {
         if fontSize <= 0 {
             fontSize = 117.76
@@ -82,15 +83,15 @@ extension FppPornhubCommand {
         let mgr = NSFontManager.shared
         return mgr.font(withFamily: "Arial", traits: .boldFontMask, weight: 2, size: CGFloat(fontSize))!
     }
-    
+
     var hPadding: CGFloat {
         return 8 * (NSScreen.main?.backingScaleFactor ?? 1)
     }
-    
+
     var vPadding: CGFloat {
         return 6 * (NSScreen.main?.backingScaleFactor ?? 1)
     }
-    
+
     func pornTextField() -> NSTextField {
         let textField = NSTextField(frame: .zero)
         textField.wantsLayer = true
@@ -105,7 +106,7 @@ extension FppPornhubCommand {
         textField.sizeToFit()
         return textField
     }
-    
+
     func hubTextField() -> NSTextField {
         let textField = NSTextField(frame: .zero)
         textField.textColor = theme == .dark ? .black : .white
@@ -118,7 +119,7 @@ extension FppPornhubCommand {
         textField.layer?.cornerRadius = 4
         return textField
     }
-    
+
     func draw() -> NSImage? {
         let pTextField = pornTextField()
         let hTextField = hubTextField()

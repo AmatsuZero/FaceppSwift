@@ -426,7 +426,8 @@ public class FaceAlbumSearchImageTaskQueryOption: FaceAlbumTaskQueryBaseOption {
 }
 
 extension FaceAlbumSearchImageTaskQueryOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumSearchImageTaskQueryResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, FaceAlbumSearchImageTaskQueryResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
@@ -727,7 +728,8 @@ public enum FaceAlbumUngroupedReason: Int, Codable {
 }
 
 extension FaceAblbumGetFaceDetailOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, FaceAblbumGetFaceDetailResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, FaceAblbumGetFaceDetailResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
@@ -778,7 +780,8 @@ public extension FaceAlbum {
 }
 
 extension FaceAlbumGetImageDetailOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGetImageDetailResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, FaceAlbumGetImageDetailResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
@@ -981,7 +984,8 @@ public extension FaceAlbum {
 }
 
 extension FaceAlbumGetAlbumDetailOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGetAlbumDetailResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, FaceAlbumGetAlbumDetailResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
@@ -1083,7 +1087,7 @@ public extension FaceAlbum {
      例：http://cburl?task_id=xxxxxxx
      */
     public var callbackURL: URL?
-    
+
      /// FaceAlbum标识
     public var facealbumToken: String
 
@@ -1169,7 +1173,8 @@ public extension FaceAlbum {
 }
 
 extension FaceAlbumAddImageTaskQueryOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumAddImageTaskQueryResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, FaceAlbumAddImageTaskQueryResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
@@ -1466,7 +1471,8 @@ public class FaceAlbumGroupFaceTaskQueryOption: FaceAlbumTaskQueryBaseOption {
 }
 
 extension FaceAlbumGroupFaceTaskQueryOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, FaceAlbumGroupFaceTaskQueryResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, FaceAlbumGroupFaceTaskQueryResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }

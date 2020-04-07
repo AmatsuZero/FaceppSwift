@@ -348,7 +348,7 @@ extension OCRDriverLicenseV2Option: FppDataRequestProtocol {
         /// 准驾车型
         public let `class`: Class?
          /// 准驾车型
-        @objc public var classString: String? {
+        public var classString: String? {
             return self.class?.rawValue
         }
         /// 表示驾驶证的正面或者反面。该字段目前只会返回“front”，表示是正面

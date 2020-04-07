@@ -23,7 +23,7 @@ let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
     public var displayName: String?
     /// FaceSet的标签，如果未提供为""
     public var tags: [String]?
-    
+
     public init(facesetToken: String?,
                 outerId: String?,
                 displayName: String?,
@@ -33,7 +33,7 @@ let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
         self.displayName = displayName
         self.tags = tags
     }
-    
+
     required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.facesetToken) {
@@ -72,7 +72,7 @@ let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
     public var needCheckParams: Bool = true
     /// 超时时间
     public var timeoutInterval: TimeInterval = 60
-    
+
     public var tags: [String]?
     /**
      一个数字 n，表示开始返回的 faceset_token 在传入的 API Key 下的序号。
@@ -82,14 +82,14 @@ let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
      默认值为1。
      */
     public var start: Int
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init(start: Int = 1, tags: [String]?) {
         self.start = start
         self.tags = tags
     }
-    
+
     public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
@@ -110,11 +110,11 @@ let kFaceSetBaseURL = kFaceppV3URL?.appendingPathComponent("faceset")
             start = 1
         }
     }
-    
+
     var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("getfacesets")
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         var params: Params = [
             "start": start
@@ -168,7 +168,7 @@ public extension FaceSet {
             }
         }
     }
-    
+
     @discardableResult
     static func getFaceSets(option: FaceSetGetOption,
                             completionHanlder: @escaping (Error?, FaceSetsGetResponse?) -> Void) -> URLSessionTask? {
@@ -191,20 +191,20 @@ public extension FaceSet {
     public var facesetToken: String?
     /// 用户提供的FaceSet标识
     public var outerId: String?
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     convenience init(faceset: FaceSet) {
         self.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
     }
-    
+
     public convenience init(facesetToken: String?, outerId: String?) {
         var params = Params()
         params["faceset_token"] = facesetToken
         params["outer_id"] = outerId
         self.init(params: params)
     }
-    
+
     public required init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
@@ -224,18 +224,18 @@ public extension FaceSet {
         }
         super.init()
     }
-    
+
     var requsetURL: URL? {
         return kFaceSetBaseURL
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
         }
         return facesetToken != nil || outerId != nil
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         var params = Params()
         params["faceset_token"] = facesetToken
@@ -248,23 +248,23 @@ public extension FaceSet {
 @objcMembers public class FaceSetsDeleteOption: FaceSetBaseRequest {
     /// 删除时是否检查FaceSet中是否存在face_token
     public var checkEmpty = true
-    
+
     public convenience init(facesetToken: String?, outerId: String?, checkEmpty: Bool = true) {
         self.init(facesetToken: facesetToken, outerId: outerId)
         self.checkEmpty = checkEmpty
     }
-    
+
     public required init(params: [String: Any]) {
         if let value = params["check_empty"] as? Int {
             checkEmpty = value == 1
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("delete")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["check_empty"] = checkEmpty ? 1 : 0
@@ -323,12 +323,12 @@ public extension FaceSet {
      您可以输入上一次请求本 API 返回的 next 值，用以获得接下来的 100 个 face_token。
      */
     public var start = 1
-    
+
     public convenience init(facesetToken: String?, outerId: String?, start: Int = 1) {
         self.init(facesetToken: facesetToken, outerId: outerId)
         self.start = start
     }
-    
+
     public required init(params: [String: Any]) {
         if let value = params["start"] as? Int {
             start = value
@@ -337,11 +337,11 @@ public extension FaceSet {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("getdetail")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["start"] = 1
@@ -386,7 +386,7 @@ public extension FaceSet {
         option.start = start
         return Self.detail(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func detail(option: FacesetGetDetailOption,
                        completionHandler: @escaping (Error?, FacesetGetDetailResponse?) -> Void) -> URLSessionTask? {
@@ -410,7 +410,7 @@ public extension FaceSet {
     public var userData: String?
     /// FaceSet自定义标签组成的字符串，用来对FaceSet分组。最长255个字符，多个tag用逗号分隔，每个tag不能包括字符^@,&=*'"
     public var tags: [String]?
-    
+
     public required init(params: [String: Any]) {
         if let value = params["display_name"] as? String {
             displayName = value
@@ -426,12 +426,12 @@ public extension FaceSet {
         }
         super.init(params: params)
     }
-    
+
     public convenience init(facesetToken: String?, outerId: String?, newOuterId: String?) {
         self.init(facesetToken: facesetToken, outerId: outerId)
         self.newOuterId = newOuterId
     }
-    
+
     override func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -444,12 +444,12 @@ public extension FaceSet {
             guard userData.allSatisfy({ !kInvalidUserDataCharacters.contains($0) }) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc :"userData不能包括字符^@,&=*'"))
             }
-            
+
             guard let data = userData.data(using: .utf8), data.count <= 16 * 1024 else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc :"userData不能包超过16KB"))
             }
         }
-        
+
         if let tags = tags, !tags.isEmpty {
             guard tags.allSatisfy({ $0.allSatisfy({ !kInvalidUserDataCharacters.contains($0)})}) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc :"tag不能包括字符^@,&=*'"))
@@ -458,14 +458,14 @@ public extension FaceSet {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc :"tags不能超过255字符"))
             }
         }
-        
+
         return true
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("update")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["new_outer_id"] = newOuterId
@@ -531,12 +531,12 @@ public extension FaceSet {
      注：face_tokens字符串传入“RemoveAllFaceTokens”则会移除FaceSet内所有的face_token
      */
     public var faceTokens = [String]()
-    
+
     public convenience init(facesetToken: String?, outerId: String?, tokens: [String] = []) {
         self.init(facesetToken: facesetToken, outerId: outerId)
         faceTokens = tokens
     }
-    
+
     public required init(params: [String: Any]) {
         if let value = params["face_tokens"] as? String {
             faceTokens = value.components(separatedBy: ",")
@@ -548,17 +548,17 @@ public extension FaceSet {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("removeface")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["face_tokens"] = removeAll ? "RemoveAllFaceTokens" : faceTokens.joined(separator: ",")
         return (params, nil)
     }
-    
+
     override func paramsCheck() -> Bool {
         guard needCheckParams else {
             return true
@@ -608,14 +608,14 @@ public extension FaceSet {
         return Self.remove(option: .init(facesetToken: facesetToken, outerId: outerId, tokens: faceTokens),
                            completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     func removeAll(completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
         let option = FaceSetRemoveOption(facesetToken: facesetToken, outerId: outerId)
         option.removeAll = true
         return Self.remove(option: option, completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func remove(option: FaceSetRemoveOption,
                        completionHandler: @escaping (Error?, FaceSetRemoveResponse?) -> Void) -> URLSessionTask? {
@@ -635,17 +635,17 @@ public extension FaceSet {
      人脸标识 face_token 组成的字符串，可以是一个或者多个，用逗号分隔。最多不超过5个face_token
      */
     public var faceTokens: [String]
-    
+
     public convenience init(facesetToken: String?, outerId: String?, tokens: [String]) {
         self.init(facesetToken: facesetToken, outerId: outerId)
         faceTokens = tokens
     }
-    
+
     public convenience init(faceset: FaceSet, tokens: [String]) {
         self.init(facesetToken: faceset.facesetToken, outerId: faceset.outerId)
         faceTokens = tokens
     }
-    
+
     public required init(params: [String: Any]) {
         if let value = params["face_tokens"] as? String {
             faceTokens = value.components(separatedBy: ",")
@@ -654,11 +654,11 @@ public extension FaceSet {
         }
         super.init(params: params)
     }
-    
+
     override var requsetURL: URL? {
         return super.requsetURL?.appendingPathComponent("addface")
     }
-    
+
     override func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
@@ -668,7 +668,7 @@ public extension FaceSet {
         }
         return (facesetToken != nil || outerId != nil)
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["face_tokens"] = faceTokens.joined(separator: ",")
@@ -698,7 +698,7 @@ public extension FaceSet {
              completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
         return Self.add(option: .init(faceset: self, tokens: faceTokens), completionHandler: completionHandler)
     }
-    
+
     @discardableResult
     static func add(option: FaceSetAddFaceOption,
                     completionHandler: @escaping (Error?, FaceSetAddFaceResponse?) -> Void) -> URLSessionTask? {
@@ -739,13 +739,13 @@ public extension FaceSet {
      默认值为0
      */
     public var forceMerge = 0
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public override init() {
         super.init()
     }
-    
+
     required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
@@ -777,22 +777,22 @@ public extension FaceSet {
         }
         super.init()
     }
-    
+
     func paramsCheck() throws -> Bool {
         guard needCheckParams else {
             return true
         }
-        
+
         if let data = userData {
             guard data.allSatisfy({ !kInvalidUserDataCharacters.contains($0) }) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc: "userData不能包括字符^@,&=*'"))
             }
-            
+
             guard let d = data.data(using: .utf8), d.count <= 16 * 1024 else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc: "userData不能超过16KB"))
             }
         }
-        
+
         if let tags = tags, !tags.isEmpty {
             guard tags.allSatisfy({ $0.allSatisfy({ !kInvalidUserDataCharacters.contains($0)})}) else {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc: "tags不能包括字符^@,&=*'"))
@@ -801,14 +801,14 @@ public extension FaceSet {
                 throw FaceppRequestError.argumentsError(.invalidArguments(desc: "tag不能超过255个字符"))
             }
         }
-        
+
         return true
     }
-    
+
     var requsetURL: URL? {
         return kFaceSetBaseURL?.appendingPathComponent("create")
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         var params = Params()
         params["outer_id"] = outerId
@@ -891,14 +891,14 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
     public var timeoutInterval: TimeInterval = 60
     /// 异步任务的唯一标识
     public var taskId: String
-    
+
     public weak var metricsReporter: FaceppMetricsReporter?
-    
+
     public init(taskId: String) {
         self.taskId = taskId
         super.init()
     }
-    
+
     required public init(params: [String: Any]) {
         if let value = params["need_check_params"] as? Bool {
             needCheckParams = value
@@ -917,11 +917,11 @@ let kBaseFaceSetAsyncTaskURL = kFaceSetBaseURL?.appendingPathComponent("async")
         }
         super.init()
     }
-    
+
     var requsetURL: URL? {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("task_status")
     }
-    
+
     func params() throws -> (Params, [Params]?) {
         return (["task_id": taskId], nil)
     }
@@ -1043,12 +1043,12 @@ public extension FaceSet {
      注：face_tokens字符串传入“RemoveAllFaceTokens”则会移除FaceSet内所有的face_token
      */
     public var faceTokens = [String]()
-    
+
     public convenience init(facesetToken: String?, outerId: String?, tokens: [String] = []) {
         self.init(facesetToken: facesetToken, outerId: outerId)
         faceTokens = tokens
     }
-    
+
     public required init(params: [String: Any]) {
         if let value = params["face_tokens"] as? String {
             faceTokens = value.components(separatedBy: ",")
@@ -1063,13 +1063,13 @@ public extension FaceSet {
     override var requsetURL: URL? {
         return kBaseFaceSetAsyncTaskURL?.appendingPathComponent("removeface")
     }
-    
+
     override func params() throws -> (Params, [Params]?) {
         var (params, _) = try super.params()
         params["face_tokens"] = removeAll ? "RemoveAllFaceTokens" : faceTokens.joined(separator: ",")
         return (params, nil)
     }
-    
+
     override func paramsCheck() -> Bool {
         guard needCheckParams else {
             return true

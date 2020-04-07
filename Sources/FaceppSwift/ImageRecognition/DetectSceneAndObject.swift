@@ -16,7 +16,8 @@ public class ImageppDetectScenceAndObjectOption: FaceppBaseRequest {
 }
 
 extension ImageppDetectScenceAndObjectOption: FppDataRequestProtocol {
-    @objc public func request(completionHandler: @escaping (Error?, ImageppDetectScenceAndObjectResponse?) -> Void) -> URLSessionTask? {
+    @objc public func request(completionHandler:
+        @escaping (Error?, ImageppDetectScenceAndObjectResponse?) -> Void) -> URLSessionTask? {
         return FaceppClient.shared?.parse(option: self, completionHandler: completionHandler)
     }
 }
