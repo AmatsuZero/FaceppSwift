@@ -56,7 +56,7 @@ extension NSColor {
         self.init(calibratedRed: red, green: green, blue: blue, alpha: 1.0)
     }
 
-    convenience init?(hexString hex: String, alpha: Float) {
+    convenience init?(hexString hex: String, alpha: Float = 1) {
         // Handle two types of literals: 0x and # prefixed
         var cleanedString = ""
         if hex.hasPrefix("0x") {

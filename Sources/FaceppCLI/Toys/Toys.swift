@@ -15,7 +15,8 @@ struct FppToysCommand: ParsableCommand {
             FppNokiaImage.self,
             FppConfesssionGuysCommand.self,
             FppPornhubCommand.self,
-            FppQRCodeCommand.self
+            FppQRCodeCommand.self,
+            FppGithubCommand.self
         ]
     )
 

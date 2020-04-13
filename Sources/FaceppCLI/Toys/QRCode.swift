@@ -11,29 +11,23 @@ import AppKit
 import Foundation
 #endif
 import ArgumentParser
+import Rainbow
 
-enum ANSIColor: Int, ExpressibleByArgument {
-    case Black = 30, Red, Green, Yellow, Blue, Magenta, Cyan, White
-    case BackgroundBlack = 40, BackgroundRed, BackgroundGreen, BackgroundYellow,
-    BackgroundBlue, BackgroundMagenta, BackgroundCyan, BackgroundWhite
-    case BrightBlack = 90, BrightRed, BrightGreen, BrightYellow, BrightBlue, BrightMagenta, BrightCyan, BrightWhite
-
-    private static let Reset = "\u{001B}[0m"
-
+extension BackgroundColor: ExpressibleByArgument {
     private var color: String {
         return "\u{001B}[\(rawValue)m"
     }
-
-    private var bgColor: String {
-        return "\u{001B}[\(rawValue+10)m"
+    var output: String {
+        return "\(color)  \u{001B}[0m"
     }
+}
 
-    var fgOutput: String {
-        return "\(color)  \(ANSIColor.Reset)"
+extension Color: ExpressibleByArgument {
+    private var color: String {
+        return "\u{001B}[\(rawValue)m"
     }
-
-    var bgOutput: String {
-        return "\(bgColor)  \(ANSIColor.Reset)"
+    var output: String {
+        return "\(color)  \u{001B}[0m"
     }
 }
 
@@ -44,12 +38,12 @@ final class FppQRCodeCommand: ParsableCommand {
         discussion: "仅限于 macOS 平台"
     )
 
-    @Option(name: .shortAndLong, default: .White, help: "字体颜色")
-    var foregroundColor: ANSIColor
+    @Option(name: .shortAndLong, default: .green, help: "字体颜色")
+    var foregroundColor: Color
 
-    @Option(name: .shortAndLong, default: .Black, help: "字体背景颜色")
-    var backgroundColor: ANSIColor
-    
+    @Option(name: .shortAndLong, default: .white, help: "字体背景颜色")
+    var backgroundColor: BackgroundColor
+
     @Option(name: .shortAndLong, help: "二维码文案")
     var text: String
 
@@ -59,7 +53,7 @@ final class FppQRCodeCommand: ParsableCommand {
             return
         }
         #if os(macOS)
-        if let qrCode = text.createQRCodeANSI(background: foregroundColor, foreground: backgroundColor) {
+        if let qrCode = text.createQRCodeANSI(background: backgroundColor, foreground: foregroundColor) {
             print(qrCode)
         }
         #endif
@@ -68,8 +62,8 @@ final class FppQRCodeCommand: ParsableCommand {
 
 #if os(macOS)
 extension String {
-    func createQRCodeANSI(background backgroundColor: ANSIColor = .White,
-                          foreground foregroundColor: ANSIColor = .Black) -> String? {
+    func createQRCodeANSI(background backgroundColor: BackgroundColor = .white,
+                          foreground foregroundColor: Color = .black) -> String? {
         // 生成二维码
         let filter = CIFilter(name: "CIQRCodeGenerator")
         filter?.setDefaults()
@@ -84,7 +78,7 @@ extension String {
         colorFilter?.setValue(CIColor(color: .white), forKey: "inputColor0")
         colorFilter?.setValue(CIColor(color: .black), forKey: "inputColor1")
         let context = CIContext(options: [
-            .useSoftwareRenderer : false
+            .useSoftwareRenderer: false
         ])
         guard let outputCIImage = colorFilter?.outputImage,
             let cgImage = context.createCGImage(outputCIImage, from: outputCIImage.extent) else {
@@ -99,9 +93,9 @@ extension String {
             for y in 0..<h {
                 if let color = bmpImgRef.colorAt(x: x, y: y) {
                     if color.usingColorSpace(.genericRGB) == blackColor {
-                        result += backgroundColor.bgOutput
+                        result += backgroundColor.output
                     } else {
-                        result += foregroundColor.bgOutput
+                        result += foregroundColor.output
                     }
                 }
             }
