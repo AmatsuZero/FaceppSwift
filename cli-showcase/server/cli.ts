@@ -51,11 +51,14 @@ export class Cli {
         callbackError?: any
     ) {
         try {
-            const params = ['/c', command, ...args].filter(
+            const params: string[] = ['/c', command, ...args].filter(
                 (item, index) => params.indexOf(item) === index
             )
-            Cli._execute(process.env.comspec, params)
-            callback(command, args, 'Windows')
+            const cmd = process.env['comspec']
+            if (cmd !== undefined) {
+                Cli._execute(cmd, params)
+                callback(command, args, 'Windows')
+            }
         } catch (e) {
             callbackError(command, args, 'Windows')
         }
@@ -90,15 +93,15 @@ export class Cli {
      * @param args      Args of the command. ('watch')
      * @private
      */
-    private static _execute(command, args) {
-        var spawn = require('child_process').spawn
-        var childProcess = spawn(command, args)
+    private static _execute(command: string, args: string[]) {
+        const spawn = require('child_process').spawn
+        const childProcess = spawn(command, args)
 
-        childProcess.stdout.on('data', function(data) {
+        childProcess.stdout.on('data', (data: any) => {
             console.log(data.toString())
         })
 
-        childProcess.stderr.on('data', function(data) {
+        childProcess.stderr.on('data', (data: any) => {
             console.error(data.toString())
         })
     }
