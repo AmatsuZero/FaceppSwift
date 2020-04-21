@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <head>
     <meta charset="utf-8">
     <title>图片美化拦截测试</title>
@@ -10,15 +10,15 @@
             height: 100%;
         }
         button {
-            width: 300px;
-            height: 100px;
+            width: 100px;
+            height: 26px;
             margin: 0 auto; 
             display: block;
-            font-size: 40px;
+            font-size: 18px;
         }
         input {
             width: 100%;
-            font-size: 40px;
+            font-size: 18px;
         }
     </style>
     <script>
@@ -106,6 +106,10 @@
             出生日期： <input type="text" id="birthday" value=""><br/>
             身份证号： <input type="text" id="number" value=""><br/>
             <button type="button" onclick="sendMessage()">识别</button>
+        </div>
+        <div>
+            <h1>自适应 ImageView </h1>
+            <button type="button" onclick="webkit.messageHandlers.fppaware.postMessage('')">查看</button>
         </div>
     </body>
 

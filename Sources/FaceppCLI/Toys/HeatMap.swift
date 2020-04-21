@@ -19,7 +19,7 @@ struct GithubCommitData {
     let count: Int
     var weekDay = 0
     var month = 0
-    
+
     var consoleColor: String {
         switch color {
         case "#ebedf0":
@@ -48,34 +48,34 @@ extension GithubCommitData: CustomStringConvertible {
 
 final class GithubCommitHelper {
     let userName: String
-    
+
     init(userName: String) {
         self.userName = userName
     }
-    
+
     lazy var url: URL? = {
         return URL(string: "https://github.com/users/\(userName)/contributions")
     }()
-    
+
     lazy var webData: String? = {
         guard let url = self.url else {
             return nil
         }
         return try? String(contentsOf: url, encoding: .utf8)
     }()
-    
+
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "UTC")
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()
-    
+
     lazy var regExp: NSRegularExpression = {
         let pattern = "(fill=\")(#[^\"]{6})(\" data-count=\")([^\"]{1,})(\" data-date=\")([^\"]{10})(\"/>)"
         return (try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators)) ?? NSRegularExpression()
     }()
-    
+
     func fetchCommit() -> [GithubCommitData]? {
         guard let webData = webData else { return nil }
         let matched = regExp.matches(in: webData, range: NSRange(location: 0, length: webData.count))
@@ -88,12 +88,12 @@ final class GithubCommitHelper {
             let date = Self.dateFormatter.date(from: substringForRange(6))!
             let itemData = GithubCommitData(date: date, color: color, count: count,
                                             weekDay: date.weekday, month: date.month)
-            
+
             return itemData
         }
         return commitArray
     }
-    
+
     func fetchOrganizedCommit() -> [[GithubCommitData]]? {
         guard let tempArray = fetchCommit(), !tempArray.isEmpty else {
             return nil
@@ -134,11 +134,11 @@ final class VisualizationHelper {
     let WEEKS_IN_YEAR = 52.0
     let months = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"]
     let commitHelper: GithubCommitHelper
-    
+
     init(userName: String) {
         self.commitHelper = GithubCommitHelper(userName: userName)
     }
-    
+
     #if os(macOS)
     func commitImageWithRect(rect: CGRect) -> NSImage {
         let im = NSImage(size: rect.size)
@@ -164,7 +164,7 @@ final class VisualizationHelper {
         im.unlockFocus()
         return im
     }
-    
+
     func drawCommits(_ context: CGContext, rect: CGRect) {
         guard let data = commitHelper.fetchOrganizedCommit() else {
             return
@@ -185,7 +185,7 @@ final class VisualizationHelper {
                 NSColor(hexString: day.color)?.setFill()
                 context.fill(rec)
             }
-            
+
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: NSFont.systemFont(ofSize: CGFloat(squareSize * COMMIT_FONT_SIZE_PERCETAGE)),
                 .strokeWidth: 0,
@@ -200,7 +200,7 @@ final class VisualizationHelper {
         }
     }
     #endif
-    
+
     func drawCommitsInConsole() {
 //        guard let data = commitHelper.fetchOrganizedCommit() else {
 //            return
@@ -221,26 +221,26 @@ final class FppGithubCommand: ParsableCommand {
         commandName: "github",
         abstract: "查看Github热力图",
         discussion: "仅支持 macOS 输出图片")
-    
+
     @Option(name: .long, default: 1024, help: "画布宽度")
     var width: Double
-    
+
     @Option(name: .long, default: 768, help: "画布宽度")
     var height: Double
-    
+
     @Option(name: .shortAndLong, help: "Github 用户名")
     var name: String
-    
+
     @Option(name: .shortAndLong, help: "图片输出路径")
     var output: String?
-    
+
     @Flag(default: false, inversion: .prefixedEnableDisable, help: "浏览器查看")
     var openInBrowse: Bool
-    
+
     lazy var visualizeHelper: VisualizationHelper = {
         return VisualizationHelper(userName: name)
     }()
-    
+
     func run() throws {
         if let path = output {
             guard #available(macOS 10.10, *) else {
@@ -262,7 +262,7 @@ final class FppGithubCommand: ParsableCommand {
             try browse()
         }
     }
-    
+
     /// 浏览器查看
     func browse() throws {
         let task = Process()

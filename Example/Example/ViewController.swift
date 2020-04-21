@@ -36,6 +36,7 @@ class ViewController: UIViewController {
         let userController = WKUserContentController()
         userController.add(messageHandler, name: "idcard")
         userController.add(self, name: "facemodel")
+        userController.add(self, name: "fppaware")
         configureation.userContentController = userController
 
         return WKWebView(frame: .zero, configuration: configureation)
@@ -65,6 +66,7 @@ class ViewController: UIViewController {
     deinit {
         webView.configuration.userContentController.removeScriptMessageHandler(forName: "idcard")
         webView.configuration.userContentController.removeScriptMessageHandler(forName: "facemodel")
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "fppaware")
     }
 }
 
@@ -362,6 +364,9 @@ extension ViewController: WKScriptMessageHandler {
         switch message.name {
         case "facemodel":
             let controller = ThreeDimensionViewController()
+            present(controller, animated: true, completion: nil)
+        case "fppaware":
+            let controller = FppAwareViewContrller()
             present(controller, animated: true, completion: nil)
         default:
             break
