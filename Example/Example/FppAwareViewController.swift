@@ -13,6 +13,8 @@ class FppAwareViewContrller: UIViewController {
 
     let avatarImageView = UIImageView()
 
+    var isOpen = false
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         preferredContentSize = CGSize(width: 160, height: 160)
@@ -34,7 +36,7 @@ class FppAwareViewContrller: UIViewController {
         avatarImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         avatarImageView.layer.masksToBounds = true
     }
-    
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         avatarImageView.layer.cornerRadius = view.frame.width / 2
@@ -46,13 +48,11 @@ class FppAwareViewContrller: UIViewController {
             print("Did Focus on")
         }
         avatarImageView.debugFppAware = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.avatarImageView.focusType = .face(true)
-        }
     }
 
     @objc func onTap(_ sender: UITapGestureRecognizer) {
-
+        isOpen.toggle()
+        avatarImageView.focusType = isOpen ? .face(needFallback: true) : .none
     }
 }
 
