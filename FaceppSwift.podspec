@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = 'FaceppSwift'
-    s.version = '0.2.0'
+    s.version = '0.2.1'
     s.license = 'MIT'
     s.summary = 'Facepp API Wrapper in Swift'
     s.homepage = 'https://github.com/AmatsuZero/FaceppSwift'
