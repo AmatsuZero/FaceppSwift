@@ -417,7 +417,7 @@ extension FaceDetectOption: FppDataRequestProtocol {
     public let noseRightContour4: FaceppPoint?
     public let noseRightContour5: FaceppPoint?
     public let mouthUpperLipLeftContour4: FaceppPoint?
-    public let mouthUupperLipRightContour4: FaceppPoint?
+    public let mouthUpperLipRightContour4: FaceppPoint?
 }
 
 @objc(FppFace)
@@ -444,23 +444,85 @@ extension Set where Element == FaceDetectOption.ReturnAttributes {
 }
 
 public extension LandMark {
-    func basicPoints() -> [FaceppPoint] {
+    func basicPoints() -> [String: [FaceppPoint?]] {
         return [
-            contourChin,
-            contourLeft1, contourLeft2, contourLeft3, contourLeft4,
-            contourLeft5, contourLeft6, contourLeft7, contourLeft8, contourLeft9,
-            contourRight1, contourRight2, contourRight3, contourRight4,
-            contourRight5, contourRight6, contourRight7, contourRight8, contourRight9,
-            leftEyeBottom, leftEyeCenter, leftEyeLeftCorner, leftEyeLowerLeftQuarter,
-            leftEyeLowerRightQuarter, leftEyePupil, leftEyeRightCorner, leftEyeTop,
-            leftEyeUpperLeftQuarter, leftEyeUpperRightQuarter, leftEyebrowUpperLeftQuarter, leftEyebrowUpperRightQuarter,
-            mouthLeftCorner, mouthLowerLipBottom, mouthLowerLipLeftContour1, mouthLowerLipLeftContour2, mouthLowerLipLeftContour3,
-            mouthLowerLipRightContour1, mouthLowerLipRightContour2, mouthLowerLipRightContour3, mouthLowerLipTop,
-            noseContourLeft1, noseContourLeft2, noseContourLeft3, noseLeft, noseRight, noseTip,
-            rightEyeBottom, rightEyeCenter, rightEyeLowerLeftQuarter, rightEyeLowerRightQuarter, rightEyePupil,
-            rightEyeRightCorner, rightEyeTop, rightEyeUpperLeftQuarter, rightEyeUpperRightQuarter, rightEyebrowLeftCorner,
-            rightEyebrowLowerLeftQuarter, rightEyebrowLowerMiddle, rightEyeLowerRightQuarter, rightEyebrowRightCorner,
-            rightEyebrowUpperLeftQuarter, rightEyebrowUpperMiddle, rightEyebrowUpperMiddle, rightEyebrowUpperRightQuarter
-            ].compactMap { $0 }
+            "contour": [
+                contourChin,
+                contourLeft1, contourLeft2, contourLeft3, contourLeft4,
+                contourLeft5, contourLeft6, contourLeft7, contourLeft8, contourLeft9,
+                contourRight1, contourRight2, contourRight3, contourRight4,
+                contourRight5, contourRight6, contourRight7, contourRight8, contourRight9
+            ],
+            "leftEye": [
+                leftEyeBottom, leftEyeCenter, leftEyeLeftCorner, leftEyeLowerLeftQuarter,
+                leftEyeLowerRightQuarter, leftEyePupil, leftEyeRightCorner, leftEyeTop,
+                leftEyeUpperLeftQuarter, leftEyeUpperRightQuarter
+            ],
+            "leftEyebrow": [
+                leftEyebrowLeftCorner, leftEyebrowLowerLeftQuarter, leftEyebrowLowerMiddle, leftEyebrowLowerRightQuarter,
+                leftEyebrowRightCorner, leftEyebrowUpperLeftQuarter, leftEyebrowUpperMiddle, leftEyebrowUpperRightQuarter
+            ],
+            "mouth": [
+                mouthLeftCorner, mouthLowerLipBottom, mouthLowerLipLeftContour1, mouthLowerLipLeftContour2,
+                mouthLowerLipLeftContour3, mouthLowerLipRightContour1, mouthLowerLipRightContour2,
+                mouthLowerLipRightContour3, mouthLowerLipTop, mouthRightCorner, mouthUpperLipBottom,
+                mouthUpperLipLeftContour1, mouthUpperLipLeftContour2, mouthUpperLipLeftContour3,
+                mouthUpperLipRightContour1, mouthUpperLipRightContour2, mouthUpperLipRightContour3, mouthUpperLipTop
+            ],
+            "nose": [
+                noseContourLeft1, noseContourLeft2, noseContourLeft3, noseContourLowerMiddle,
+                noseContourRight1, noseContourRight2, noseContourRight3, noseLeft, noseRight, noseTip
+            ],
+            "rightEye": [
+                rightEyeBottom, rightEyeCenter, rightEyeLeftCorner, rightEyeLowerLeftQuarter, rightEyeLowerRightQuarter,
+                rightEyePupil, rightEyeRightCorner, rightEyeTop, rightEyeUpperLeftQuarter, rightEyeUpperRightQuarter
+            ],
+            "rightEyebrow": [
+                rightEyebrowLeftCorner,
+                rightEyebrowLowerLeftQuarter, rightEyebrowLowerMiddle, rightEyeLowerRightQuarter, rightEyebrowRightCorner,
+                rightEyebrowUpperLeftQuarter, rightEyebrowUpperMiddle, rightEyebrowUpperRightQuarter
+            ]
+        ]
+    }
+
+    func allPoints() -> [String: [FaceppPoint?]] {
+        return [
+            "contour": [
+                contourLeft1, contourLeft2, contourLeft3, contourLeft4, contourLeft5, contourLeft6, contourLeft7, contourLeft8,
+                contourLeft9, contourLeft10, contourLeft11, contourLeft12, contourLeft13, contourLeft14, contourLeft15,
+                contourLeft16, contourChin, contourRight1, contourRight2, contourRight3, contourRight4,
+                contourRight5, contourRight6, contourRight7, contourRight8, contourRight9, contourRight10,
+                contourRight11, contourRight12, contourRight13, contourRight14, contourRight15, contourRight16
+            ],
+            "leftEyebrow": [
+                leftEyebrowLeftCorner, leftEyebrowUpperLeftQuarter, leftEyebrowUpperMiddle, leftEyebrowUpperRightQuarter,
+                leftEyebrowUpperRightCorner, leftEyebrowLowerLeftQuarter, leftEyebrowLowerMiddle, leftEyebrowLowerRightQuarter,
+                leftEyebrowLowerRightCorner
+            ],
+            "rightEyebrow": [
+                rightEyebrowUpperLeftCorner, rightEyebrowUpperLeftQuarter, rightEyebrowUpperMiddle, rightEyebrowUpperRightQuarter,
+                rightEyebrowRightCorner, rightEyebrowLowerLeftCorner, rightEyebrowLowerLeftQuarter, rightEyebrowLowerMiddle,
+                rightEyebrowLowerRightQuarter
+            ],
+            "nose": [
+                noseBridge1, noseBridge2, noseBridge3, noseTip, noseLeftContour1, noseLeftContour2, noseLeftContour3,
+                noseLeftContour4, noseLeftContour5, noseMiddleContour, noseRightContour1, noseRightContour2,
+                noseRightContour3, noseRightContour4, noseRightContour5
+            ],
+            "leftEye": [
+                leftEyeLeftCorner, leftEyeUpperLeftQuarter, leftEyeTop, leftEyeUpperRightQuarter, leftEyeRightCorner,
+                leftEyeLowerRightQuarter, leftEyeBottom, leftEyeLowerLeftQuarter, leftEyePupil, leftEyeCenter, rightEyeLeftCorner,
+                rightEyeUpperLeftQuarter, rightEyeTop, rightEyeUpperRightQuarter, rightEyeRightCorner,
+                rightEyebrowLowerRightQuarter, rightEyeBottom, rightEyeLowerLeftQuarter, rightEyePupil, rightEyeCenter
+            ],
+            "mouth": [
+                mouthLeftCorner, mouthUpperLipLeftContour1, mouthUpperLipLeftContour2, mouthUpperLipLeftContour3,
+                mouthUpperLipLeftContour4, mouthRightCorner, mouthUpperLipRightContour1,
+                mouthUpperLipRightContour2, mouthUpperLipRightContour3, mouthUpperLipRightContour4,
+                mouthUpperLipTop, mouthUpperLipBottom, mouthLowerLipRightContour1,
+                mouthLowerLipRightContour2, mouthLowerLipRightContour3, mouthLowerLipLeftContour1, mouthLowerLipLeftContour2,
+                mouthLowerLipLeftContour3, mouthLowerLipTop, mouthLowerLipBottom
+            ]
+        ]
     }
 }
