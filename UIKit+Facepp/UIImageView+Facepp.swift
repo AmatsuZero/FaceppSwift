@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import ObjectiveC
 
 private var fppDebugFppAwareKey: Void?
 private var fppDidFocusOnFacesKey: Void?
