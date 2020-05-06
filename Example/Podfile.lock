@@ -1,16 +1,19 @@
 PODS:
-  - FaceppSwift (0.1.8):
-    - FaceppSwift/Core (= 0.1.8)
-  - FaceppSwift/Core (0.1.8)
-  - FaceppSwift/UIKit (0.1.8):
+  - FaceppSwift (0.2.1):
+    - FaceppSwift/Core (= 0.2.1)
+  - FaceppSwift/ARKit (0.2.1):
+    - FaceppSwift/UIKit
+  - FaceppSwift/Core (0.2.1)
+  - FaceppSwift/UIKit (0.2.1):
     - FaceppSwift/Core
-  - FaceppSwift/WebKit (0.1.8):
+  - FaceppSwift/WebKit (0.2.1):
     - FaceppSwift/UIKit
   - SnapKit (5.0.1)
   - SwiftLint (0.39.1)
 
 DEPENDENCIES:
   - FaceppSwift (from `../`)
+  - FaceppSwift/ARKit (from `../`)
   - FaceppSwift/UIKit (from `../`)
   - FaceppSwift/WebKit (from `../`)
   - SnapKit (~> 5.0.0)
@@ -26,10 +29,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  FaceppSwift: 9e6afae312120ce6ce90d060f4015f8067a6ddc2
+  FaceppSwift: 46aa1ee8fba8eb6e0b5c87c6af691dc20eb4994a
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
-PODFILE CHECKSUM: 5cbcee246876eb2513546643663e70c75795c3f6
+PODFILE CHECKSUM: 5e990fa0992c44dd6750953f530ba7bd27a51827
 
 COCOAPODS: 1.9.1

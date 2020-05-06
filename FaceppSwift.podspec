@@ -27,22 +27,30 @@ Pod::Spec.new do |s|
       ss.ios.deployment_target = '10.0'
       ss.tvos.deployment_target = '10.0'
       ss.watchos.deployment_target = '3.0'
-      ss.source_files = 'UIKit+Facepp'
+      ss.source_files = 'Extensions/UIKit+Facepp/**/*'
       ss.ios.framework = 'UIKit', 'SceneKit'
       ss.dependency 'FaceppSwift/Core'
     end
 
     s.subspec 'WebKit' do |ss|
       ss.ios.deployment_target = '10.0'
-      ss.source_files = 'WebKit+Facepp'
+      ss.source_files = 'Extensions/WebKit+Facepp/**/*'
       ss.ios.framework = 'UIKit', 'WebKit'
       ss.dependency 'FaceppSwift/UIKit'
     end
 
     s.subspec 'SwiftUI' do |ss|
       ss.ios.deployment_target = '13.0'
-      ss.source_files = 'SwiftUI+Facepp'
+      ss.source_files = 'Extensions/SwiftUI+Facepp/**/*'
       ss.ios.framework = 'SwiftUI', 'Combine'
       ss.dependency 'FaceppSwift/Core'
+    end 
+
+    s.subspec 'ARKit' do |ss|
+      ss.ios.deployment_target = '11.0'
+      ss.source_files = 'Extensions/ARKit+Facepp/**/*'
+      ss.ios.framework = 'UIKit', 'SceneKit', 'ARKit', 'AVFoundation'
+      ss.resource_bundle = { 'FaceppResources' => 'Resources/ARKit+Facepp/FaceppSwift.scnassets' }
+      ss.dependency 'FaceppSwift/UIKit'
     end  
   end
