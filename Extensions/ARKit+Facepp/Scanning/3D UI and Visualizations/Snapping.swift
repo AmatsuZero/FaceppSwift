@@ -7,6 +7,7 @@ Extensions to BoundingBox and ObjectOrigin for snapping to significant locations
 
 import ARKit
 
+@available(iOS 12.0, *)
 extension BoundingBox {
 
     func snapToHorizontalPlane() {
@@ -15,7 +16,7 @@ extension BoundingBox {
         var isWithinSnapThreshold = false
         let bottomY = simdWorldPosition.y - extent.y / 2
 
-        guard let currentFrame = ViewController.instance!.sceneView.session.currentFrame else { return }
+        guard let currentFrame = delegate?.currentFrame(self) else { return }
 
         for anchor in currentFrame.anchors where anchor is ARPlaneAnchor {
             let distanceFromHorizontalPlane = abs(bottomY - anchor.transform.position.y)
@@ -38,8 +39,8 @@ extension BoundingBox {
     }
 }
 
+@available(iOS 12.0, *)
 extension ObjectOrigin {
-
     func snapToBoundingBoxSide() {
         guard let boundingBox = self.parent as? BoundingBox else { return }
         let extent = boundingBox.extent
@@ -88,7 +89,7 @@ extension ObjectOrigin {
 
         if abs(boundingBoxPos.x - simdPosition.x) < snapThreshold &&
             abs(boundingBoxPos.z - simdPosition.z) < snapThreshold {
-            simdPosition = float3(boundingBoxPos.x, simdPosition.y, boundingBoxPos.z)
+            simdPosition = SIMD3<Float>(boundingBoxPos.x, simdPosition.y, boundingBoxPos.z)
             isWithinSnapThreshold = true
         }
 

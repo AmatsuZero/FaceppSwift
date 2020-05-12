@@ -25,6 +25,8 @@ extension ARCamera.TrackingState {
                 return "ARKit is initializing"
             case .relocalizing:
                 return "ARKit is relocalizing"
+            @unknown default:
+                return "Unknow State"
             }
         }
     }

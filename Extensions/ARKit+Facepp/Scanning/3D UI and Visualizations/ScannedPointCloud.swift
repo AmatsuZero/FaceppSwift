@@ -9,27 +9,28 @@ import Foundation
 import ARKit
 import SceneKit
 
+@available(iOS 12.0, *)
 class ScannedPointCloud: SCNNode, PointCloud {
 
     private var pointNode = SCNNode()
     private var preliminaryPointsNode = SCNNode()
 
     // The latest known set of points inside the reference object.
-    private var referenceObjectPoints: [float3] = []
+    private var referenceObjectPoints: [SIMD3<Float>] = []
 
     // The current frame's set of points inside the reference object.
-    private var currentFramePoints: [float3] = []
+    private var currentFramePoints: [SIMD3<Float>] = []
 
     // The set of currently rendered points, in world coordinates.
     // Note: We render them in world coordinates instead of local coordinates to
     //       prevent rendering issues with points jittering e.g. when the
     //       bounding box is rotated.
-    private var renderedPoints: [float3] = []
+    private var renderedPoints: [SIMD3<Float>] = []
 
     // The set of points from the current frame, in world coordinates.
     // Note: These are preliminary since not all of them might be added
     //       to the reference object.
-    private var renderedPreliminaryPoints: [float3] = []
+    private var renderedPreliminaryPoints: [SIMD3<Float>] = []
 
     private var boundingBox: BoundingBox?
 
@@ -77,7 +78,7 @@ class ScannedPointCloud: SCNNode, PointCloud {
     func update(with pointCloud: ARPointCloud, localFor boundingBox: BoundingBox) {
         // Convert the points to world coordinates because we display them
         // in world coordinates.
-        var pointsInWorld: [float3] = []
+        var pointsInWorld: [SIMD3<Float>] = []
         for point in pointCloud.points {
             pointsInWorld.append(boundingBox.simdConvertPosition(point, to: nil))
         }

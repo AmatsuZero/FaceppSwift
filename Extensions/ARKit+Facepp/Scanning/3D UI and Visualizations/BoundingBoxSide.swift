@@ -23,7 +23,7 @@ class BoundingBoxSide: SCNNode {
     var face: Position
 
     // The normal vector of this side.
-    var normal: float3 {
+    var normal: SIMD3<Float> {
         switch face {
         case .front, .right, .top: return dragAxis.normal
         case .back, .left, .bottom: return -dragAxis.normal
@@ -80,7 +80,7 @@ class BoundingBoxSide: SCNNode {
         return Float(capturedTiles.count) / Float(tiles.count)
     }
 
-    init(_ face: Position, boundingBoxExtent extent: float3, color: UIColor = .appYellow) {
+    init(_ face: Position, boundingBoxExtent extent: SIMD3<Float>, color: UIColor = .appYellow) {
         self.color = color
         self.face = face
         super.init()
@@ -92,46 +92,46 @@ class BoundingBoxSide: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup(boundingBoxExtent extent: float3) {
+    private func setup(boundingBoxExtent extent: SIMD3<Float>) {
         self.size = size(from: extent)
 
         switch face {
         case .front:
-            simdLocalTranslate(by: float3(0, 0, extent.z / 2))
+            simdLocalTranslate(by: SIMD3<Float>(0, 0, extent.z / 2))
         case .back:
-            simdLocalTranslate(by: float3(0, 0, -extent.z / 2))
+            simdLocalTranslate(by: SIMD3<Float>(0, 0, -extent.z / 2))
             simdLocalRotate(by: simd_quatf(angle: .pi, axis: .y))
         case .left:
-            simdLocalTranslate(by: float3(-extent.x / 2, 0, 0))
+            simdLocalTranslate(by: SIMD3<Float>(-extent.x / 2, 0, 0))
             simdLocalRotate(by: simd_quatf(angle: -.pi / 2, axis: .y))
         case .right:
-            simdLocalTranslate(by: float3(extent.x / 2, 0, 0))
+            simdLocalTranslate(by: SIMD3<Float>(extent.x / 2, 0, 0))
             simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: .y))
         case .bottom:
-            simdLocalTranslate(by: float3(0, -extent.y / 2, 0))
+            simdLocalTranslate(by: SIMD3<Float>(0, -extent.y / 2, 0))
             simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: .x))
         case .top:
-            simdLocalTranslate(by: float3(0, extent.y / 2, 0))
+            simdLocalTranslate(by: SIMD3<Float>(0, extent.y / 2, 0))
             simdLocalRotate(by: simd_quatf(angle: -.pi / 2, axis: .x))
         }
 
         setupExtensions()
     }
 
-    func update(boundingBoxExtent extent: float3) {
+    func update(boundingBoxExtent extent: SIMD3<Float>) {
         switch face {
         case .front:
-            simdPosition = float3(0, 0, extent.z / 2)
+            simdPosition = SIMD3<Float>(0, 0, extent.z / 2)
         case .back:
-            simdPosition = float3(0, 0, -extent.z / 2)
+            simdPosition = SIMD3<Float>(0, 0, -extent.z / 2)
         case .left:
-            simdPosition = float3(-extent.x / 2, 0, 0)
+            simdPosition = SIMD3<Float>(-extent.x / 2, 0, 0)
         case .right:
-            simdPosition = float3(extent.x / 2, 0, 0)
+            simdPosition = SIMD3<Float>(extent.x / 2, 0, 0)
         case .bottom:
-            simdPosition = float3(0, -extent.y / 2, 0)
+            simdPosition = SIMD3<Float>(0, -extent.y / 2, 0)
         case .top:
-            simdPosition = float3(0, extent.y / 2, 0)
+            simdPosition = SIMD3<Float>(0, extent.y / 2, 0)
         }
 
         // Update extensions if the size has changed.
@@ -148,7 +148,7 @@ class BoundingBoxSide: SCNNode {
         }
     }
 
-    private func size(from extent: float3) -> CGSize {
+    private func size(from extent: SIMD3<Float>) -> CGSize {
         switch face {
         case .front, .back:
             return CGSize(width: CGFloat(extent.x), height: CGFloat(extent.y))
@@ -180,7 +180,7 @@ class BoundingBoxSide: SCNNode {
                 let yPos = self.size.height / 2 - plane.height / 2 - CGFloat(row) * plane.height
 
                 let tileNode = Tile(plane)
-                tileNode.simdPosition = float3(Float(xPos), Float(yPos), 0)
+                tileNode.simdPosition = SIMD3<Float>(Float(xPos), Float(yPos), 0)
                 newTiles.append(tileNode)
             }
         }
@@ -237,18 +237,18 @@ class BoundingBoxSide: SCNNode {
         let halfHeight = Float(size.height) / 2
         let halfLength = (extensionLength / 2)
 
-        xAxisExtLines[0].simdPosition = float3(-halfWidth - halfLength, -halfHeight, 0)
-        yAxisExtLines[0].simdPosition = float3(-halfWidth, -halfHeight - halfLength, 0)
-        zAxisExtLines[0].simdPosition = float3(-halfWidth, -halfHeight, halfLength)
-        xAxisExtLines[1].simdPosition = float3(-halfWidth - halfLength, halfHeight, 0)
-        yAxisExtLines[1].simdPosition = float3(-halfWidth, halfHeight + halfLength, 0)
-        zAxisExtLines[1].simdPosition = float3(-halfWidth, halfHeight, halfLength)
-        xAxisExtLines[2].simdPosition = float3(halfWidth + halfLength, -halfHeight, 0)
-        yAxisExtLines[2].simdPosition = float3(halfWidth, -halfHeight - halfLength, 0)
-        zAxisExtLines[2].simdPosition = float3(halfWidth, -halfHeight, halfLength)
-        xAxisExtLines[3].simdPosition = float3(halfWidth + halfLength, halfHeight, 0)
-        yAxisExtLines[3].simdPosition = float3(halfWidth, halfHeight + halfLength, 0)
-        zAxisExtLines[3].simdPosition = float3(halfWidth, halfHeight, halfLength)
+        xAxisExtLines[0].simdPosition = SIMD3<Float>(-halfWidth - halfLength, -halfHeight, 0)
+        yAxisExtLines[0].simdPosition = SIMD3<Float>(-halfWidth, -halfHeight - halfLength, 0)
+        zAxisExtLines[0].simdPosition = SIMD3<Float>(-halfWidth, -halfHeight, halfLength)
+        xAxisExtLines[1].simdPosition = SIMD3<Float>(-halfWidth - halfLength, halfHeight, 0)
+        yAxisExtLines[1].simdPosition = SIMD3<Float>(-halfWidth, halfHeight + halfLength, 0)
+        zAxisExtLines[1].simdPosition = SIMD3<Float>(-halfWidth, halfHeight, halfLength)
+        xAxisExtLines[2].simdPosition = SIMD3<Float>(halfWidth + halfLength, -halfHeight, 0)
+        yAxisExtLines[2].simdPosition = SIMD3<Float>(halfWidth, -halfHeight - halfLength, 0)
+        zAxisExtLines[2].simdPosition = SIMD3<Float>(halfWidth, -halfHeight, halfLength)
+        xAxisExtLines[3].simdPosition = SIMD3<Float>(halfWidth + halfLength, halfHeight, 0)
+        yAxisExtLines[3].simdPosition = SIMD3<Float>(halfWidth, halfHeight + halfLength, 0)
+        zAxisExtLines[3].simdPosition = SIMD3<Float>(halfWidth, halfHeight, halfLength)
     }
 
     func showXAxisExtensions() {

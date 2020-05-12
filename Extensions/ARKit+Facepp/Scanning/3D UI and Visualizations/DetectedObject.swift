@@ -9,6 +9,12 @@ import Foundation
 import ARKit
 import SceneKit
 
+@available(iOS 12.0, *)
+protocol DetectedObjectDelegate: class {
+    func detectedObject(_ object: DetectedObject, prepare model: SCNNode)
+}
+
+@available(iOS 12.0, *)
 class DetectedObject: SCNNode {
 
     var displayDuration: TimeInterval = 1.0 // How long this visualization is displayed in seconds after an update
@@ -23,15 +29,15 @@ class DetectedObject: SCNNode {
     private var customModel: SCNNode?
 
     private let referenceObject: ARReferenceObject
+    
+    weak var deleagate: DetectedObjectDelegate?
 
     func set3DModel(_ url: URL?) {
         if let url = url, let model = load3DModel(from: url) {
             customModel?.removeFromParentNode()
             customModel = nil
             originVis.removeFromParentNode()
-            ViewController.instance?.sceneView.prepare([model], completionHandler: { _ in
-                self.addChildNode(model)
-            })
+            deleagate?.detectedObject(self, prepare: model)
             customModel = model
             pointCloudVisualization.isHidden = true
             boundingBox?.isHidden = true
@@ -44,11 +50,11 @@ class DetectedObject: SCNNode {
         }
     }
 
-    init(referenceObject: ARReferenceObject) {
+    init(referenceObject: ARReferenceObject, modelURL: URL?) {
         self.referenceObject = referenceObject
         pointCloudVisualization = DetectedPointCloud(referenceObjectPointCloud: referenceObject.rawFeaturePoints,
                                                      center: referenceObject.center, extent: referenceObject.extent)
-
+        // TODO: Bundle 资源获取方式需要修改
         if let scene = SCNScene(named: "axes.scn", inDirectory: "art.scnassets") {
             originVis = SCNNode()
             for child in scene.rootNode.childNodes {
@@ -62,8 +68,7 @@ class DetectedObject: SCNNode {
         super.init()
         addChildNode(pointCloudVisualization)
         isHidden = true
-
-        set3DModel(ViewController.instance?.modelURL)
+        set3DModel(modelURL)
     }
 
     required init?(coder aDecoder: NSCoder) {

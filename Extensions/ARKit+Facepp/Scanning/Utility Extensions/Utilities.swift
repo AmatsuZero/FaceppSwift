@@ -24,21 +24,21 @@ enum Axis {
     case y
     case z
 
-    var normal: float3 {
+    var normal: SIMD3<Float> {
         switch self {
         case .x:
-            return float3(1, 0, 0)
+            return SIMD3<Float>(1, 0, 0)
         case .y:
-            return float3(0, 1, 0)
+            return SIMD3<Float>(0, 1, 0)
         case .z:
-            return float3(0, 0, 1)
+            return SIMD3<Float>(0, 0, 1)
         }
     }
 }
 
 struct PlaneDrag {
     var planeTransform: float4x4
-    var offset: float3
+    var offset: SIMD3<Float>
 }
 
 extension simd_quatf {
@@ -48,17 +48,17 @@ extension simd_quatf {
 }
 
 extension float4x4 {
-    var position: float3 {
+    var position: SIMD3<Float> {
         return columns.3.xyz
     }
 }
 
-extension float4 {
-    var xyz: float3 {
-        return float3(x, y, z)
+extension SIMD4 where Scalar == Float {
+    var xyz: SIMD3<Float> {
+        return SIMD3<Float>(x, y, z)
     }
 
-    init(_ xyz: float3, _ w: Float) {
+    init(_ xyz: SIMD3<Float>, _ w: Float) {
         self.init(xyz.x, xyz.y, xyz.z, w)
     }
 }
@@ -81,10 +81,10 @@ extension SCNMaterial {
 }
 
 struct Ray {
-    let origin: float3
-    let direction: float3
+    let origin: SIMD3<Float>
+    let direction: SIMD3<Float>
 
-    init(origin: float3, direction: float3) {
+    init(origin: SIMD3<Float>, direction: SIMD3<Float>) {
         self.origin = origin
         self.direction = direction
     }
@@ -95,15 +95,16 @@ struct Ray {
     }
 }
 
+@available(iOS 12.0, *)
 extension ARSCNView {
 
-    func unprojectPointLocal(_ point: CGPoint, ontoPlane planeTransform: float4x4) -> float3? {
+    func unprojectPointLocal(_ point: CGPoint, ontoPlane planeTransform: float4x4) -> SIMD3<Float>? {
         guard let result = unprojectPoint(point, ontoPlane: planeTransform) else {
             return nil
         }
 
         // Convert the result into the plane's local coordinate system.
-        let point = float4(result, 1)
+        let point = SIMD4<Float>(result, 1)
         let localResult = planeTransform.inverse * point
         return localResult.xyz
     }
@@ -130,9 +131,10 @@ extension ARSCNView {
 }
 
 extension SCNNode {
-
     /// Wrapper for SceneKit function to use SIMD vectors and a typed dictionary.
-    open func hitTestWithSegment(from pointA: float3, to pointB: float3, options: [SCNHitTestOption: Any]? = nil) -> [SCNHitTestResult] {
+    func hitTestWithSegment(from pointA: SIMD3<Float>,
+                                 to pointB: SIMD3<Float>,
+                                 options: [SCNHitTestOption: Any]? = nil) -> [SCNHitTestResult] {
         if let options = options {
             var rawOptions = [String: Any]()
             for (key, value) in options {
@@ -216,7 +218,7 @@ extension CGPoint {
     }
 }
 
-func dragPlaneTransform(for dragRay: Ray, cameraPos: float3) -> float4x4 {
+func dragPlaneTransform(for dragRay: Ray, cameraPos: SIMD3<Float>) -> float4x4 {
 
     let camToRayOrigin = normalize(dragRay.origin - cameraPos)
 
@@ -242,10 +244,10 @@ func dragPlaneTransform(for dragRay: Ray, cameraPos: float3) -> float4x4 {
     let zVector = normalize(cross(xVector, camToRayOrigin))
     let yVector = normalize(cross(xVector, zVector))
 
-    return float4x4([float4(xVector, 0),
-                     float4(yVector, 0),
-                     float4(zVector, 0),
-                     float4(dragRay.origin, 1)])
+    return float4x4([SIMD4<Float>(xVector, 0),
+                     SIMD4<Float>(yVector, 0),
+                     SIMD4<Float>(zVector, 0),
+                     SIMD4<Float>(dragRay.origin, 1)])
 }
 
 func dragPlaneTransform(forPlaneNormal planeNormalRay: Ray, camera: SCNNode) -> float4x4 {
@@ -257,12 +259,13 @@ func dragPlaneTransform(forPlaneNormal planeNormalRay: Ray, camera: SCNNode) -> 
     let xVector = cross(yVector, camera.simdWorldRight)
     let zVector = normalize(cross(xVector, yVector))
 
-    return float4x4([float4(xVector, 0),
-                     float4(yVector, 0),
-                     float4(zVector, 0),
-                     float4(planeNormalRay.origin, 1)])
+    return float4x4([SIMD4<Float>(xVector, 0),
+                     SIMD4<Float>(yVector, 0),
+                     SIMD4<Float>(zVector, 0),
+                     SIMD4<Float>(planeNormalRay.origin, 1)])
 }
 
+@available(iOS 12.0, *)
 extension ARReferenceObject {
     func mergeInBackground(with otherReferenceObject: ARReferenceObject, completion: @escaping (ARReferenceObject?, Error?) -> Void) {
         DispatchQueue.global(qos: .background).async {
@@ -278,4 +281,12 @@ extension ARReferenceObject {
             }
         }
     }
+}
+
+extension Bundle {
+    
+}
+
+extension SCNScene {
+    
 }

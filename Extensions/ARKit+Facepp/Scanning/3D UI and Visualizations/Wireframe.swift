@@ -8,7 +8,8 @@ A visualization of the edges of a 3D box.
 import Foundation
 import SceneKit
 
-class FaceppWireframe: SCNNode {
+@available(iOS 12.0, *)
+class Wireframe: SCNNode {
 
     private var color = UIColor.appYellow
 
@@ -21,7 +22,7 @@ class FaceppWireframe: SCNNode {
     private var flashTimer: Timer?
     private var flashDuration = 0.1
 
-    init(extent: float3, color: UIColor, scale: CGFloat = 1.0) {
+    init(extent: SIMD3<Float>, color: UIColor, scale: CGFloat = 1.0) {
         super.init()
 
         let box = SCNBox(width: CGFloat(extent.x), height: CGFloat(extent.y), length: CGFloat(extent.z), chamferRadius: 0)
@@ -43,7 +44,7 @@ class FaceppWireframe: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func update(extent: float3) {
+    func update(extent: SIMD3<Float>) {
         if let box = self.geometry as? SCNBox {
             box.width = CGFloat(extent.x)
             box.height = CGFloat(extent.y)
